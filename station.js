@@ -1,11 +1,10 @@
 let request = require('request');
-let express = require('express');
-let app = express();
+let app = require('express')();
 let bodyParser = require('body-parser').json({ strict: false });
 //let myIP = "192.168.3.100"
 let myIP = '127.0.0.1';
-//let http = require('http').Server;
-//let socket = require('socketio');
+let http = require('http').Server(app);
+let io = require('socket.io')(http);
 
 var help = require('./helpers');
 
@@ -49,12 +48,12 @@ class Station {
         ref.nEvents = arr.length;
     }
 
-    //make a POST request
-    makePostRequest(uri, body) {
+    //make a POST request (for subscriptions)
+    makeSubscriptionPost(uri, body) {
         var ref = this;
         return new Promise(function(resolve, reject) {
             request.post({ uri: uri, json: true, body: body }, function(err, res, body) {
-                if (res.statusCode.toString().substr(0, 1) == 2) { // 200 class response
+                if (res) {
                     resolve(res.statusCode);
                 } else reject(new Error(ref.name + ": 1 subscription failed   statusCode:", res.statusCode));
             });
@@ -68,7 +67,7 @@ class Station {
 
         var uri = baseURI + ref.events[ref.eventCount] + "/notifs";
         var body = { destUrl: "http://" + myIP + ":" + ref.eventPort };
-        ref.makePostRequest(uri, body)
+        ref.makeSubscriptionPost(uri, body)
             .then(function(data) { // data is the response code to the most recent subscription
                 if (data.toString().substr(0, 1) == 2) { // success = 2xx
                     console.log(ref.events[ref.eventCount], 'SUBSCRIBED!');
@@ -90,7 +89,7 @@ class Station {
         //baseURI = "http://" + ref.ip + "/rest/services/";
         uri = baseURI + ref.inputs[ref.inputCount];
         var body = {};
-        ref.makePostRequest(uri, body)
+        ref.makeSubscriptionPost(uri, body)
             .then(function(data) {
                 if (data.toString().substr(0, 1) == 2) {
                     ref.inputCount++;
@@ -110,12 +109,12 @@ class Station {
         //baseURI = "http://" + ref.ip + "/rest/services/";
         uri = baseURI + ref.inputs[ref.inputCount];
         var body = {};
-        ref.makePostRequest(uri, body)
+        ref.makeSubscriptionPost(uri, body)
             .then(function(data) {
                 if (data.toString().substr(0, 1) == 2) {
                     ref.inputCount++;
                     if (ref.inputCount < ref.nOutputs) {
-                        return ref.initInputs(baseURI); // recursive
+                        return ref.initOutputs(baseURI); // recursive
                     }
                 }
             })
@@ -128,14 +127,25 @@ class Station {
     runServer() {
         var ref = this;
         app.use(bodyParser);
+
         app.post('/', function(req, res) { // for event notifications
-            // on request, emit an event with the eventID and data. different for each station.
-            console.log(req.body);
 
             res.end();
         });
 
-        app.listen(ref.eventPort, function() {
+        http.on('request', function(req) {
+            // on request, emit an event with the eventID and data. different for each station.
+            req.on('end', function() {
+                console.log('req.body is:', req.body);
+                io.emit('newEvent', req.body);
+            });
+        });
+
+        io.on('connection', function(socket) {
+            console.log('a user connected');
+        });
+
+        http.listen(ref.eventPort, function() {
             console.log(ref.name, 'is listening on port', ref.eventPort);
         });
     }
