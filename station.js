@@ -48,6 +48,16 @@ class Station {
         ref.nEvents = arr.length;
     }
 
+    // make a POST request (for fetching IO values)
+    fetchIOstatus(uri, body) {
+        var ref = this;
+        return new Promise(function(resolve, reject) {
+            request.post({ uri: uri, body: {} }, function(err, res, body) {
+                resolve(res.body); // expected body = {"IO_name": value}
+            });
+        });
+    }
+
     //make a POST request (for subscriptions)
     makeSubscriptionPost(uri, body) {
         var ref = this;
@@ -64,63 +74,74 @@ class Station {
     subscribe(baseURI) {
         var ref = this;
         //baseURI = "http://" + ref.ip + "/rest/events/";
+        if (ref.nEvents) {
+            var uri = baseURI + ref.events[ref.eventCount] + "/notifs";
+            var body = { destUrl: "http://" + myIP + ":" + ref.eventPort };
 
-        var uri = baseURI + ref.events[ref.eventCount] + "/notifs";
-        var body = { destUrl: "http://" + myIP + ":" + ref.eventPort };
-        ref.makeSubscriptionPost(uri, body)
-            .then(function(data) { // data is the response code to the most recent subscription
-                if (data.toString().substr(0, 1) == 2) { // success = 2xx
-                    console.log(ref.events[ref.eventCount], 'SUBSCRIBED!');
-                    ref.eventCount++;
-                    if (ref.eventCount < ref.nEvents) {
-                        return ref.subscribe(baseURI); // recursive
+            ref.makeSubscriptionPost(uri, body)
+                .then(function(data) { // data is the response code to the most recent subscription
+                    if (data.toString().substr(0, 1) == 2) { // success = 2xx
+                        console.log(ref.events[ref.eventCount], 'SUBSCRIBED!');
+                        ref.eventCount++;
+                        if (ref.eventCount < ref.nEvents) {
+                            return ref.subscribe(baseURI); // recursive
+                        }
                     }
-                }
-            })
-            .catch(function(err) {
-                console.error(err);
-            });
+                })
+                .catch(function(err) {
+                    console.error(err);
+                });
+        } else {
+            console.log(ref.name, ": No events specified, therefore no subscriptions.");
+        }
     }
 
     //get the initial statuses of all inputs
-    initInputs(baseURI) { // initialize inputs
+    initInputs(baseURI) {
         var ref = this;
-        //var inp = ref.inputs;
         //baseURI = "http://" + ref.ip + "/rest/services/";
-        uri = baseURI + ref.inputs[ref.inputCount];
-        var body = {};
-        ref.makeSubscriptionPost(uri, body)
-            .then(function(data) {
-                if (data.toString().substr(0, 1) == 2) {
-                    ref.inputCount++;
-                    if (ref.inputCount < ref.nInputs) {
-                        return ref.initInputs(baseURI); // recursive
+        if (ref.nInputs) {
+            var uri = baseURI + ref.inputs[Object.keys(ref.inputs)[ref.inputCount]];
+            var body = {};
+            ref.fetchIOstatus(uri, body)
+                .then(function(data) {
+                    if (data) {
+                        ref.inputs[Object.keys(ref.inputs)[ref.inputCount]] = data; // copy IO value
+
+                        ref.inputCount++;
+                        if (ref.inputCount < ref.nInputs) {
+                            return ref.initInputs(baseURI);
+                        }
                     }
-                }
-            })
-            .catch(function(err) {
-                console.error(err);
-            });
+                })
+                .catch(function(err) {
+                    console.error(err);
+                });
+        }
     }
 
     //get the initial statuses of all outputs
-    initOutputs(baseURI) { // initialize inputs
+    initOutputs(baseURI) {
         var ref = this;
         //baseURI = "http://" + ref.ip + "/rest/services/";
-        uri = baseURI + ref.inputs[ref.inputCount];
-        var body = {};
-        ref.makeSubscriptionPost(uri, body)
-            .then(function(data) {
-                if (data.toString().substr(0, 1) == 2) {
-                    ref.inputCount++;
-                    if (ref.inputCount < ref.nOutputs) {
-                        return ref.initOutputs(baseURI); // recursive
+        if (ref.nOutputs) {
+            var uri = baseURI + ref.inputs[Object.keys(ref.outputs)[ref.outputCount]];
+            var body = {};
+            ref.fetchIOstatus(uri, body)
+                .then(function(data) {
+                    if (data) {
+                        ref.inputs[Object.keys(ref.outputs)[ref.outputCount]] = data; // copy IO value
+
+                        ref.outputCount++;
+                        if (ref.outputCount < ref.nOutputs) {
+                            return ref.initOutputs(baseURI);
+                        }
                     }
-                }
-            })
-            .catch(function(err) {
-                console.error(err);
-            });
+                })
+                .catch(function(err) {
+                    console.error(err);
+                });
+        }
     }
 
     //run a server
@@ -137,7 +158,6 @@ class Station {
             // on request, emit an event with the eventID and data. different for each station.
             req.on('end', function() {
                 console.log('req.body is:', req.body);
-                io.emit('newEvent', req.body);
             });
         });
 
