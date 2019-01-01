@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>DEMO FACTORY</title>
+
+    <!--link rel="stylesheet" type="text/css" href="" /-->
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg.js"></script>
+
+    <script></script>
+</head>
+
+<body>
+    <script>
+        $(document).ready(function() {
+            h = window.screen.availHeight;
+            w = window.screen.availWidth;
+            var s = Snap(w, h); //drawing board
+            var x, y, width, height;
+            x = 0.05 * w;
+            y = 0.05 * h;
+            width = 0.9 * w;
+            height = 0.9 * h;
+
+            var bigRect = s.rect(x, y, width, height) //our stuff
+                .attr({
+                    fill: "#9e9e9e",
+                    stroke: "#125470",
+                    strokeWidth: 5,
+                    rx: 5,
+                    ry: 5,
+                    id: "bigrect"
+                });
+            //horizontal centre line
+            var cLine = s.line(x, y + bigRect.attr("height") / 2, x + width, y + height / 2).attr({
+                stroke: "#000",
+                strokeWidth: 4,
+                id: "cline"
+            }); // centre line. make invisible later
+
+            var cLine2 = s.line({});
+
+            var spread = 50;
+            var clipoff = 50;
+            var cnvBig = s.rect(cLine.attr("x1"), Number(cLine.attr("y1")) - spread * 1.3, width, spread * 2.6).attr({
+                fill: "#000",
+                fill: "#dbcacc",
+                opacity: 0.7,
+                id: "cnvBig",
+                rx: 40,
+                ry: 40
+            }); // -spread *k,,spread*k*2
+            //cnvBig.attr("x") + "50"
+            var cnvSm = s.rect(130, Number(cLine.attr("y1")) - spread / 2, width - 2 * clipoff, spread).attr({
+                fill: $("#bigrect").attr("fill"),
+                id: "cnvSm",
+                rx: 15,
+                ry: 15
+            });
+
+
+            //console.log(w)
+        });
+    </script>
+</body>
+
+</html>
