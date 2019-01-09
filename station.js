@@ -53,7 +53,7 @@ class Station {
         var ref = this;
         return new Promise(function(resolve, reject) {
             request.post({ uri: uri, body: {} }, function(err, res, body) {
-                resolve(res.body); // expected body = {"IO_name": value}
+                resolve(res.body); // expected body = {"IO_name": value}**********
             });
         });
     }
@@ -106,7 +106,7 @@ class Station {
             ref.fetchIOstatus(uri, body)
                 .then(function(data) {
                     if (data) {
-                        ref.inputs[Object.keys(ref.inputs)[ref.inputCount]] = data; // copy IO value
+                        ref.inputs[Object.keys(ref.inputs)[ref.inputCount]] = data; //shd be data.something
 
                         ref.inputCount++;
                         if (ref.inputCount < ref.nInputs) {
@@ -130,7 +130,7 @@ class Station {
             ref.fetchIOstatus(uri, body)
                 .then(function(data) {
                     if (data) {
-                        ref.inputs[Object.keys(ref.outputs)[ref.outputCount]] = data; // copy IO value
+                        ref.inputs[Object.keys(ref.outputs)[ref.outputCount]] = data; // shd be data.something
 
                         ref.outputCount++;
                         if (ref.outputCount < ref.nOutputs) {
