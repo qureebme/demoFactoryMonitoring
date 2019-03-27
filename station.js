@@ -1,18 +1,19 @@
-let request = require('request');
-let app = require('express')();
-let bodyParser = require('body-parser').json({ strict: false });
-//let myIP = "192.168.3.100"
-let myIP = '127.0.0.1';
-let http = require('http').Server(app);
-let io = require('socket.io')(http);
+let request = require('request'),
+    app = require('express')(),
+    bodyParser = require('body-parser').json({ strict: false }),
 
-var help = require('./helpers');
+    myIP = '192.168.3.100',
+    http = require('http').Server(app),
+    io = require('socket.io')(http),
+
+    help = require('./helpers');
 
 class Station {
     constructor(name, ip, eventPort) {
         this.name = name;
         this.ip = ip; // ip of the real station
         this.eventPort = eventPort; // for instances of this object
+        this.baseURI = "http://" + ip + "/rest/events/"; // for subscriptions
 
         this.events = undefined; // events array
         this.eventCount = 0; // num of successful subscriptions
@@ -71,11 +72,11 @@ class Station {
     }
 
     //make subscriptions
-    subscribe(baseURI) {
+    subscribe() {
         var ref = this;
         //baseURI = "http://" + ref.ip + "/rest/events/";
         if (ref.nEvents) {
-            var uri = baseURI + ref.events[ref.eventCount] + "/notifs";
+            var uri = ref.baseURI + ref.events[ref.eventCount] + "/notifs";
             var body = { destUrl: "http://" + myIP + ":" + ref.eventPort };
 
             ref.makeSubscriptionPost(uri, body)
@@ -84,7 +85,7 @@ class Station {
                         console.log(ref.events[ref.eventCount], 'SUBSCRIBED!');
                         ref.eventCount++;
                         if (ref.eventCount < ref.nEvents) {
-                            return ref.subscribe(baseURI); // recursive
+                            return ref.subscribe(); // recursive
                         }
                     }
                 })
@@ -150,21 +151,21 @@ class Station {
         app.use(bodyParser);
 
         app.post('/', function(req, res) { // for event notifications
-
+            console.log(req.body);
             res.end();
         });
-
-        http.on('request', function(req) {
-            // on request, emit an event with the eventID and data. different for each station.
-            req.on('end', function() {
-                console.log('req.body is:', req.body);
-            });
-        });
-
+        /*
+                http.on('request', function(req) {
+                    // on request, emit an event with the eventID and data. different for each station.
+                    req.on('end', function() {
+                        console.log('req.body is:', req.body);
+                    });
+                });
+        
         io.on('connection', function(socket) {
             console.log('a user connected');
         });
-
+*/
         http.listen(ref.eventPort, function() {
             console.log(ref.name, 'is listening on port', ref.eventPort);
         });
