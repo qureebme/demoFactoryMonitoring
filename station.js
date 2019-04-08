@@ -42,7 +42,7 @@ class Station {
         ref.nOutputs = help.getSize(obj);
     };
 
-    // specify eventIDs as ['xChanged', 'yChanged']
+    // specify events as an array
     getEvents(arr) {
         var ref = this;
         ref.events = arr;
@@ -66,7 +66,7 @@ class Station {
             request.post({ uri: uri, json: true, body: body }, function(err, res, body) {
                 if (res) {
                     resolve(res.statusCode);
-                } else reject(new Error(ref.name + ": 1 subscription failed   statusCode:", res.statusCode));
+                } else reject(new Error(ref.name + ": 1 subscription failed.   statusCode:", res.statusCode));
             });
         })
     }
@@ -154,18 +154,7 @@ class Station {
             console.log(req.body);
             res.end();
         });
-        /*
-                http.on('request', function(req) {
-                    // on request, emit an event with the eventID and data. different for each station.
-                    req.on('end', function() {
-                        console.log('req.body is:', req.body);
-                    });
-                });
-        
-        io.on('connection', function(socket) {
-            console.log('a user connected');
-        });
-*/
+
         http.listen(ref.eventPort, function() {
             console.log(ref.name, 'is listening on port', ref.eventPort);
         });
