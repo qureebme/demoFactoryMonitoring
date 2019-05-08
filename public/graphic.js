@@ -249,7 +249,7 @@ var arm = s.rect(Number(s.select("#hand").attr("x")) + 50, Number(s.select("#han
     gbase = s.rect(s.select("#hand").attr("x"), s.select("#hand").attr("y"), 10, s.select("#hand").attr("height"))
 
 // HANDLING STATION GROUPS
-var gripper = s.group(hgrip1, hgrip2, hgext);
+var gripper_h = s.group(hgrip1, hgrip2, hgext); //gripper, handling station
 
 
 // DISTRIBUTING STATION COMPONENTS
@@ -414,20 +414,24 @@ var s_arm = s.line(s.select("#pt").attr("cx") - 70, s.select("#pt").attr("cy"), 
 var bx0 = s_arm.getBBox();
 console.log("bx0:: ", bx0)
 
-var gr_1, gr_2, gr_3;
-gr_2 = s.line(bx0.x, bx0.y - 7, bx0.x, Number(bx0.y) + 7).attr({ //gripper, base
-    stroke: "#000000",
-    strokeWidth: 4
-})
-var bx2 = gr_2.getBBox(),
+var gr_2 = s.line(bx0.x, bx0.y - 7, bx0.x, Number(bx0.y) + 7).attr({ //gripper, base
+        stroke: "#000000",
+        strokeWidth: 4
+    }),
+
+    bx2 = gr_2.getBBox(),
+
     gr_u = s.line(bx2.x - 10, bx2.y, bx2.x, bx2.y).attr({ //gripper,upper side
         stroke: "#000000",
         strokeWidth: 4
     }),
+
     gr_d = s.line(bx2.x - 10, bx2.y2, bx2.x, bx2.y2).attr({ //gripper, down side
         stroke: "#000000",
         strokeWidth: 4
-    })
+    }),
+
+    gripper_s = s.group(s_arm, gr_2, gr_u, gr_d)
 
 
 //s.select("#s_arm").animate({ transform: armMatrix }, 5000)
