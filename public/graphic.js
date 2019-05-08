@@ -190,36 +190,17 @@ var spinner = s.group(procr1, procr2, procr3, ccc).attr({
 }); // make the spinner whole
 
 var bb = spinner.getBBox();
-//console.log("bbox:", bb);
 var mat = new Snap.Matrix();
+//s.circle(bb.cx, bb.cy, 5).attr({ opacity: 0.5 }); //centre circle
 
-s.circle(bb.cx, bb.cy, 5).attr({ opacity: 0.5 }); //centre circle
-
-
-//spinner.animate({ transform: mat }, 5000)
+const unitTurn = 1; //degrees
 
 setInterval(() => {
-    mat.rotate(60, bb.cx, bb.cy);
-    s.select("#spinner").animate({ transform: mat }, 1);
+    for (let i = 0; i < 60 / unitTurn; i++) {
+        mat.rotate(unitTurn, bb.cx, bb.cy);
+        s.select("#spinner").animate({ transform: mat }, 5);
+    }
 }, 1000);
-
-/*
-async function madd() {
-    const spinnerSVG = await new Promise((resolve) => Snap.load("http://localhost:3000/procc.svg", (fragment) => {
-        s.select("#proc").append(fragment);
-        //s.select("#procr1").transform("r60");
-        //s.select("#procr3").transform("r120");
-        resolve();
-    }));
-}
-madd();
-*/
-/*
-Snap.load("http://localhost:3000/proc.html", (fragment) => {
-    const logo = fragment.select("#spinner");
-    s.append(fragment);
-});*/
-// PROCESSING STATION GROUPS
 
 
 // HANDLING STATION COMPONENTS
