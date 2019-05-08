@@ -313,14 +313,16 @@ s.select("#sensor1").transform("r15");
 s.select("#sensor2").transform("r30");
 
 // STORING STATION COMPONENTS
-var rr = 8,
+var rr = 8, // radius of the circles
     transMatrix1 = new Snap.Matrix(),
     transMatrix2 = new Snap.Matrix();
 
 var storBox = stor.getBBox(),
     point = s.circle(storBox.x2 - 100, storBox.y + 75, 2.5).attr({ id: "pt" }),
-    cp = [s.select("#pt").attr("cx"), s.select("#pt").attr("cy")],
-    line0 = s.line(cp[0] + 10, cp[1], storBox.x + 10, cp[1]).attr({
+
+    cp = [s.select("#pt").attr("cx"), s.select("#pt").attr("cy")], //center coords of point
+
+    line0 = s.line(cp[0] + 10, cp[1], storBox.x + 10, cp[1]).attr({ //hidden line, used for placing circles
         strokeWidth: 2,
         stroke: "#000000",
         id: "line0",
@@ -376,21 +378,21 @@ var storBox = stor.getBBox(),
         opacity: 1
     });
 transMatrix1.translate(10, 0);
-transMatrix2.translate(20, 0)
+transMatrix2.translate(20, 0);
 
 var bigGr = s.group(gr1, gr2, gr3, gr4, gr5, gr6),
 
-    bigGr2 = bigGr.clone().attr({
+    bigGr2 = bigGr.clone().attr({ //middle layer of circles
         transform: transMatrix1,
     }),
 
-    bigGr3 = bigGr2.clone().attr({
+    bigGr3 = bigGr2.clone().attr({ //top layer of circles
         transform: transMatrix2,
         id: "bg3"
     });
 
-s.circle(Number(s.select("#pt").attr("cx")) + 10, s.select("#pt").attr("cy"), 2.5).attr({ fill: "#FFFFFF" });
-s.circle(Number(s.select("#pt").attr("cx")) + 20, s.select("#pt").attr("cy"), 2.5).attr({ fill: "#FFFFFF" });
+s.circle(Number(s.select("#pt").attr("cx")) + 10, s.select("#pt").attr("cy"), 2.5).attr({ fill: "#FFFFFF" }); //second dot
+s.circle(Number(s.select("#pt").attr("cx")) + 20, s.select("#pt").attr("cy"), 2.5).attr({ fill: "#FFFFFF" }); //third dot
 s.rect(cp[0] - 5, cp[1] - 5, 30, 10).attr({
     opacity: 0.5,
     rx: 2,
@@ -400,11 +402,32 @@ s.rect(cp[0] - 5, cp[1] - 5, 30, 10).attr({
 var armMatrix = new Snap.Matrix();
 armMatrix.rotate(10, cp[0], cp[1]);
 armMatrix.translate(0, 0, 0);
-var s_arm = s.rect(s.select("#pt").attr("cx") - 70, s.select("#pt").attr("cy") - 2.5, 70, 5).attr({
+
+var s_arm = s.line(s.select("#pt").attr("cx") - 70, s.select("#pt").attr("cy"), s.select("#pt").attr("cx"), s.select("#pt").attr("cy")).attr({ //robot arm
         id: "s_arm",
+        stroke: "#000000",
+        strokeWidth: 4,
         transformm: armMatrix
     }),
     s_grip = s.path();
+
+var bx0 = s_arm.getBBox();
+console.log("bx0:: ", bx0)
+
+var gr_1, gr_2, gr_3;
+gr_2 = s.line(bx0.x, bx0.y - 7, bx0.x, Number(bx0.y) + 7).attr({ //gripper, base
+    stroke: "#000000",
+    strokeWidth: 4
+})
+var bx2 = gr_2.getBBox(),
+    gr_u = s.line(bx2.x - 10, bx2.y, bx2.x, bx2.y).attr({ //gripper,upper side
+        stroke: "#000000",
+        strokeWidth: 4
+    }),
+    gr_d = s.line(bx2.x - 10, bx2.y2, bx2.x, bx2.y2).attr({ //gripper, down side
+        stroke: "#000000",
+        strokeWidth: 4
+    })
 
 
 //s.select("#s_arm").animate({ transform: armMatrix }, 5000)
