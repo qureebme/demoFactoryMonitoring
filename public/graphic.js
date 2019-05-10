@@ -124,24 +124,24 @@ var procc = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select(
         id: "procc"
     }), // the bounding circle, hidden
 
-    procr1 = s.rect(Number(s.select("#proc").attr("x")) + 90, Number(s.select("#proc").attr("y")) + 10, 20, s.select("#procc").attr("r") * 2).attr({
+    flange1 = s.rect(Number(s.select("#proc").attr("x")) + 90, Number(s.select("#proc").attr("y")) + 10, 20, s.select("#procc").attr("r") * 2).attr({
         fill: "#ffffff",
         rx: 7,
         ry: 7,
         stroke: "#B00020",
         strokeWidth: 2,
-        id: "procr1"
+        id: "flan1"
     }), // flange 1
 
-    procr2 = procr1.clone().attr({
+    flange2 = flange1.clone().attr({
         stroke: "#6200EE",
-        id: "procr2"
-    }),
+        id: "flan2"
+    }), //flange 2
 
-    procr3 = procr1.clone().attr({
+    flange3 = flange1.clone().attr({
         stroke: "#03DAC5",
-        id: "procr3"
-    }),
+        id: "flan3"
+    }), // flange 3
 
     ccc = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select("#proc").attr("y")) + 75, 30).attr({
         fill: "#FFFFFF",
@@ -171,11 +171,11 @@ var drill1_1 = s.rect(Number(s.select("#proc").attr("x")), Number(s.select("#pro
     }); // end of processing station components
 
 // rotate the flanges into position
-s.select("#procr2").transform("r60"); // 60 deg off procr1
-s.select("#procr3").transform("r120"); // 120 deg off procr1
+s.select("#flan2").transform("r60"); // 60 deg off flange1
+s.select("#flan3").transform("r120"); // 120 deg off flange1
 
-var spinner = s.group(procr1, procr2, procr3, ccc).attr({
-    id: "spinner"
+var spinner = s.group(flange1, flange2, flange3, ccc).attr({
+    id: "spin"
 }).attr({
     opacity: 1
 }); // make the spinner whole
@@ -189,7 +189,7 @@ const unitTurn = 1; //degrees
 setInterval(() => {
     for (let i = 0; i < 60 / unitTurn; i++) {
         mat.rotate(unitTurn, bb.cx, bb.cy);
-        s.select("#spinner").animate({ transform: mat }, 5);
+        s.select("#spin").animate({ transform: mat }, 5);
     }
 }, 1000);
 
