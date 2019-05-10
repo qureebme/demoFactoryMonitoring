@@ -99,8 +99,7 @@ var hand = s.rect(c_x - 100, c_y1, s_width, s_height).attr({
 var proc = s.rect(s.select("#hand").attr("x"), Number($("#hand").attr("y")) + Number($("#hand").attr("height")) + 5,
     s_width, s_height).attr({
     id: "proc",
-    fill: "#90A4AE",
-    opacity: 0.4
+    fill: "#90A4AE"
 }); // processing station
 
 var test = s.rect(Number(s.select("#cnvBig").attr("x")) + 40, c_y1, s_width, s_height).attr({
@@ -123,7 +122,7 @@ var procc = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select(
         fill: "#ffffff",
         opacity: 0,
         id: "procc"
-    }), // the bounding circle
+    }), // the bounding circle, hidden
 
     procr1 = s.rect(Number(s.select("#proc").attr("x")) + 90, Number(s.select("#proc").attr("y")) + 10, 20, s.select("#procc").attr("r") * 2).attr({
         fill: "#ffffff",
@@ -134,23 +133,15 @@ var procc = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select(
         id: "procr1"
     }), // flange 1
 
-    procr2 = s.rect(Number(s.select("#proc").attr("x")) + 90, Number(s.select("#proc").attr("y")) + 10, 20, s.select("#procc").attr("r") * 2).attr({
-        fill: "#ffffff",
-        rx: 7,
-        ry: 7,
+    procr2 = procr1.clone().attr({
         stroke: "#6200EE",
-        strokeWidth: 2,
         id: "procr2"
-    }), // flange 2
+    }),
 
-    procr3 = s.rect(Number(s.select("#proc").attr("x")) + 90, Number(s.select("#proc").attr("y")) + 10, 20, s.select("#procc").attr("r") * 2).attr({
-        fill: "#ffffff",
-        rx: 7,
-        ry: 7,
+    procr3 = procr1.clone().attr({
         stroke: "#03DAC5",
-        strokeWidth: 2,
         id: "procr3"
-    }), // flange 3
+    }),
 
     ccc = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select("#proc").attr("y")) + 75, 30).attr({
         fill: "#FFFFFF",
@@ -180,7 +171,7 @@ var drill1_1 = s.rect(Number(s.select("#proc").attr("x")), Number(s.select("#pro
     }); // end of processing station components
 
 // rotate the flanges into position
-s.select("#procr1").transform("r60"); // 60 deg off procr1
+s.select("#procr2").transform("r60"); // 60 deg off procr1
 s.select("#procr3").transform("r120"); // 120 deg off procr1
 
 var spinner = s.group(procr1, procr2, procr3, ccc).attr({
