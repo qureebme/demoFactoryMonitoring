@@ -184,14 +184,15 @@ var bb = spinner.getBBox();
 var mat = new Snap.Matrix();
 //s.circle(bb.cx, bb.cy, 5).attr({ opacity: 0.5 }); //centre circle
 
-const unitTurn = 1; //degrees
+const unitTurn = 5; //degrees
 
 setInterval(() => {
+    mat.rotate(unitTurn, bb.cx, bb.cy);
     for (let i = 0; i < 60 / unitTurn; i++) {
-        mat.rotate(unitTurn, bb.cx, bb.cy);
+
         s.select("#spin").animate({ transform: mat }, 5);
     }
-}, 1000);
+}, 100);
 
 
 // HANDLING STATION COMPONENTS
