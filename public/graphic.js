@@ -34,86 +34,85 @@ var bigRect = s.rect(0, 0, w, h + 200) //our stuff
         ry: 5,
         id: "bigrect",
         opacity: 0.3
-    });
-//horizontal centre line
-var cLine = s.line(x, y + height / 2 + 150, x + width, y + height / 2 + 150).attr({ //mv dw hr
-    stroke: "#000",
-    strokeWidth: 4,
-    id: "cline",
-    opacity: 0
-}); // centre line. make invisible later
+    }),
+    //horizontal centre line
+    cLine = s.line(x, y + height / 2 + 150, x + width, y + height / 2 + 150).attr({ //mv dw hr
+        stroke: "#000000",
+        strokeWidth: 4,
+        id: "cline",
+        opacity: 0
+    }); // centre line. make invisible later
 
-var spread = 50;
-var clipoff = 50;
+var spread = 50,
+    clipoff = 50;
 
 //Conveyor, outer part
 var cnvBig = s.rect($("#cline").attr("x1"), Number(cLine.attr("y1")) - spread * 1.3, width, spread * 2.6).attr({
-    fill: "#000",
-    id: "cnvBig",
-    rx: 40,
-    ry: 40
-}); // -spread *k,,spread*k*2
+        fill: "#000000",
+        id: "cnvBig",
+        rx: 40,
+        ry: 40
+    }), // -spread *k,,spread*k*2
 
-//Conveyor, inner part
-var cnvSm = s.rect(Number($("#cnvBig").attr("x")) + clipoff, Number(cLine.attr("y1")) - spread / 2, width - 2 * clipoff, spread).attr({
-    fill: $("#bigrect").attr("fill"),
-    id: "cnvSm",
-    rx: 15,
-    ry: 15
-});
+    //Conveyor, inner part
+    cnvSm = s.rect(Number($("#cnvBig").attr("x")) + clipoff, Number(cLine.attr("y1")) - spread / 2, width - 2 * clipoff, spread).attr({
+        fill: $("#bigrect").attr("fill"),
+        id: "cnvSm",
+        rx: 15,
+        ry: 15
+    });
 
-var c_x = Number(s.select("#cnvBig").attr("x")) + Number(s.select("#cnvBig").attr("width")) / 2; //cnv, middle
-var c_y1 = Number(s.select("#cnvBig").attr("y")) + Number(s.select("#cnvBig").attr("height")) + 10; // for hand and proc
-//s.circle(c_x, c_y, 10);
+var c_x = Number(s.select("#cnvBig").attr("x")) + Number(s.select("#cnvBig").attr("width")) / 2, //cnv, middle
+    c_y1 = Number(s.select("#cnvBig").attr("y")) + Number(s.select("#cnvBig").attr("height")) + 10; // for hand and proc
+
 
 //UPPER SIDE
-c_y2 = Number(s.select("#cnvBig").attr("y")) - 160; // - 10(spacing) - height_of_asrs// for asrs
+var c_y2 = Number(s.select("#cnvBig").attr("y")) - 160; // - 10(spacing) - height_of_asrs// for asrs
 var asrs = s.rect(c_x - 150, c_y2 - 100, 300, 250).attr({
-    id: "asrs",
-    fill: "#90A4AE"
-}); //asrs station
+        id: "asrs",
+        fill: "#90a4ae"
+    }), //asrs station
 
-//robot station
-var robs = s.rect(x + width - 40 - s_width, s.select("#cnvBig").attr("y") - 160, s_width, s_height).attr({ //mv dw hr
-    id: "robs",
-    fill: "#90A4AE"
-}); // y + height / 2 - Number($("#bigRect").attr("height")) / 2 - 10 - s_height
+    //robot station
+    robs = s.rect(x + width - 40 - s_width, s.select("#cnvBig").attr("y") - 160, s_width, s_height).attr({ //mv dw hr
+        id: "robs",
+        fill: "#90a4ae"
+    }), // y + height / 2 - Number($("#bigRect").attr("height")) / 2 - 10 - s_height
 
-var asse = s.rect(s.select("#robs").attr("x"), s.select("#robs").attr("y") - s_height - 5, s_width, s_height).attr({
-    id: "asse",
-    fill: "#90A4AE"
-}); // assembling station
+    asse = s.rect(s.select("#robs").attr("x"), s.select("#robs").attr("y") - s_height - 5, s_width, s_height).attr({
+        id: "asse",
+        fill: "#90a4ae"
+    }), // assembling station
 
-var stor = s.rect(s.select("#asse").attr("x"), s.select("#asse").attr("y") - s_height - 5, s_width, s_height).attr({
-    id: "stor",
-    fill: "#90A4AE"
-}); // storing station
+    stor = s.rect(s.select("#asse").attr("x"), s.select("#asse").attr("y") - s_height - 5, s_width, s_height).attr({
+        id: "stor",
+        fill: "#90a4ae"
+    }); // storing station
 
 
 // LOWER SIDE
 var hand = s.rect(c_x - 100, c_y1, s_width, s_height).attr({
-    id: "hand",
-    fill: "#90A4AE"
-}); // handling station
+        id: "hand",
+        fill: "#90a4ae"
+    }), // handling station
 
-var proc = s.rect(s.select("#hand").attr("x"), Number($("#hand").attr("y")) + Number($("#hand").attr("height")) + 5,
-    s_width, s_height).attr({
-    id: "proc",
-    fill: "#90A4AE"
-}); // processing station
+    proc = s.rect(s.select("#hand").attr("x"), Number($("#hand").attr("y")) + Number($("#hand").attr("height")) + 5,
+        s_width, s_height).attr({
+        id: "proc",
+        fill: "#90a4ae"
+    }), // processing station
 
-var test = s.rect(Number(s.select("#cnvBig").attr("x")) + 40, c_y1, s_width, s_height).attr({
-    id: "test",
-    fill: "#90A4AE"
-});
+    test = s.rect(Number(s.select("#cnvBig").attr("x")) + 40, c_y1, s_width, s_height).attr({
+        id: "test",
+        fill: "#90a4ae"
+    }), // testing station
 
-var dist = s.rect(s.select("#test").attr("x"), Number(s.select("#test").attr("y")) + Number(s.select("#test").attr("height")) + 5,
-    s_width, s_height).attr({
-    id: "dist",
-    fill: "#90A4AE"
-}); // distribution station
+    dist = s.rect(s.select("#test").attr("x"), Number(s.select("#test").attr("y")) + Number(s.select("#test").attr("height")) + 5,
+        s_width, s_height).attr({
+        id: "dist",
+        fill: "#90A4AE"
+    }); // distribution station
 
-var all = s.group(cnvBig, cnvSm, hand, proc, test, dist, asrs, robs, asse, stor);
 var cnv = s.group(cnvBig, cnvSm).attr({}); // the conveyor
 
 // PROCESSING STATION COMPONENTS
@@ -128,30 +127,30 @@ var procc = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select(
         fill: "#ffffff",
         rx: 7,
         ry: 7,
-        stroke: "#B00020",
+        stroke: "#b00020",
         strokeWidth: 2,
         id: "flan1"
     }), // flange 1
 
     flange2 = flange1.clone().attr({
-        stroke: "#6200EE",
+        stroke: "#6200ee",
         id: "flan2"
     }), //flange 2
 
     flange3 = flange1.clone().attr({
-        stroke: "#03DAC5",
+        stroke: "#03dac5",
         id: "flan3"
     }), // flange 3
 
     ccc = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select("#proc").attr("y")) + 75, 30).attr({
-        fill: "#FFFFFF",
+        fill: "#ffffff",
         opacity: 1,
-        stroke: "#50FF50",
+        stroke: "#50ff50",
         strokeWidth: 2,
         id: "ccc"
-    }); // the centre circle
+    }), // the centre circle
 
-var drill1_1 = s.rect(Number(s.select("#proc").attr("x")), Number(s.select("#proc").attr("y")) + 30, 5, 20).attr({
+    drill1_1 = s.rect(Number(s.select("#proc").attr("x")), Number(s.select("#proc").attr("y")) + 30, 5, 20).attr({
         fill: "#000000",
         opacity: 1
     }),
@@ -202,41 +201,40 @@ var arm = s.rect(Number(s.select("#hand").attr("x")) + 50, Number(s.select("#han
 
     handc = s.circle(Number(s.select("#hand").attr("x")) + 60, Number(s.select("#hand").attr("y")) + 100, 30).attr({
         id: "handb",
-        fill: "#03D866",
+        fill: "#03d866",
         opacity: 0.9
     }),
 
     hgext = s.rect(Number(s.select("#harm").attr("x")) + 10, Number(s.select("#harm").attr("y")) + Number(s.select("#harm").attr("height")) - 20, 7, 25).attr({
-        fill: "#FFFFFF",
         opacity: 0.5,
-        fill: "#6200EE",
-        stroke: "#FFFFFF",
+        fill: "#6200ee",
+        stroke: "#ffffff",
         strokeWidth: 1
     }),
 
     hgrip1 = s.rect(Number(s.select("#harm").attr("x")) + 15, Number(s.select("#harm").attr("y")) + Number(s.select("#harm").attr("height")) - 20, 10, 5).attr({
         id: "hgrip1",
-        stroke: "#FFFFFF",
+        stroke: "#ffffff",
         strokeWidth: 1
     }),
 
     hgrip2 = s.rect(Number(s.select("#harm").attr("x")) + 15, Number(s.select("#harm").attr("y")) + Number(s.select("#harm").attr("height")), 10, 5).attr({
         id: "hgrip2",
-        stroke: "#FFFFFF",
+        stroke: "#ffffff",
         strokeWidth: 1
     }),
 
     hslide1 = s.rect(Number(s.select("#harm").attr("x")) + 35, Number(s.select("#harm").attr("y")) + 10, 50, 20).attr({
         rx: 2,
         ry: 2,
-        fill: "#FFFFFF",
-        stroke: "#6200EE"
+        fill: "#ffffff",
+        stroke: "#6200ee"
     }),
     hslide2 = s.rect(Number(s.select("#harm").attr("x")) + 35, Number(s.select("#harm").attr("y")) + 40, 50, 20).attr({
         rx: 2,
         ry: 2,
-        fill: "#FFFFFF",
-        stroke: "#6200EE"
+        fill: "#ffffff",
+        stroke: "#6200ee"
     }),
     gbase = s.rect(s.select("#hand").attr("x"), s.select("#hand").attr("y"), 10, s.select("#hand").attr("height"))
 
@@ -247,14 +245,14 @@ var gripper_h = s.group(hgrip1, hgrip2, hgext); //gripper, handling station
 // DISTRIBUTING STATION COMPONENTS
 var holder = s.rect(Number(s.select("#dist").attr("x")) + 30, Number(s.select("#dist").attr("y")) + 100, 180, 30).attr({
         id: "holder",
-        stroke: "#FFFFFF",
+        stroke: "#ffffff",
         strokeWidth: 1,
-        fill: "#B71C1C"
+        fill: "#b71c1c"
     }),
-    cylinder = s.rect(s.select("#holder").attr("x"), s.select("#holder").attr("y"), 50, s.select("#holder").attr("height")).attr({
-        fill: "#FF8A65",
-        id: "cyl",
 
+    cylinder = s.rect(s.select("#holder").attr("x"), s.select("#holder").attr("y"), 50, s.select("#holder").attr("height")).attr({
+        fill: "#ff8a65",
+        id: "cyl",
     }),
 
     piston = s.rect(Number(s.select("#holder").attr("x")) + 10, Number(s.select("#holder").attr("y")) + 12, 65, 8).attr({
@@ -265,19 +263,22 @@ var holder = s.rect(Number(s.select("#dist").attr("x")) + 30, Number(s.select("#
     piston_ = s.rect(Number(s.select("#piston").attr("x")), Number(s.select("#cyl").attr("y")) + 2, 5, 26),
 
     mag = s.circle(Number(s.select("#holder").attr("x")) + 90, Number(s.select("#holder").attr("y")) + 15, 15).attr({
-        fill: "#F47100"
+        fill: "#f47100"
     }),
+
     hook = s.circle(Number(s.select("#dist").attr("x")) + Number(s.select("#dist").attr("width")) - 100,
         Number(s.select("#dist").attr("y")) + Number(s.select("#dist").attr("height")) - 100, 10).attr({
         id: "hook"
     }),
     swivel = s.rect(Number(s.select("#hook").attr("cx")) - 40, Number(s.select("#hook").attr("cy")) - 3, 40, 5).attr({
-        fill: "#FFFFFF"
+        fill: "#ffffff"
     }),
+
     cylinder2 = s.rect(Number(s.select("#hook").attr("cx")) + 20, Number(s.select("#hook").attr("cy")) - 70, 25, 70).attr({
-        fill: "#FFFFFF",
+        fill: "#ffffff",
         id: "cyl2"
     }),
+
     piston2_ = s.rect(Number(s.select("#cyl2").attr("x")), Number(s.select("#cyl2").attr("y")) + Number(s.select("#cyl2").attr("height")) - 7, 25, 7).attr({
         id: "pist2_"
     }),
@@ -290,19 +291,17 @@ var testBase = s.circle(Number(s.select("#cyl2").attr("x")) + 12.5, Number(s.sel
     upperSlide = s.rect(Number(s.select("#cyl2").attr("x")), Number(s.select("#cyl2").attr("y")) - 140, 25, 110),
 
     sensor1 = s.rect(Number(s.select("#cyl2").attr("x")) - 4, Number(s.select("#pist2_").attr("y")) + 13, 20, 7).attr({
-        id: "sensor1"
+        id: "sens1"
     }),
 
-    sensor2 = sensor1.clone();
-
-sensor2.attr({
-    x: Number(s.select("#cyl2").attr("x")) - 10,
-    y: Number(s.select("#sensor1").attr("y")) + 12,
-    fill: "#FF5555",
-    id: "sensor2"
-});
-s.select("#sensor1").transform("r15");
-s.select("#sensor2").transform("r30");
+    sensor2 = sensor1.clone().attr({
+        x: Number(s.select("#cyl2").attr("x")) - 10,
+        y: Number(s.select("#sens1").attr("y")) + 12,
+        fill: "#ff5555",
+        id: "sens2"
+    });
+s.select("#sens1").transform("r15");
+s.select("#sens2").transform("r30");
 
 // STORING STATION COMPONENTS
 var rr = 8, // radius of the circles
@@ -323,7 +322,7 @@ var storBox = stor.getBBox(),
     }),
     c0 = s.circle(Number(s.select("#line0").attr("x2")) + rr, s.select("#line0").attr("y2"), rr).attr({
         opacity: 1,
-        fill: "#90A4AE" // matches the bg
+        fill: "#90a4ae" // matches the bg
     }),
 
     gr0 = s.group(line0, c0).attr({}),
@@ -372,10 +371,13 @@ var storBox = stor.getBBox(),
 transMatrix1.translate(10, 0);
 transMatrix2.translate(20, 0);
 
-var bigGr = s.group(gr1, gr2, gr3, gr4, gr5, gr6),
+var bigGr = s.group(gr1, gr2, gr3, gr4, gr5, gr6).attr({
+        id: "bg1"
+    }),
 
     bigGr2 = bigGr.clone().attr({ //middle layer of circles
         transform: transMatrix1,
+        id: "bg2"
     }),
 
     bigGr3 = bigGr2.clone().attr({ //top layer of circles
@@ -401,9 +403,9 @@ var s_arm = s.line(s.select("#pt").attr("cx") - 70, s.select("#pt").attr("cy"), 
         strokeWidth: 4,
         transformm: armMatrix
     }),
-    s_grip = s.path();
+    s_grip = s.path(),
 
-var bx0 = s_arm.getBBox();
+    bx0 = s_arm.getBBox();
 console.log("bx0:: ", bx0)
 
 var gr_2 = s.line(bx0.x, bx0.y - 7, bx0.x, Number(bx0.y) + 7).attr({ //gripper, base
