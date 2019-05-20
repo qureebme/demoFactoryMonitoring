@@ -247,11 +247,12 @@ var holder = s.rect(Number(s.select("#dist").attr("x")) + 30, Number(s.select("#
         id: "holder",
         stroke: "#ffffff",
         strokeWidth: 1,
-        fill: "#b71c1c"
+        fill: "#6200ee",
+        opacity: 0.5
     }),
 
     cylinder = s.rect(s.select("#holder").attr("x"), s.select("#holder").attr("y"), 50, s.select("#holder").attr("height")).attr({
-        fill: "#ff8a65",
+        fill: "#03dac5",
         id: "cyl",
     }),
 
@@ -262,13 +263,15 @@ var holder = s.rect(Number(s.select("#dist").attr("x")) + 30, Number(s.select("#
 
     piston_ = s.rect(Number(s.select("#piston").attr("x")), Number(s.select("#cyl").attr("y")) + 2, 5, 26),
 
-    mag = s.circle(Number(s.select("#holder").attr("x")) + 90, Number(s.select("#holder").attr("y")) + 15, 15).attr({
-        fill: "#f47100"
+    mag = s.circle(Number(s.select("#holder").attr("x")) + 90, Number(s.select("#holder").attr("y")) + 15, 13).attr({
+        fill: "#b00020",
+        opacity: 0.6
     }),
 
     hook = s.circle(Number(s.select("#dist").attr("x")) + Number(s.select("#dist").attr("width")) - 100,
         Number(s.select("#dist").attr("y")) + Number(s.select("#dist").attr("height")) - 100, 10).attr({
-        id: "hook"
+        id: "hook",
+        fill: "#b00020"
     }),
     swivel = s.rect(Number(s.select("#hook").attr("cx")) - 40, Number(s.select("#hook").attr("cy")) - 3, 40, 5).attr({
         fill: "#ffffff"
@@ -286,7 +289,9 @@ var holder = s.rect(Number(s.select("#dist").attr("x")) + 30, Number(s.select("#
     piston2 = s.rect(Number(s.select("#cyl2").attr("x")) + 10, s.select("#cyl2").attr("y"), 5, 63);
 
 //TESTING STATION COMPONENTS
-var testBase = s.circle(Number(s.select("#cyl2").attr("x")) + 12.5, Number(s.select("#cyl2").attr("y")) - 12.5, 12.5),
+var testBase = s.circle(Number(s.select("#cyl2").attr("x")) + 12.5, Number(s.select("#cyl2").attr("y")) - 12.5, 12.5).attr({
+        fill: "#b00020"
+    }),
 
     upperSlide = s.rect(Number(s.select("#cyl2").attr("x")), Number(s.select("#cyl2").attr("y")) - 140, 25, 110),
 
@@ -325,49 +330,49 @@ var storBox = stor.getBBox(),
         fill: "#90a4ae" // matches the bg
     }),
 
-    gr0 = s.group(line0, c0).attr({}),
+    gr0 = s.group(line0, c0).attr({}), // a (hidden) line with a circle on its end
 
     gr1 = gr0.clone().attr({
-        stroke: "green",
+        stroke: "#b00020",
         transform: "r-50",
         id: "line1",
         opacity: 1
-    }),
+    }), // lowest
 
     gr2 = gr0.clone().attr({
-        stroke: "brown",
+        stroke: "#6200ee",
         transform: "r-30",
         id: "line2",
         opacity: 1
     }),
 
     gr3 = gr0.clone().attr({
-        stroke: "blue",
+        stroke: "#03dac5",
         transform: "r-10",
         id: "line3",
         opacity: 1
     }),
 
     gr4 = gr0.clone().attr({
-        stroke: "green",
+        stroke: "#b00020",
         transform: "r10",
         id: "line4",
         opacity: 1
     }),
 
     gr5 = gr0.clone().attr({
-        stroke: "brown",
+        stroke: "#6200ee",
         transform: "r30",
         id: "line5",
         opacity: 1
     }),
 
     gr6 = gr0.clone().attr({
-        stroke: "blue",
+        stroke: "#03dac5",
         transform: "r50",
         id: "line6",
         opacity: 1
-    });
+    }); // highest
 transMatrix1.translate(10, 0);
 transMatrix2.translate(20, 0);
 
