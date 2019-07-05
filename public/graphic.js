@@ -316,13 +316,17 @@ s.select("#sens2").transform("r30");
 
 // STORING STATION COMPONENTS
 var rr = 8, // radius of the circles
-    transMatrix1 = new Snap.Matrix(),
-    transMatrix2 = new Snap.Matrix();
+    transMatrix2 = new Snap.Matrix().translate(10, 0),
+    transMatrix3 = new Snap.Matrix().translate(20, 0);
 
 var storBox = stor.getBBox(),
     point = s.circle(storBox.x2 - 100, storBox.y + 75, 2.5).attr({ id: "pt" }),
 
     cp = [s.select("#pt").attr("cx"), s.select("#pt").attr("cy")], //center coords of point
+
+    lev1_color = "#03dac5",
+    lev2_color = "#b00020", //reddish brown
+    lev3_color = "#6200ee", //deep blue
 
     line0 = s.line(cp[0] + 10, cp[1], storBox.x + 10, cp[1]).attr({ //hidden line, used for placing circles
         strokeWidth: 2,
@@ -333,68 +337,85 @@ var storBox = stor.getBBox(),
     }),
     c0 = s.circle(Number(s.select("#line0").attr("x2")) + rr, s.select("#line0").attr("y2"), rr).attr({
         opacity: 1,
-        fill: "#90a4ae" // matches the bg
+        fill: "#90a4ae", // matches the bg
+        strokeWidth: 2
     }),
 
     gr0 = s.group(line0, c0).attr({}), // a (hidden) line with a circle on its end
 
-    gr1 = gr0.clone().attr({
-        stroke: "#b00020",
-        transform: "r-50",
+    gr0b = gr0.clone().attr({
+        stroke: lev2_color,
+        opacity: 0,
+    }),
+
+    gr0c = gr0.clone().attr({
+        stroke: lev3_color,
+        opacity: 0,
+    }),
+
+    gr1a = gr0.clone().attr({
+        transform: "r-55",
         id: "line1",
-        opacity: 1
+        opacity: 1,
+        stroke: lev1_color,
+
     }), // lowest
 
-    gr2 = gr0.clone().attr({
-        stroke: "#6200ee",
+    gr1b = gr0.clone().attr({
         transform: "r-30",
         id: "line2",
-        opacity: 1
+        opacity: 1,
+        stroke: lev1_color,
     }),
 
-    gr3 = gr0.clone().attr({
-        stroke: "#03dac5",
+    gr1c = gr0.clone().attr({
         transform: "r-10",
         id: "line3",
-        opacity: 1
+        opacity: 1,
+        stroke: lev1_color,
     }),
 
-    gr4 = gr0.clone().attr({
-        stroke: "#b00020",
+    gr1d = gr0.clone().attr({
         transform: "r10",
         id: "line4",
-        opacity: 1
+        opacity: 1,
+        stroke: lev1_color,
     }),
 
-    gr5 = gr0.clone().attr({
-        stroke: "#6200ee",
+    gr1e = gr0.clone().attr({
         transform: "r30",
         id: "line5",
-        opacity: 1
+        opacity: 1,
+        stroke: lev1_color,
     }),
 
-    gr6 = gr0.clone().attr({
-        stroke: "#03dac5",
-        transform: "r50",
+    gr1f = gr0.clone().attr({
+        transform: "r55",
         id: "line6",
-        opacity: 1
-    }); // highest
-transMatrix1.translate(10, 0);
-transMatrix2.translate(20, 0);
+        opacity: 1,
+        stroke: lev1_color,
+    }), // highest
 
-var bigGr = s.group(gr1, gr2, gr3, gr4, gr5, gr6).attr({
-        id: "bg1"
-    }),
+    gr2a = gr1a.clone().attr({ stroke: lev2_color, transform: "r-55", }),
+    gr2b = gr1b.clone().attr({ stroke: lev2_color, transform: "r-30", }),
+    gr2c = gr1c.clone().attr({ stroke: lev2_color, transform: "r-10", }),
+    gr2d = gr1d.clone().attr({ stroke: lev2_color, transform: "r10", }),
+    gr2e = gr1a.clone().attr({ stroke: lev2_color, transform: "r30", }),
+    gr2f = gr1b.clone().attr({ stroke: lev2_color, transform: "r55", }),
 
-    bigGr2 = bigGr.clone().attr({ //middle layer of circles
-        transform: transMatrix1,
-        id: "bg2"
-    }),
+    gr3a = gr1a.clone().attr({ stroke: lev3_color, transform: "r-55", }),
+    gr3b = gr1b.clone().attr({ stroke: lev3_color, transform: "r-30", }),
+    gr3c = gr1c.clone().attr({ stroke: lev3_color, transform: "r-10", }),
+    gr3d = gr1d.clone().attr({ stroke: lev3_color, transform: "r10", }),
+    gr3e = gr1a.clone().attr({ stroke: lev3_color, transform: "r30", }),
+    gr3f = gr1b.clone().attr({ stroke: lev3_color, transform: "r55", });
 
-    bigGr3 = bigGr2.clone().attr({ //top layer of circles
-        transform: transMatrix2,
-        id: "bg3"
-    });
+
+var bigGr = s.group(gr1a, gr1b, gr1c, gr1d, gr1e, gr1f).attr({ id: "bg1", }), //level1
+
+    bigGr2 = s.group(gr2a, gr2b, gr2c, gr2d, gr2e, gr2f).attr({ transform: transMatrix2 }), //level2
+
+    bigGr3 = s.group(gr3a, gr3b, gr3c, gr3d, gr3e, gr3f).attr({ transform: transMatrix3 }); //level3
 
 s.circle(Number(s.select("#pt").attr("cx")) + 10, s.select("#pt").attr("cy"), 2.5).attr({ fill: "#FFFFFF" }); //second dot
 s.circle(Number(s.select("#pt").attr("cx")) + 20, s.select("#pt").attr("cy"), 2.5).attr({ fill: "#FFFFFF" }); //third dot
