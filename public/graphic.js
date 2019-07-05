@@ -22,7 +22,8 @@ height = 0.8 * h;
 */
 
 var s_width = 250, // station width
-    s_height = 150; //station height
+    s_height = 150, //station height
+    stationFill = "#90a4ae";
 
 // var bigRect = s.rect(0, 0, w, h)
 var bigRect = s.rect(0, 0, w, h + 200) //our stuff
@@ -70,47 +71,47 @@ var c_x = Number(s.select("#cnvBig").attr("x")) + Number(s.select("#cnvBig").att
 var c_y2 = Number(s.select("#cnvBig").attr("y")) - 160; // - 10(spacing) - height_of_asrs// for asrs
 var asrs = s.rect(c_x - 150, c_y2 - 100, 300, 250).attr({
         id: "asrs",
-        fill: "#90a4ae"
+        fill: stationFill
     }), //asrs station
 
     //robot station
     robs = s.rect(x + width - 40 - s_width, s.select("#cnvBig").attr("y") - 160, s_width, s_height).attr({ //mv dw hr
         id: "robs",
-        fill: "#90a4ae"
+        fill: stationFill
     }), // y + height / 2 - Number($("#bigRect").attr("height")) / 2 - 10 - s_height
 
     asse = s.rect(s.select("#robs").attr("x"), s.select("#robs").attr("y") - s_height - 5, s_width, s_height).attr({
         id: "asse",
-        fill: "#90a4ae"
+        fill: stationFill
     }), // assembling station
 
     stor = s.rect(s.select("#asse").attr("x"), s.select("#asse").attr("y") - s_height - 5, s_width, s_height).attr({
         id: "stor",
-        fill: "#90a4ae"
+        fill: stationFill
     }); // storing station
 
 
 // LOWER SIDE
 var hand = s.rect(c_x - 100, c_y1, s_width, s_height).attr({
         id: "hand",
-        fill: "#90a4ae"
+        fill: stationFill
     }), // handling station
 
     proc = s.rect(s.select("#hand").attr("x"), Number($("#hand").attr("y")) + Number($("#hand").attr("height")) + 5,
         s_width, s_height).attr({
         id: "proc",
-        fill: "#90a4ae"
+        fill: stationFill
     }), // processing station
 
     test = s.rect(Number(s.select("#cnvBig").attr("x")) + 40, c_y1, s_width, s_height).attr({
         id: "test",
-        fill: "#90a4ae"
+        fill: stationFill
     }), // testing station
 
     dist = s.rect(s.select("#test").attr("x"), Number(s.select("#test").attr("y")) + Number(s.select("#test").attr("height")) + 5,
         s_width, s_height).attr({
         id: "dist",
-        fill: "#90A4AE"
+        fill: stationFill
     }); // distribution station
 
 var cnv = s.group(cnvBig, cnvSm).attr({}); // the conveyor
@@ -123,14 +124,19 @@ var procc = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select(
         id: "procc"
     }), // the bounding circle, hidden
 
-    flange1 = s.rect(Number(s.select("#proc").attr("x")) + 90, Number(s.select("#proc").attr("y")) + 10, 20, s.select("#procc").attr("r") * 2).attr({
+    flange0 = s.rect(Number(s.select("#proc").attr("x")) + 90, Number(s.select("#proc").attr("y")) + 10, 20, s.select("#procc").attr("r") * 2).attr({
         fill: "#ffffff",
         rx: 7,
         ry: 7,
-        stroke: "#b00020",
         strokeWidth: 2,
         id: "flan1"
     }), // flange 1
+
+    hole1 = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select("#proc").attr("y")) + 20, 8).attr({ fill: stationFill }),
+
+    hole2 = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select("#proc").attr("y")) + 130, 8).attr({ fill: stationFill }),
+
+    flange1 = s.group(flange0, hole1, hole2).attr({ stroke: "#b00020" }),
 
     flange2 = flange1.clone().attr({
         stroke: "#6200ee",
@@ -179,12 +185,12 @@ var spinner = s.group(flange1, flange2, flange3, ccc).attr({
     opacity: 1
 }); // make the spinner whole
 
+
 var bb = spinner.getBBox();
 var mat = new Snap.Matrix();
 //s.circle(bb.cx, bb.cy, 5).attr({ opacity: 0.5 }); //centre circle
 
 const unitTurn = 5; //degrees
-
 setInterval(() => {
     mat.rotate(unitTurn, bb.cx, bb.cy);
     for (let i = 0; i < 60 / unitTurn; i++) {
@@ -198,12 +204,12 @@ setInterval(() => {
 var arm = s.rect(Number(s.select("#hand").attr("x")) + 50, Number(s.select("#hand").attr("y")) - 5, 10, 185).attr({
         id: "harm"
     }),
-
-    handc = s.circle(Number(s.select("#hand").attr("x")) + 60, Number(s.select("#hand").attr("y")) + 100, 30).attr({
-        id: "handb",
-        fill: "#03d866",
-        opacity: 0.9
-    }),
+    /*
+        handc = s.circle(Number(s.select("#hand").attr("x")) + 60, Number(s.select("#hand").attr("y")) + 100, 30).attr({
+            id: "handb",
+            fill: "#03d866",
+            opacity: 0.9
+        }),*/
 
     hgext = s.rect(Number(s.select("#harm").attr("x")) + 10, Number(s.select("#harm").attr("y")) + Number(s.select("#harm").attr("height")) - 20, 7, 25).attr({
         opacity: 0.5,
