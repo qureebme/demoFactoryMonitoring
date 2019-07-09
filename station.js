@@ -53,7 +53,7 @@ class Station {
     fetchIOstatus(uri, body) {
         var ref = this;
         return new Promise(function(resolve, reject) {
-            request.post({ uri: uri, body: {} }, function(err, res, body) {
+            request.post({ uri: uri, json: true, body: {} }, function(err, res, body) {
                 resolve(res.body); // expected body = {"IO_name": value}**********
             });
         });
@@ -74,7 +74,6 @@ class Station {
     //make subscriptions
     subscribe() {
         var ref = this;
-        //baseURI = "http://" + ref.ip + "/rest/events/";
         if (ref.nEvents) {
             var uri = ref.baseURI + ref.events[ref.eventCount] + "/notifs";
             var body = { destUrl: "http://" + myIP + ":" + ref.eventPort };
@@ -87,6 +86,9 @@ class Station {
                         if (ref.eventCount < ref.nEvents) {
                             return ref.subscribe(); // recursive
                         }
+                    } else {
+                        // what to do when a subscription fails?***************
+                        //NOTIFY THE OPERATOR!
                     }
                 })
                 .catch(function(err) {
@@ -97,12 +99,15 @@ class Station {
         }
     }
 
-    //get the initial statuses of all inputs
-    initInputs(baseURI) {
+    //get the initial statuses of all inputs,
+    //for DRAWing the initial state of the GUI
+    // EACH STATION OBJECT SHOULD IMPLEMENT THIS METHOD DIFFERENTLY***************** OR
+    // REPLACE THIS WITH A CALL TO THE showAllInputs service on each controller?*****
+    initInputs() {
         var ref = this;
         //baseURI = "http://" + ref.ip + "/rest/services/";
         if (ref.nInputs) {
-            var uri = baseURI + ref.inputs[Object.keys(ref.inputs)[ref.inputCount]];
+            var uri = ref.baseURI + ref.inputs[Object.keys(ref.inputs)[ref.inputCount]];
             var body = {};
             ref.fetchIOstatus(uri, body)
                 .then(function(data) {
