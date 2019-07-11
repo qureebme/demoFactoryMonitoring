@@ -119,6 +119,7 @@ class Station {
         let uri = "http://" + this.ip + "/rest/services/showAllInputs";
         request.post({ uri: uri, json: true, body: {} }, function(err, res, body) {
             this.inputs = Object.keys(res.body);
+            this.nInputs = this.inputs.length;
             // and then emit an event carrying the statuses of the Inputs
             io.emit('initialStatus', res.body); //---> to the front-end
         })
