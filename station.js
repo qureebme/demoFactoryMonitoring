@@ -29,6 +29,7 @@ class Station {
     }
 
     // specify inputs as {"matPush":undefined, "swivel":undefined}
+    // Not needed anymore 11.07.19, handled by initInputs2
     getInputs(obj) {
         var ref = this;
         ref.inputs = obj;
@@ -126,7 +127,20 @@ class Station {
         }
     }
 
+    // MUST CALL!
+    // This function fetches all the inputs from the controller,
+    // as defined in the showAllInputs Web service
+    initInputs2() {
+        let uri = "http://" + this.ip + "/rest/services/showAllInputs";
+        request.post({ uri: uri, json: true, body: {} }, function(err, res, body) {
+            this.inputs = Object.keys(res.body);
+            // and then emit an event carrying the statuses of the Inputs
+            io.emit('initialStatus', res.body); //---> to the front-end
+        })
+    }
+
     //get the initial statuses of all outputs
+    // DON'T FORGET: the outputs help us transition the GUI between states.
     initOutputs(baseURI) {
         var ref = this;
         //baseURI = "http://" + ref.ip + "/rest/services/";
