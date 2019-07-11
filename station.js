@@ -18,30 +18,15 @@ class Station {
         this.events = undefined; // events array
         this.eventCount = 0; // num of successful subscriptions
 
-        this.inputs = undefined; // json array
+        this.inputs = undefined; // array
         this.inputCount = 0; // same idea as eventCount (initial input statuses)
 
-        this.outputs = undefined; // json array
+        this.outputs = undefined; // array
         this.outputCount = 0; // same idea as eventCount (initial output statuses)
         //this.nInputs
         //this.nOutputs
         //this.nEvents
     }
-
-    // specify inputs as {"matPush":undefined, "swivel":undefined}
-    // Not needed anymore 11.07.19, handled by initInputs2
-    getInputs(obj) {
-        var ref = this;
-        ref.inputs = obj;
-        ref.nInputs = help.getSize(obj);
-    };
-
-    // specify outputs as {"matPush":undefined, "swivel":undefined}
-    getOutputs(obj) {
-        var ref = this;
-        ref.outputs = obj;
-        ref.nOutputs = help.getSize(obj);
-    };
 
     // specify events as an array
     getEvents(arr) {
