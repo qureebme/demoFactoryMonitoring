@@ -125,6 +125,16 @@ class Station {
         })
     }
 
+    initOutputs2() {
+        let uri = "http://" + this.ip + "/rest/services/showAllOutputs";
+        request.post({ uri: uri, json: true, body: {} }, function(err, res, body) {
+            this.outputs = Object.keys(res.body);
+            this.nOutputs = this.outputs.length;
+            // and then emit an event carrying the statuses of the outputs
+            io.emit('initialStatus', res.body); //---> to the front-end
+        })
+    }
+
     //get the initial statuses of all outputs
     // DON'T FORGET: the outputs help us transition the GUI between states.
     initOutputs(baseURI) {
