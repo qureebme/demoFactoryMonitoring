@@ -130,8 +130,12 @@ class Station {
         request.post({ uri: uri, json: true, body: {} }, function(err, res, body) {
             this.outputs = Object.keys(res.body);
             this.nOutputs = this.outputs.length;
-            // and then emit an event carrying the statuses of the outputs
-            io.emit('initialStatus', res.body); //---> to the front-end
+
+            if (Object.values(res.body).includes(true)) {
+                //problem: an output is set
+                io.emit('initialStateError'); //---> to the front-end
+                console.log("Error: check that no output on the station is active.");
+            }
         })
     }
 
