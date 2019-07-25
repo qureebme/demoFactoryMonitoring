@@ -165,6 +165,16 @@ var spinner = s.group(flange1, flange2, flange3, ccc).attr({
 }).attr({
     opacity: 1
 }); // make the spinner whole
+// accesories
+
+let line1 = s.line(663, 840, 638, 840),
+    line2 = s.line(638, 840, 638, 950),
+    line3 = s.line(638, 950, 685, 950),
+    line4 = s.line(685, 950, 685, 900),
+    lines = s.group(line1, line2, line3, line4).attr({
+        stroke: "black",
+        strokeWidth: 7,
+    });
 
 // drilling mach
 let base = s.rect(s.select("#proc").attr("x") - 15, Number(s.select("#proc").attr("y")) + 35, 25, 24).attr({
@@ -175,19 +185,17 @@ let base = s.rect(s.select("#proc").attr("x") - 15, Number(s.select("#proc").att
         stroke: "#6200ee",
         strokeWidth: 4,
     })
+console.log("xx: ", s.select("#proc").attr("x"));
+console.log("yy: ", s.select("#proc").attr("y"));
 
 s.path("M678 827 l 10 10 l 0 4 L 678 851").attr({
     stroke: "black",
 })
 
-let jjd = s.line(695, Number(s.select("#proc").attr("y")) + 47, 701, Number(s.select("#proc").attr("y")) + 47).attr({
+let tip = s.line(695, Number(s.select("#proc").attr("y")) + 47, 701, Number(s.select("#proc").attr("y")) + 47).attr({
         stroke: "#b00020",
         strokeWidth: 6,
     }) // reddish tip
-
-s.line(Number(s.select("#proc").attr("x")), Number(s.select("#proc").attr("y")) + 103, Number(s.select("#proc").attr("x")) + 100, Number(s.select("#proc").attr("y")) + 103).attr({
-    stroke: "black",
-})
 
 //gripping mach
 let body = s.rect(Number(s.select("#proc").attr("x")) + 5, Number(s.select("#proc").attr("y")) + 93, 25, 20).attr({
@@ -245,7 +253,7 @@ let handler = s.rect(Number(s.select("#hand").attr("x")) + 50, Number(s.select("
     }),
 
     ggg = s.group(handler, wkpc);
-console.log("ggg: ", wkpc.attr("cy"))
+//console.log("ggg: ", wkpc.attr("cy"))
 
 setInterval(
     function() {
