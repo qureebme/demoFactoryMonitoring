@@ -1,4 +1,3 @@
-//$(document).ready(function() {
 h = window.screen.availHeight;
 w = window.screen.availWidth;
 
@@ -42,7 +41,7 @@ var bigRect = s.rect(0, 0, w, h + 200) //our stuff
         strokeWidth: 4,
         id: "cline",
         opacity: 0
-    }); // centre line. make invisible later
+    }); // centre line
 
 var spread = 50,
     clipoff = 50;
@@ -130,7 +129,7 @@ var procc = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select(
         ry: 7,
         strokeWidth: 2,
         id: "flan1"
-    }), // flange 1
+    }),
 
     hole1 = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select("#proc").attr("y")) + 20, 8).attr({ fill: stationFill }),
 
@@ -154,26 +153,8 @@ var procc = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select(
         stroke: "#50ff50",
         strokeWidth: 2,
         id: "ccc"
-    }), // the centre circle
+    }); // the centre circle
 
-    drill1_1 = s.rect(Number(s.select("#proc").attr("x")), Number(s.select("#proc").attr("y")) + 30, 5, 20).attr({
-        fill: "#000000",
-        opacity: 1
-    }),
-
-    drill1_2 = s.rect(Number(s.select("#proc").attr("x")), Number(s.select("#proc").attr("y")) + 36, 10, 8).attr({
-        fill: "#000000",
-        opacity: 1
-    }),
-    drill2_1 = s.rect(Number(s.select("#proc").attr("x")), Number(s.select("#proc").attr("y")) + 90, 5, 20).attr({
-        fill: "#000000",
-        opacity: 1
-    }),
-
-    drill2_2 = s.rect(Number(s.select("#proc").attr("x")), Number(s.select("#proc").attr("y")) + 96, 10, 8).attr({
-        fill: "#000000",
-        opacity: 1
-    }); // end of processing station components
 
 // rotate the flanges into position
 s.select("#flan2").transform("r60"); // 60 deg off flange1
@@ -185,67 +166,100 @@ var spinner = s.group(flange1, flange2, flange3, ccc).attr({
     opacity: 1
 }); // make the spinner whole
 
+// drilling mach
+let base = s.rect(s.select("#proc").attr("x") - 15, Number(s.select("#proc").attr("y")) + 35, 25, 24).attr({
+        fill: "blue",
+    }),
+
+    jjc = s.line(Number(s.select("#proc").attr("x")) + 10, Number(s.select("#proc").attr("y")) + 47, Number(s.select("#proc").attr("x")) + 27, Number(s.select("#proc").attr("y")) + 47).attr({
+        stroke: "#6200ee",
+        strokeWidth: 4,
+    })
+
+s.path("M678 827 l 10 10 l 0 4 L 678 851").attr({
+    stroke: "black",
+})
+
+let jjd = s.line(695, Number(s.select("#proc").attr("y")) + 47, 701, Number(s.select("#proc").attr("y")) + 47).attr({
+        stroke: "#b00020",
+        strokeWidth: 6,
+    }) // reddish tip
+
+s.line(Number(s.select("#proc").attr("x")), Number(s.select("#proc").attr("y")) + 103, Number(s.select("#proc").attr("x")) + 100, Number(s.select("#proc").attr("y")) + 103).attr({
+    stroke: "black",
+})
+
+//gripping mach
+let body = s.rect(Number(s.select("#proc").attr("x")) + 5, Number(s.select("#proc").attr("y")) + 93, 25, 20).attr({
+        rx: 3,
+        ry: 3,
+        fill: "black",
+    }),
+
+    bodyBox = body.getBBox(body),
+
+    plungerRod = s.line(bodyBox.x - 10, bodyBox.cy, bodyBox.x2 + 5, bodyBox.cy).attr({
+        strokeWidth: 5,
+        stroke: "black",
+    }),
+
+    plunBox = plungerRod.getBBox(),
+
+    capR = s.line(plunBox.x2 - 1, plunBox.y2 - 5, plunBox.x2 - 1, plunBox.y2 + 5).attr({
+        strokeWidth: 5,
+        stroke: "black",
+    }),
+    capL = s.line(plunBox.x, plunBox.y - 5, plunBox.x, plunBox.y + 5).attr({
+        strokeWidth: 5,
+        stroke: "black",
+    }),
+    plunger = s.group(capL, plungerRod, capR);
+
 
 var bb = spinner.getBBox();
 var mat = new Snap.Matrix();
 //s.circle(bb.cx, bb.cy, 5).attr({ opacity: 0.5 }); //centre circle
 
-const unitTurn = 5; //degrees
-setInterval(() => {
+const unitTurn = 6; //degrees
+setInterval(function() {
     mat.rotate(unitTurn, bb.cx, bb.cy);
-    for (let i = 0; i < 60 / unitTurn; i++) {
+    //for (let i = 0; i < 60 / unitTurn; i++) {
 
-        s.select("#spin").animate({ transform: mat }, 5);
-    }
+    s.select("#spin").animate({ transform: mat }, 5);
+    //}
 }, 100);
 
 
 // HANDLING STATION COMPONENTS
-var arm = s.rect(Number(s.select("#hand").attr("x")) + 50, Number(s.select("#hand").attr("y")) - 5, 10, 185).attr({
-        id: "harm"
-    }),
-    /*
-        handc = s.circle(Number(s.select("#hand").attr("x")) + 60, Number(s.select("#hand").attr("y")) + 100, 30).attr({
-            id: "handb",
-            fill: "#03d866",
-            opacity: 0.9
-        }),*/
+let handler = s.rect(Number(s.select("#hand").attr("x")) + 50, Number(s.select("#hand").attr("y")) - 5, 16, 183).attr({
+        id: "handler",
+        rx: 5,
+        ry: 5,
+        fill: "white",
+        stroke: "#6200ee",
+        strokeWidth: 4
+    }), //anim to h=~185 to reach nxt station
 
-    hgext = s.rect(Number(s.select("#harm").attr("x")) + 10, Number(s.select("#harm").attr("y")) + Number(s.select("#harm").attr("height")) - 20, 7, 25).attr({
-        opacity: 0.5,
-        fill: "#6200ee",
-        stroke: "#ffffff",
-        strokeWidth: 1
+    wkpc = s.circle(Number(s.select("#handler").attr("x")) + 8, Number(s.select("#handler").attr("y")) + Number(s.select("#handler").attr("height")) - 10, 8).attr({
+        fill: "red"
     }),
 
-    hgrip1 = s.rect(Number(s.select("#harm").attr("x")) + 15, Number(s.select("#harm").attr("y")) + Number(s.select("#harm").attr("height")) - 20, 10, 5).attr({
-        id: "hgrip1",
-        stroke: "#ffffff",
-        strokeWidth: 1
-    }),
+    ggg = s.group(handler, wkpc);
+console.log("ggg: ", wkpc.attr("cy"))
 
-    hgrip2 = s.rect(Number(s.select("#harm").attr("x")) + 15, Number(s.select("#harm").attr("y")) + Number(s.select("#harm").attr("height")), 10, 5).attr({
-        id: "hgrip2",
-        stroke: "#ffffff",
-        strokeWidth: 1
-    }),
+setInterval(
+    function() {
+        wkpc.animate({ cy: 627 }, 2000, mina.easein, function() {
+            this.animate({ cy: 805 }, 2000)
+        })
+        handler.animate({ height: 5 }, 2000, mina.easein, function() {
+            this.animate({ height: 183 }, 2000)
+        })
+    }, 5000
+)
 
-    hslide1 = s.rect(Number(s.select("#harm").attr("x")) + 35, Number(s.select("#harm").attr("y")) + 10, 50, 20).attr({
-        rx: 2,
-        ry: 2,
-        fill: "#ffffff",
-        stroke: "#6200ee"
-    }),
-    hslide2 = s.rect(Number(s.select("#harm").attr("x")) + 35, Number(s.select("#harm").attr("y")) + 40, 50, 20).attr({
-        rx: 2,
-        ry: 2,
-        fill: "#ffffff",
-        stroke: "#6200ee"
-    }),
-    gbase = s.rect(s.select("#hand").attr("x"), s.select("#hand").attr("y"), 10, s.select("#hand").attr("height"))
 
 // HANDLING STATION GROUPS
-var gripper_h = s.group(hgrip1, hgrip2, hgext); //gripper, handling station
 
 
 // DISTRIBUTING STATION COMPONENTS
@@ -424,10 +438,11 @@ s.rect(cp[0] - 5, cp[1] - 5, 30, 10).attr({
     rx: 2,
     ry: 2
 }); // layer over 3 points
-
+/*
 var armMatrix = new Snap.Matrix();
 armMatrix.rotate(10, cp[0], cp[1]);
 armMatrix.translate(0, 0, 0);
+*/
 
 var s_arm = s.line(s.select("#pt").attr("cx") - 70, s.select("#pt").attr("cy"), s.select("#pt").attr("cx"), s.select("#pt").attr("cy")).attr({ //robot arm
         id: "s_arm",
@@ -487,38 +502,3 @@ s.rect(bb.x, bb.y, bb.x2 - bb.x, bb.y2 - bb.y).attr({
     opacity: 0.5
 }); // draw bounding box
 */
-
-////////////////////////////////////////////////////////////////////////////
-//grid, upper line
-/*
-    var r = 10;
-    var gridLine1 = s.group(
-        s.circle(x, y, r),
-        s.circle(x + width / 4, y, r),
-        s.circle(x + width / 2, y, r),
-        s.circle(x + width * 0.75, y, r),
-        s.circle(x + width, y, r)
-    )
-
-    //grid, middle line
-    var gridLine2 = s.group(
-        s.circle(x, y + height / 2, r),
-        s.circle(x + width / 4, y + height / 2, r),
-        s.circle(x + width / 2, y + height / 2, r),
-        s.circle(x + width * 0.75, y + height / 2, r),
-        s.circle(x + width, y + height / 2, r)
-    )
-
-    //grid, lower line
-    var gridLine3 = s.group(
-        s.circle(x, y + height, r),
-        s.circle(x + width / 4, y + height, r),
-        s.circle(x + width / 2, y + height, r),
-        s.circle(x + width * 0.75, y + height, r),
-        s.circle(x + width, y + height, r)
-    )
-    gridLine1.attr({ opacity: 0 });
-    gridLine2.attr({ opacity: 0 });
-    gridLine3.attr({ opacity: 0 });
-*/
-//});
