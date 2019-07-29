@@ -3,8 +3,7 @@ let request = require('request'),
     bodyParser = require('body-parser').json({ strict: false }),
 
     myIP = '192.168.3.100',
-    http = require('http').Server(app),
-    io = require('socket.io')(http);
+    http = require('http').Server(app);
 
     class Station {
         constructor(name, ip, eventPort) {

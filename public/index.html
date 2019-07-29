@@ -11,13 +11,25 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg.js" integrity=""></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.5.2/velocity.min.js" integrity=""></script>
-    <script></script>
-    <script></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        
+        var socket = io()
+        var n = 0;
+        socket.on('connect', () => {
+            console.log('client side')
+        })
+        // chekn if statns can comm directly with front end. DID NOT
+        socket.on('hello', ()=>{
+            console.log('got hello', n)
+            n = n+1;
+        })
+    </script>
 </head>
 
 <body>
     <header>
-        <img src="" height="100px" width="100%">
+        <img>
         <nav>
             <ul>
                 <li></li>
