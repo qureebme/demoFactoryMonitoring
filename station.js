@@ -4,9 +4,7 @@ let request = require('request'),
 
     myIP = '192.168.3.100',
     http = require('http').Server(app),
-    io = require('socket.io')(http),
-
-    //help = require('./helpers');
+    io = require('socket.io')(http);
 
     class Station {
         constructor(name, ip, eventPort) {
@@ -113,7 +111,7 @@ let request = require('request'),
         }
 
         // MUST CALL!
-        // This function fetches all the inputs from the controller,
+        // This function fetches all the input statuses from the controller,
         // as defined in the showAllInputs Web service
         initInputs2() {
             let uri = "http://" + this.ip + "/rest/services/showAllInputs";
@@ -165,18 +163,8 @@ let request = require('request'),
         }
 
         //run a server
-        runServer() {
-            var ref = this;
-            app.use(bodyParser);
-
-            app.post('/', function(req, res) { // for event notifications
-                console.log(req.body);
-                res.end();
-            });
-
-            http.listen(ref.eventPort, function() {
-                console.log(ref.name, 'is listening on port', ref.eventPort);
-            });
+        runServer(){
+            // each station instance must implement on its own
         }
     }
 
