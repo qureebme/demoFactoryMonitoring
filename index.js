@@ -36,13 +36,40 @@ handStat.getEvents(["atFollowE", "atPreviousE", "partAvE", "atSortE", "gripperDo
 
 handStat.runServer = function(){
     var ref = this;
-    var http = require('http').createServer(app)
+    var http = require('http').createServer(app),
+    handSocket = io.of('/handling');
     app.use(bodyParser);
 
     app.post('/', function(req, res) { // for event notifications
         console.log(req.body);
-        io.emit('hello')
-        res.end('fine');
+        let id = req.body.eventID;
+        switch (id) {
+            case ('partAvE'):
+                io.emit('partAvE', req.body.status)
+                break;
+            case('atPreviousE'):
+                io.emit('atPreviousE', req.body.status)
+                break;
+            case('atFollowE'):
+                io.emit('atFollowE', req.body.status)
+                break;
+            case('atSortE'):
+                io.emit('atSortE', req.body.status)
+                break;
+            case('gripperDownE'):
+                io.emit('gripperDownE', req.body.status)
+                break;
+            case('gripperUpE'):
+                io.emit('gripperUpE', req.body.status)
+                break;
+            case('gripperOpenE'):
+                console.log('gripperOpen')
+                handSocket.emit('gripperOpenE', req.body.status)
+                break;
+            default:
+                break;
+        }
+        res.end();
     });
 
     http.listen(ref.eventPort, function() {
