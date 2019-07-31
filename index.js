@@ -6,6 +6,8 @@ var express = require('express'),
     staticFile = require('path').resolve(__dirname, "public"),
     io = require('socket.io')(http);
 
+let handSocket;;
+
 const Station = require('./station');
 
 app.use(bodyParser);
@@ -16,7 +18,8 @@ app.get('/', function(req, res) {
 });
 
 io.on('connection', (socket) => {
-    console.log('main server: emitting hello');
+    console.log('main server: connected to a client');
+    handStat.initInputs(handSocket)
 })
 
 const port = 3000;
@@ -26,45 +29,46 @@ http.listen(port, function() {
 
 
 //handling station
-
 var handStat = new Station("Handling Station", "192.168.3.81", 3005);
-
-//handStat.initInputs2()
-//handStat.initOutputs2()
 handStat.getEvents(["atFollowE", "atPreviousE", "partAvE", "atSortE", "gripperDownE", "gripperUpE", "colorCheckE", "gripperOpenE"]);
-//handStat.subscribe();
+handStat.subscribe()
 
 handStat.runServer = function(){
     var ref = this;
-    var http = require('http').createServer(app),
+    var http = require('http').createServer(app);
     handSocket = io.of('/handling');
     app.use(bodyParser);
 
-    app.post('/', function(req, res) { // for event notifications
-        console.log(req.body);
+    app.post('/', function(req, res) {
         let id = req.body.eventID;
         switch (id) {
-            case ('partAvE'):
-                io.emit('partAvE', req.body.status)
+            case ('partAv'):
+                console.log('partAv event')
+                handSocket.emit('partAv', req.body.status)
                 break;
-            case('atPreviousE'):
-                io.emit('atPreviousE', req.body.status)
+            case('atPrevious'):
+                console.log('atPrevious event')
+                handSocket.emit('atPrevious', req.body.status)
                 break;
-            case('atFollowE'):
-                io.emit('atFollowE', req.body.status)
+            case('atFollow'):
+                console.log('atFollow event')
+                handSocket.emit('atFollow', req.body.status)
                 break;
-            case('atSortE'):
-                io.emit('atSortE', req.body.status)
+            case('atSort'):
+                console.log('atSort event')
+                handSocket.emit('atSort', req.body.status)
                 break;
-            case('gripperDownE'):
-                io.emit('gripperDownE', req.body.status)
+            case('gripperDown'):
+                console.log('gripperDown event')
+                handSocket.emit('gripperDown', req.body.status)
                 break;
             case('gripperUpE'):
-                io.emit('gripperUpE', req.body.status)
+                console.log('gripperUp event')
+                handSocket.emit('gripperUp', req.body.status)
                 break;
-            case('gripperOpenE'):
-                console.log('gripperOpen')
-                handSocket.emit('gripperOpenE', req.body.status)
+            case('gripperOpen'):
+                console.log('gripperOpen event')
+                handSocket.emit('gripperOpen', req.body.status)
                 break;
             default:
                 break;
@@ -76,5 +80,6 @@ handStat.runServer = function(){
         console.log(ref.name, 'is listening on port', ref.eventPort);
     });
 }
-
 handStat.runServer()
+
+

@@ -86,19 +86,18 @@ let request = require('request'),
         //for DRAWing the initial state of the GUI
         // This function fetches all the input statuses from the controller,
         // as defined in the showAllInputs Web service
-        initInputs2(ioObj) {
+        initInputs(ioObj) {
             let uri = "http://" + this.ip + "/rest/services/showAllInputs";
             request.post({ uri: uri, json: true, body: {} }, function(err, res, body) {
                 this.inputs = Object.keys(res.body);
                 this.nInputs = this.inputs.length;
-                console.log(this.inputs)/////////////////////////////////////////////////
-                console.log(this.nInputs)/////////////////////////////////////////////////
+
                 // and then emit an event carrying the statuses of the Inputs
-                ioObj.emit('initialStatus', res.body); //---> to the front-end
+                setTimeout(() => ioObj.emit('initialStatus', res.body), 2000)
             })
         }
 
-        initOutputs2(ioObj) {
+        initOutputs(ioObj) {
             let uri = "http://" + this.ip + "/rest/services/showAllOutputs";
             request.post({ uri: uri, json: true, body: {} }, function(err, res, body) {
                 this.outputs = Object.keys(res.body);
