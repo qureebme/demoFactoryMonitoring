@@ -84,45 +84,21 @@ let request = require('request'),
 
         //get the initial statuses of all inputs,
         //for DRAWing the initial state of the GUI
-        // EACH STATION OBJECT SHOULD IMPLEMENT THIS METHOD DIFFERENTLY***************** OR
-        // REPLACE THIS WITH A CALL TO THE showAllInputs service on each controller?*****
-        initInputs() {
-            var ref = this;
-            //baseURI = "http://" + ref.ip + "/rest/services/";
-            if (ref.nInputs) {
-                var uri = ref.baseURI + ref.inputs[Object.keys(ref.inputs)[ref.inputCount]];
-                var body = {};
-                ref.fetchIOstatus(uri, body)
-                    .then(function(data) {
-                        if (data) {
-                            ref.inputs[Object.keys(ref.inputs)[ref.inputCount]] = data; //shd be data.something
-
-                            ref.inputCount++;
-                            if (ref.inputCount < ref.nInputs) {
-                                return ref.initInputs(baseURI);
-                            }
-                        }
-                    })
-                    .catch(function(err) {
-                        console.error(err);
-                    });
-            }
-        }
-
-        // MUST CALL!
         // This function fetches all the input statuses from the controller,
         // as defined in the showAllInputs Web service
-        initInputs2() {
+        initInputs2(ioObj) {
             let uri = "http://" + this.ip + "/rest/services/showAllInputs";
             request.post({ uri: uri, json: true, body: {} }, function(err, res, body) {
                 this.inputs = Object.keys(res.body);
                 this.nInputs = this.inputs.length;
+                console.log(this.inputs)/////////////////////////////////////////////////
+                console.log(this.nInputs)/////////////////////////////////////////////////
                 // and then emit an event carrying the statuses of the Inputs
-                io.emit('initialStatus', res.body); //---> to the front-end
+                ioObj.emit('initialStatus', res.body); //---> to the front-end
             })
         }
 
-        initOutputs2() {
+        initOutputs2(ioObj) {
             let uri = "http://" + this.ip + "/rest/services/showAllOutputs";
             request.post({ uri: uri, json: true, body: {} }, function(err, res, body) {
                 this.outputs = Object.keys(res.body);
@@ -130,35 +106,10 @@ let request = require('request'),
 
                 if (Object.values(res.body).includes(true)) {
                     //problem: an output is set
-                    io.emit('initialStateError'); //---> to the front-end
+                    ioObj.emit('initialStateError'); //---> to the front-end
                     console.log("Error: check that no output on the station is active.");
                 }
             })
-        }
-
-        //get the initial statuses of all outputs
-        // DON'T FORGET: the outputs help us transition the GUI between states.
-        initOutputs(baseURI) {
-            var ref = this;
-            //baseURI = "http://" + ref.ip + "/rest/services/";
-            if (ref.nOutputs) {
-                var uri = baseURI + ref.inputs[Object.keys(ref.outputs)[ref.outputCount]];
-                var body = {};
-                ref.fetchIOstatus(uri, body)
-                    .then(function(data) {
-                        if (data) {
-                            ref.inputs[Object.keys(ref.outputs)[ref.outputCount]] = data; // shd be data.something
-
-                            ref.outputCount++;
-                            if (ref.outputCount < ref.nOutputs) {
-                                return ref.initOutputs(baseURI);
-                            }
-                        }
-                    })
-                    .catch(function(err) {
-                        console.error(err);
-                    });
-            }
         }
 
         //run a server
