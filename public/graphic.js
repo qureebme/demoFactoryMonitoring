@@ -185,8 +185,8 @@ let base = s.rect(s.select("#proc").attr("x") - 15, Number(s.select("#proc").att
         stroke: "#6200ee",
         strokeWidth: 4,
     })
-console.log("xx: ", s.select("#proc").attr("x"));
-console.log("yy: ", s.select("#proc").attr("y"));
+//console.log("xx: ", s.select("#proc").attr("x"));
+//console.log("yy: ", s.select("#proc").attr("y"));
 
 s.path("M678 827 l 10 10 l 0 4 L 678 851").attr({
     stroke: "black",
@@ -254,7 +254,7 @@ let handler = s.rect(Number(s.select("#hand").attr("x")) + 50, Number(s.select("
 
     ggg = s.group(handler, wkpc);
 //console.log("ggg: ", wkpc.attr("cy"))
-
+/*
 setInterval(
     function() {
         wkpc.animate({ cy: 627 }, 2000, mina.easein, function() {
@@ -264,7 +264,7 @@ setInterval(
             this.animate({ height: 183 }, 2000)
         })
     }, 5000
-)
+)*/
 
 
 // HANDLING STATION GROUPS
@@ -446,11 +446,11 @@ s.rect(cp[0] - 5, cp[1] - 5, 30, 10).attr({
     rx: 2,
     ry: 2
 }); // layer over 3 points
-/*
+
 var armMatrix = new Snap.Matrix();
 armMatrix.rotate(10, cp[0], cp[1]);
 armMatrix.translate(0, 0, 0);
-*/
+
 
 var s_arm = s.line(s.select("#pt").attr("cx") - 70, s.select("#pt").attr("cy"), s.select("#pt").attr("cx"), s.select("#pt").attr("cy")).attr({ //robot arm
         id: "s_arm",
@@ -461,7 +461,7 @@ var s_arm = s.line(s.select("#pt").attr("cx") - 70, s.select("#pt").attr("cy"), 
     s_grip = s.path(),
 
     bx0 = s_arm.getBBox();
-console.log("bx0:: ", bx0)
+//console.log("bx0:: ", bx0)
 
 var gr_2 = s.line(bx0.x, bx0.y - 7, bx0.x, Number(bx0.y) + 7).attr({ //gripper, base
         stroke: "#000000",

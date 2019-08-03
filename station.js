@@ -1,9 +1,6 @@
 let request = require('request'),
-    app = require('express')(),
-    bodyParser = require('body-parser').json({ strict: false }),
 
-    myIP = '192.168.3.100',
-    http = require('http').Server(app);
+    myIP = '192.168.3.100';
 
     class Station {
         constructor(name, ip, eventPort) {
@@ -86,14 +83,14 @@ let request = require('request'),
         //for DRAWing the initial state of the GUI
         // This function fetches all the input statuses from the controller,
         // as defined in the showAllInputs Web service
-        initInputs(ioObj) {
+        initInputs(socket) {
             let uri = "http://" + this.ip + "/rest/services/showAllInputs";
             request.post({ uri: uri, json: true, body: {} }, function(err, res, body) {
                 this.inputs = Object.keys(res.body);
                 this.nInputs = this.inputs.length;
 
                 // and then emit an event carrying the statuses of the Inputs
-                setTimeout(() => ioObj.emit('initialStatus', res.body), 2000)
+                setTimeout(() => socket.emit('initialStatus', res.body), 2000)
             })
         }
 
