@@ -260,14 +260,22 @@ let handler = s.rect(Number(s.select("#hand").attr("x")) + 50, Number(s.select("
     gr_line = s.group(line_m, line_c, line_r, line_l).attr({
         stroke: 'black',
         strokeWidth: 3,
-        visibility: 'hidden'
+        //visibility: 'hidden',//
+        opacity: 0,
     });
+    console.log('my2: ',line_m.attr('y2'))
+    console.log('cy2: ',line_c.attr('y2'))
+    console.log('cy1: ',line_c.attr('y1'))
+    console.log('ry2: ',line_r.attr('y2'))
+    console.log('ry1: ',line_r.attr('y1'))
+    console.log('ly2: ',line_l.attr('y2'))
+    console.log('ly1: ',line_l.attr('y1'))
 /*
     setTimeout(function(){
-        line_m.animate({y2:630},2000)
-        line_c.animate({y1:630, y2:630},2000)
-        line_r.animate({y1:630, y2:630},2000)
-        line_l.animate({y1:630, y2:630},2000)
+        line_m.animate({y2: line_m.attr('y1')},2000) //630
+        line_c.animate({y1: line_m.attr('y1'), y2: line_m.attr('y1')},2000)
+        line_r.animate({y1: line_m.attr('y1'), y2: line_m.attr('y1')},2000)
+        line_l.animate({y1: line_m.attr('y1'), y2: line_m.attr('y1')},2000)
         gr_line.animate({opacity:0},2200)
     },2000)*/
 

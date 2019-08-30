@@ -18,18 +18,33 @@ let wkpcAv = false,
 handSocket.on('initialStatus', function(data) {
     //set initial status of the GUI
     console.log('hand socket initial status:', data)
-    console.log('wkpc: ', wkpc.attr('cy'))
+    //console.log('wkpc: ', wkpc.attr('cy'))
     if (data.atFollow == true) {
         handler.animate({ height: 5 }, 500, mina.easein)
         wkpc.animate({ cy: 630 }, 500, mina.easein) //630
+
+        gr_line.animate({opacity: 0}, 500)
+        //then animate the xy vals
+        line_m.animate({y2: line_m.attr('y1')},2000) //630
+        line_c.animate({y1: line_m.attr('y1'), y2: line_m.attr('y1')},500)
+        line_r.animate({y1: line_m.attr('y1'), y2: line_m.attr('y1')},500)
+        line_l.animate({y1: line_m.attr('y1'), y2: line_m.attr('y1')},500)
     }
-    else if(data.atSort == true){
+    else if (data.atSort == true){
         handler.animate({ height: 65 }, 500, mina.easein)
         wkpc.animate({ cy: 760 }, 500, mina.easein)
+        //set gr_line props as suitable. changing the y atrrs
+        gr_line.animate({opacity: 0.5}, 400)
+        //then animate the xy vals ..p2s= 118
+        line_m.animate({y2: line_m.attr('y1')-115},500) //630
+        line_c.animate({y1: line_c.attr('y1')-115, y2: line_c.attr('y2')-115},500)
+        line_r.animate({y1: line_r.attr('y1')-115},500)
+        line_l.animate({y1: line_l.attr('y1')-115},500)
     }
-    else if(data.atPrevious == true){
+    else if (data.atPrevious == true){
         handler.animate({ height: 183 }, 500, mina.easein)
         wkpc.animate({ cy: 805 }, 500, mina.easein) //805
+        gr_line.animate({opacity: 1}, 250) // starting xy vals
     }
     else {
         //THE STATION IS IN AN ERROR STATE
@@ -38,49 +53,72 @@ handSocket.on('initialStatus', function(data) {
 
 handSocket.on('partAv', function(data){
     console.log('partAv:                        ', data);
-    wkpcAv = data;
+    //wkpcAv = data;
     //let statn emit partAv after it has done the color check, and in both directions of the handler
     data ? wkpc.attr({visibility:'visible'}) : wkpc.attr({visibility:'hidden'})
     //data ? wkpc.atrr({opacity: 0}).animate({opacity:1}, 200) : wkpc.animate({opacity:0}, 200) //for later
 })
 
 handSocket.on('atFollow', function(data){
-    console.log('atFollow');
-    atFollowTracker = data ? true : false // Boolean(data)
+    //console.log('atFollow');
+    //atFollowTracker = data ? true : false // Boolean(data)
     data ? handler.animate({ height: 5 }, 500, mina.easein) : null //ok
     wkpc.animate({ cy: 630 }, 500, mina.easein) //ok
-
+    /////////////////////////////////////////
+    line_m.animate({y2: line_m.attr('y1')},500, mina.easein)
+    line_c.animate({y1: line_m.attr('y1'), y2: line_m.attr('y1')},500, mina.easein)
+    line_r.animate({y1: line_m.attr('y1'), y2: line_m.attr('y1')},500, mina.easein)
+    line_l.animate({y1: line_m.attr('y1'), y2: line_m.attr('y1')},500, mina.easein)
+    gr_line.animate({opacity: 0}, 500)
+    ////////////////////////////////////////
      // use a global var to track wkpc availability
 })
 handSocket.on('atSort', function(data){
-    console.log('atSort');
-    atSortTracker = data ? true : false
+    //console.log('atSort');
+    //atSortTracker = data ? true : false
     data ? handler.animate({ height: 65 }, 500, mina.easein) : null //ok
     wkpc.animate({ cy: 690 }, 500, mina.easein) //ok
+    // animate y props to 
+    gr_line.animate({opacity: 1}, 500)
+
+    line_m.animate({y2: 667},500, mina.easein) /////////////////
+    line_c.animate({y1: 667, y2: 667}, 500, mina.easein)
+    line_r.animate({y1: 667, y2: 687}, 500, mina.easein)
+    line_l.animate({y1: 667, y2: 687}, 500, mina.easein)
 
      // use a global var to track wkpc availability
 })
 handSocket.on('atPrevious', function(data){
-    console.log('atPrevious');
-    atPreviousTracker = data ? true : false
+    //console.log('atPrevious');
+    //atPreviousTracker = data ? true : false
     data ? handler.animate({ height: 183 }, 500, mina.easein) : null //ok
     wkpc.animate({ cy: 805 }, 500, mina.easein) //ok
+    // animate y props to 0
+    gr_line.animate({opacity: 1}, 500)
+
+    line_m.animate({y2: 782},500, mina.easein) /////////////////
+    line_c.animate({y1: 782, y2: 782}, 500, mina.easein)
+    line_r.animate({y1: 782, y2: 802}, 500, mina.easein)
+    line_l.animate({y1: 782, y2: 802}, 500, mina.easein)
+
+    
 
     // use a global var to track wkpc availability
 })
-/*
+
 handSocket.on('gripperDown', function(data){
     console.log('gripperDown', data);
-    if (atPreviousTracker){}
+    /*if (atPreviousTracker){}
     else if(atFollowTracker){}
-    else if (atSortTracker){}
+    else if (atSortTracker){}*/
 })
 handSocket.on('gripperUp', function(data){
     console.log('gripperUp', data);
-    if (atPreviousTracker){}
+    /*if (atPreviousTracker){}
     else if(atFollowTracker){}
-    else if (atSortTracker){}
+    else if (atSortTracker){}*/
 })
+/*
 handSocket.on('gripperOpen', (data) => {
     console.log('gripperOpen', data);
 })
