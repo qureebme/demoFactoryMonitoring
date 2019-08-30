@@ -107,7 +107,7 @@ handStat.runServer = function(){
         switch (id) {
             case ('partAv')://
                 console.log('partAv event', req.body.status)
-                handSocket.emit('partAv')
+                handSocket.emit('partAv', req.body.status)
                 break;
             case('atPrevious')://
                 console.log('atPrevious event')

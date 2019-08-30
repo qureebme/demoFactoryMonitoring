@@ -35,13 +35,14 @@ handSocket.on('initialStatus', function(data) {
         //THE STATION IS IN AN ERROR STATE
     }
 })
-/*
+
 handSocket.on('partAv', function(data){
-    console.log('partAv');
-    //wkpcAv = data ? true : false;
+    console.log('partAv:                        ', data);
+    wkpcAv = data;
     //let statn emit partAv after it has done the color check, and in both directions of the handler
-    //data ? wkpc.attr({visibility:'visible'}) : wkpc.attr({visibility:'hidden'})
-})*/
+    data ? wkpc.attr({visibility:'visible'}) : wkpc.attr({visibility:'hidden'})
+    //data ? wkpc.atrr({opacity: 0}).animate({opacity:1}, 200) : wkpc.animate({opacity:0}, 200) //for later
+})
 
 handSocket.on('atFollow', function(data){
     console.log('atFollow');

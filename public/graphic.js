@@ -251,7 +251,7 @@ let handler = s.rect(Number(s.select("#hand").attr("x")) + 50, Number(s.select("
 
     wkpc = s.circle(Number(s.select("#handler").attr("x")) + 8, Number(s.select("#handler").attr("y")) + Number(s.select("#handler").attr("height")) - 10, 8).attr({
         fill: "red",
-        visibility: "visible"
+        visibility: "hidden",
     }),
     line_m = s.line (Number(handler.attr('x'))+8, handler.attr('y'), Number(handler.attr('x'))+8, Number(handler.attr('y'))+150),
     line_c = s.line(line_m.attr('x2')-5, line_m.attr('y2'), Number(line_m.attr('x2'))+5, line_m.attr('y2')),
