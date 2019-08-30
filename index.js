@@ -25,121 +25,21 @@ io.on('connection', (socket) => {
     //testStat.initInputs(testSocket)
     //storStat.initInputs(storSocket)
 })
+/*io.on('reconnected', (socket) => { //check later
+    console.log('main server: connected to a client');
+    handStat.initInputs(handSocket)
+    //procStat.initInputs(procSocket)
+    //distStat.initInputs(distSocket)
+    //testStat.initInputs(testSocket)
+    //storStat.initInputs(storSocket)
+})*/
 
 const port = 3000;
 http.listen(port, function() {
     console.log('Main server: running on port', port);
 });
-
-
-//1 handling station
-var handStat = new Station("Handling Station", "192.168.3.81", 3005);
-handStat.getEvents(["atFollowE", "atPreviousE", "partAvE", "atSortE", "gripperDownE", "gripperUpE", "colorCheckE", "gripperOpenE"]);
-handStat.subscribe()
-
-handStat.runServer = function(){
-    var ref = this;
-    var http = require('http').createServer(app);
-    handSocket = io.of('/handling');
-    app.use(bodyParser);
-
-    app.post('/', function(req, res) {
-        let id = req.body.eventID;
-        console.log(id)
-        switch (id) {
-            case ('partAv'):
-                console.log('partAv event')
-                handSocket.emit('partAv', req.body.status)
-                break;
-            case('atPrevious'):
-                console.log('atPrevious event')
-                handSocket.emit('atPrevious', req.body.status)
-                break;
-            case('atFollow'):
-                console.log('atFollow event')
-                handSocket.emit('atFollow', req.body.status)
-                break;
-            case('atSort'):
-                console.log('atSort event')
-                handSocket.emit('atSort', req.body.status)
-                break;
-            case('gripperDown'):
-                console.log('gripperDown event')
-                handSocket.emit('gripperDown', req.body.status)
-                break;
-            case('gripperUp'):
-                console.log('gripperUp event')
-                handSocket.emit('gripperUp', req.body.status)
-                break;
-            case('gripperOpen'):
-                console.log('gripperOpen event')
-                handSocket.emit('gripperOpen', req.body.status)
-                break;
-            default:
-                break;
-        }
-        res.end();
-    });
-
-    http.listen(ref.eventPort, function() {
-        console.log(ref.name, ': listening on port', ref.eventPort);
-    });
-}
-handStat.runServer()
 /*
-//2 processing station
-var procStat = new Station("Processing Station", "192.168.3.60", 3006);
-procStat.getEvents(['rotateE','partAvE','workRubE','workTestE','rubUpE','rubDownE','rotPosE','workOKE']);
-procStat.subscribe()
-
-procStat.runServer = function(){
-    var ref = this;
-    var http = require('http').createServer(app);
-    procSocket = io.of('/processing');
-    app.use(bodyParser);
-
-    app.post('/', function(req, res){
-        let id = req.body.eventID;
-        
-        switch (id) {
-            case ('rotate'):
-                console.log(ref.name, id)
-                break;
-            case ('partAv'):
-                console.log(ref.name, id)
-                break;
-            case ('workRub'):
-                console.log(ref.name, id)
-                break;
-            case ('workTest'):
-                console.log(ref.name, id)
-                break;
-            case ('rubUp'):
-                    console.log(ref.name, id)
-                    break;
-            case ('rubDown'):
-                    console.log(ref.name, id)
-                    break;
-            case ('rotPos'):
-                // possibly use this for rotate event
-                    console.log(ref.name, id)
-                    break
-            case ('workOK'):
-                    console.log(ref.name, id)
-                    break;
-            default:
-                break;
-        }
-        res.end()
-    })
-
-    http.listen(ref.eventPort, function() {
-        console.log(ref.name, ': listening on port', ref.eventPort);
-    });
-}
-procStat.runServer()
-
-//3 distributing station
+//1 distributing station
 var distStat = new Station("Distributing Station", "192.168.3.63", 3007);
 distStat.getEvents(['magEmptyE','armPutE','armTakeE','pushCylFrontE','pushCylBackE','vacuumE']);
 distStat.subscribe()
@@ -156,21 +56,27 @@ distStat.runServer = function(){
         switch (id) {
             case ('magEmpty'):
                 console.log(ref.name, id)
+                distSocket.emit('magEmpty', req.body.status)
                 break;
             case ('armPut'):
                 console.log(ref.name, id)
+                distSocket.emit('armPut', req.body.status)
                 break;
             case ('armTake'):
                 console.log(ref.name, id)
+                distSocket.emit('armTake', req.body.status)
                 break;
             case ('pushCylFront'):
                 console.log(ref.name, id)
+                distSocket.emit('pushCylFront', req.body.status)
                 break;
             case ('pushCylBack'):
                 console.log(ref.name, id)
+                distSocket.emit('pushCylBack', req.body.status)
                 break;
             case ('vacuum'):
                 console.log(ref.name, id)
+                distSocket.emit('vacuum', req.body.status)
                 break;
             default:
                 break;
@@ -183,7 +89,133 @@ distStat.runServer = function(){
     });
 }
 distStat.runServer()
+*/
+//1 handling station
+var handStat = new Station("Handling Station", "192.168.3.81", 3005);
+handStat.getEvents(["atFollowE", "atPreviousE", "partAvE", "atSortE", "gripperDownE", "gripperUpE", "colorCheckE", "gripperOpenE"]);
+handStat.subscribe()
 
+handStat.runServer = function(){
+    var ref = this;
+    var http = require('http').createServer(app);
+    handSocket = io.of('/handling');
+    app.use(bodyParser);
+
+    app.post('/', function(req, res) {
+        let id = req.body.eventID;
+        //console.log(id)
+        switch (id) {
+            case ('partAv')://
+                console.log('partAv event', req.body.status)
+                handSocket.emit('partAv')
+                break;
+            case('atPrevious')://
+                console.log('atPrevious event')
+                handSocket.emit('atPrevious', req.body.status)
+                break;
+            case('atFollow')://
+                console.log('atFollow event')
+                handSocket.emit('atFollow', req.body.status)
+                break;
+            case('atSort')://
+                console.log('atSort event')
+                handSocket.emit('atSort', req.body.status)
+                break;
+            case('colorCheck'): // never worked! Dunno.
+                console.log('colorCheck event', req.body.status)
+                handSocket.emit('colorCheck', req.body.status)
+                break;
+            case('gripperDown')://
+                console.log('gripperDown event')
+                handSocket.emit('gripperDown', req.body.status)
+                break;
+            case('gripperUp')://
+                console.log('gripperUp event')
+                handSocket.emit('gripperUp', req.body.status)
+                break;
+            case('gripperOpen')://
+                console.log('gripperOpen event')
+                handSocket.emit('gripperOpen', req.body.status)
+                break;
+            default:
+                break;
+        }
+        res.end();
+    });
+
+    http.listen(ref.eventPort, function() {
+        console.log(ref.name, ': listening on port', ref.eventPort);
+    });
+}
+handStat.runServer()
+/*
+
+//2 processing station
+var procStat = new Station("Processing Station", "192.168.3.60", 3006);
+procStat.getEvents(['rotateE','partAvE','workRubE','workTestE','rubUpE','rubDownE','rotPosE','workOKE']);
+procStat.subscribe()
+let rubCounter = 0;
+procStat.runServer = function(){
+    var ref = this;
+    var http = require('http').createServer(app);
+    procSocket = io.of('/processing');
+    app.use(bodyParser);
+
+    app.post('/', function(req, res){
+        let id = req.body.eventID;
+        console.log(id)
+        switch (id) {
+            case ('rotate'):
+                console.log(ref.name, id)
+                procSocket.emit('rotate', req.body.status)
+                break;
+            case ('partAv'):
+                console.log(ref.name, id)
+                procSocket.emit('partAv', req.body.status)
+                break;
+            case ('workRub')://perfect
+                    rubCounter = rubCounter+1
+                console.log(rubCounter);
+                console.log(ref.name, id)
+                procSocket.emit('workRub', req.body.status)
+                break;
+            case ('workTest')://perfect
+                console.log(ref.name, id)
+                procSocket.emit('workTest', req.body.status)
+                break;
+            case ('rubUp')://doesnt work
+                console.log(ref.name, id)
+                procSocket.emit('rubUp', req.body.status)
+                break;
+            case ('rubDown'): //doesnt work
+                console.log(ref.name, id)
+                procSocket.emit('rubDown', req.body.status)
+                break;
+            case ('rotPos'):
+                // possibly use this for rotate event
+                console.log(ref.name, id)
+                procSocket.emit('rotPos', req.body.status)
+                break
+            case ('workOK')://fine
+                console.log(ref.name, id)
+                procSocket.emit('workOK', req.body.status)
+                break;
+            case('colorCheck'):
+                //do something
+                break;
+            default:
+                break;
+        }
+        res.end()
+    })
+
+    http.listen(ref.eventPort, function() {
+        console.log(ref.name, ': listening on port', ref.eventPort);
+    });
+}
+procStat.runServer()
+
+/*
 //4 testing station
 var testStat = new Station("Testing Station", "192.168.3.27", 3008);
 testStat.getEvents(['liftIsDownE','liftIsUpE','heightOKE','partAvE','pushCylBackE']);
@@ -225,7 +257,7 @@ testStat.runServer = function(){
     });
 }
 testStat.runServer()
-*/
+
 /*
 //5 storing station
 var storStat = new Station("Storing Station", "192.168.3.65", 3009);

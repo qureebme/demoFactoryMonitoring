@@ -9,61 +9,65 @@ let distSocket = io('/distributing'),
     storSocket = io('/storing');
 
 //for the handling station
+/*
 let wkpcAv = false,
     atPreviousTracker = false,
     atFollowTracker = false,
     atSortTracker = false;
-
+*/
 handSocket.on('initialStatus', function(data) {
     //set initial status of the GUI
     console.log('hand socket initial status:', data)
+    console.log('wkpc: ', wkpc.attr('cy'))
     if (data.atFollow == true) {
         handler.animate({ height: 5 }, 500, mina.easein)
-        wkpc.animate({ cy: 567 }, 500, mina.easein)
+        wkpc.animate({ cy: 630 }, 500, mina.easein) //630
     }
     else if(data.atSort == true){
         handler.animate({ height: 65 }, 500, mina.easein)
-        wkpc.animate({ cy: 627 }, 500, mina.easein)
+        wkpc.animate({ cy: 760 }, 500, mina.easein)
     }
     else if(data.atPrevious == true){
         handler.animate({ height: 183 }, 500, mina.easein)
-        wkpc.animate({ cy: 805 }, 500, mina.easein)
+        wkpc.animate({ cy: 805 }, 500, mina.easein) //805
     }
     else {
         //THE STATION IS IN AN ERROR STATE
     }
 })
-
+/*
 handSocket.on('partAv', function(data){
     console.log('partAv');
-    wkpcAv = data ? true : false;
+    //wkpcAv = data ? true : false;
     //let statn emit partAv after it has done the color check, and in both directions of the handler
-    data ? wkpc.attr({visibility:'visible'}) : wkpc.attr({visibility:'hidden'})
-})
-handSocket.on('atPrevious', function(data){
-    console.log('atPrevious');
-    atPreviousTracker = data ? true : false
-    data ? handler.animate({ height: 183 }, 500, mina.easein) : null
-    wkpcAv ? wkpc.animate({ cy: 805 }, 500, mina.easein) : null
+    //data ? wkpc.attr({visibility:'visible'}) : wkpc.attr({visibility:'hidden'})
+})*/
 
-    // use a global var to track wkpc availability
-})
 handSocket.on('atFollow', function(data){
     console.log('atFollow');
     atFollowTracker = data ? true : false // Boolean(data)
-    data ? handler.animate({ height: 5 }, 500, mina.easein) : null
-    wkpcAv ? wkpc.animate({ cy: 567 }, 500, mina.easein) : null
+    data ? handler.animate({ height: 5 }, 500, mina.easein) : null //ok
+    wkpc.animate({ cy: 630 }, 500, mina.easein) //ok
 
      // use a global var to track wkpc availability
 })
 handSocket.on('atSort', function(data){
     console.log('atSort');
     atSortTracker = data ? true : false
-    data ? handler.animate({ height: 65 }, 500, mina.easein) : null
-    wkpcAv ? wkpc.animate({ cy: 627 }, 500, mina.easein) : null
+    data ? handler.animate({ height: 65 }, 500, mina.easein) : null //ok
+    wkpc.animate({ cy: 690 }, 500, mina.easein) //ok
 
      // use a global var to track wkpc availability
 })
+handSocket.on('atPrevious', function(data){
+    console.log('atPrevious');
+    atPreviousTracker = data ? true : false
+    data ? handler.animate({ height: 183 }, 500, mina.easein) : null //ok
+    wkpc.animate({ cy: 805 }, 500, mina.easein) //ok
+
+    // use a global var to track wkpc availability
+})
+/*
 handSocket.on('gripperDown', function(data){
     console.log('gripperDown', data);
     if (atPreviousTracker){}
@@ -82,9 +86,10 @@ handSocket.on('gripperOpen', (data) => {
 handSocket.on('colorCheck', function(data){
     //set workpiece color
     var colorToken = data ? 'black' : 'green'
-    wkpc.attr({fill : colorToken})
+    //wkpc.attr({fill : colorToken})
 })
 
+/*
 /////distributing station
 distSocket.on('initialStatus', function(data) {
     //set initial status of the GUI
@@ -156,3 +161,4 @@ procSocket.on('rotPos', function(data){
 procSocket.on('workOK', function(data){
     console.log('workOK', data)
 })
+*/

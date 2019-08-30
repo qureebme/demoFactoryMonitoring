@@ -82,7 +82,7 @@ var asrs = s.rect(c_x - 150, c_y2 - 100, 300, 250).attr({
     asse = s.rect(s.select("#robs").attr("x"), s.select("#robs").attr("y") - s_height - 5, s_width, s_height).attr({
         id: "asse",
         fill: stationFill
-    }), // assembling station
+    }), // assembling stationn
 
     stor = s.rect(s.select("#asse").attr("x"), s.select("#asse").attr("y") - s_height - 5, s_width, s_height).attr({
         id: "stor",
@@ -223,11 +223,9 @@ let body = s.rect(Number(s.select("#proc").attr("x")) + 5, Number(s.select("#pro
     }),
     plunger = s.group(capL, plungerRod, capR);
 
-
-var bb = spinner.getBBox();
 var mat = new Snap.Matrix();
+var bb = spinner.getBBox();
 //s.circle(bb.cx, bb.cy, 5).attr({ opacity: 0.5 }); //centre circle
-
 const unitTurn = 6; //degrees
 setInterval(function() {
     mat.rotate(unitTurn, bb.cx, bb.cy);
@@ -236,7 +234,10 @@ setInterval(function() {
     s.select("#spin").animate({ transform: mat }, 5);
     //}
 }, 100);
-
+/*
+mat.rotate(60,768,867)
+s.select("#spin").animate({ transform: mat.toTransformString() }, 2000);
+*/
 
 // HANDLING STATION COMPONENTS
 let handler = s.rect(Number(s.select("#hand").attr("x")) + 50, Number(s.select("#hand").attr("y")) - 5, 16, 183).attr({
@@ -249,22 +250,26 @@ let handler = s.rect(Number(s.select("#hand").attr("x")) + 50, Number(s.select("
     }), //anim to h=~185 to reach nxt station
 
     wkpc = s.circle(Number(s.select("#handler").attr("x")) + 8, Number(s.select("#handler").attr("y")) + Number(s.select("#handler").attr("height")) - 10, 8).attr({
-        fill: "red"
+        fill: "red",
+        visibility: "visible"
     }),
-
-    ggg = s.group(handler, wkpc);
-//console.log("ggg: ", wkpc.attr("cy"))
+    line_m = s.line (Number(handler.attr('x'))+8, handler.attr('y'), Number(handler.attr('x'))+8, Number(handler.attr('y'))+150),
+    line_c = s.line(line_m.attr('x2')-5, line_m.attr('y2'), Number(line_m.attr('x2'))+5, line_m.attr('y2')),
+    line_r = s.line(line_c.attr('x2'), line_c.attr('y2'), line_c.attr('x2'), Number(line_c.attr('y2'))+20),
+    line_l = s.line(line_c.attr('x1'), line_c.attr('y1'), line_c.attr('x1'), Number(line_c.attr('y1'))+20),
+    gr_line = s.group(line_m, line_c, line_r, line_l).attr({
+        stroke: 'black',
+        strokeWidth: 3,
+        visibility: 'hidden'
+    });
 /*
-setInterval(
-    function() {
-        wkpc.animate({ cy: 627 }, 2000, mina.easein, function() {
-            this.animate({ cy: 805 }, 2000)
-        })
-        handler.animate({ height: 5 }, 2000, mina.easein, function() {
-            this.animate({ height: 183 }, 2000)
-        })
-    }, 5000
-)*/
+    setTimeout(function(){
+        line_m.animate({y2:630},2000)
+        line_c.animate({y1:630, y2:630},2000)
+        line_r.animate({y1:630, y2:630},2000)
+        line_l.animate({y1:630, y2:630},2000)
+        gr_line.animate({opacity:0},2200)
+    },2000)*/
 
 
 // HANDLING STATION GROUPS
