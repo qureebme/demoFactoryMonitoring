@@ -79,6 +79,24 @@ let request = require('request'),
             }
         }
 
+        //unsubscribe
+        unsubscribe(){
+            var ref = this,
+                uri = ref.baseURI,
+                body = {}
+                request.post({uri:uri, body:body, function(err, res, body){
+                    if (res.statusCode.toString.substr(0, 1) == 2){
+                        console.log(`${ref.name} has unsubscribed from all events`)
+                    }
+                    else if(res.statusCode.toString.substr(0, 1) == 4){
+                        console.log(`${ref.name} has no events`)
+                    }
+                    else{
+                        //dunno yet
+                    }
+                }})
+        }
+
         //get the initial statuses of all inputs,
         //for DRAWing the initial state of the GUI
         // This function fetches all the input statuses from the controller,
