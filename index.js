@@ -19,8 +19,8 @@ app.get('/', function(req, res) {
 
 io.on('connection', (socket) => {
     console.log('main server: connected to a client');
-    handStat.initInputs(handSocket)
-    //procStat.initInputs(procSocket)
+    //handStat.initInputs(handSocket)
+    procStat.initInputs(procSocket)
     //distStat.initInputs(distSocket)
     //testStat.initInputs(testSocket)
     //storStat.initInputs(storSocket)
@@ -38,6 +38,65 @@ const port = 3000;
 http.listen(port, function() {
     console.log('Main server: running on port', port);
 });
+
+//2 processing station
+var procStat = new Station("Processing Station", "192.168.3.60", 3006);
+procStat.getEvents([/*'rotateE','atRubE','atTestE','wkpcOKE'*/'partAvE','inPositionE']);
+procStat.subscribe()
+
+procStat.runServer = function(){
+    var ref = this;
+    var http = require('http').createServer(app);
+    procSocket = io.of('/processing');
+    app.use(bodyParser);
+
+    app.post('/', function(req, res){
+        let id = req.body.eventID;
+        switch (id) {
+            case ('rotate')://perfect
+                console.log(ref.name, id)
+                procSocket.emit('rotate', req.body.status)
+                break;
+            case ('partAv')://ok
+                console.log(ref.name, id)
+                procSocket.emit('partAv', req.body.status)
+                break;
+            case ('atRub'):// perfect
+                console.log(ref.name, id, req.body.status)
+                procSocket.emit('atRub', req.body.status)
+                break;
+            case ('atTest'):// perfect
+                console.log(ref.name, id, req.body.status)
+                procSocket.emit('atTest', req.body.status)
+                break;           
+            case ('inPosition')://very good
+                console.log(ref.name, id, req.body.status)
+                procSocket.emit(id, req.body.status)
+                break
+            case ('wkpcOK')://good
+                console.log(ref.name, id, req.body.status)
+                procSocket.emit('wkpcOK', req.body.status)
+                break;
+            case ('rubUp')://doesnt work. bad device
+                console.log(ref.name, id)
+                procSocket.emit('rubIsUp', req.body.status)
+                break;
+            case ('rubDown'): //doesnt work, bad device
+                console.log(ref.name, id)
+                procSocket.emit('rubIsDown', req.body.status)
+                break;
+            default:
+                break;
+        }
+        res.end()
+    })
+
+    http.listen(ref.eventPort, function() {
+        console.log(ref.name, ': listening on port', ref.eventPort);
+    });
+}
+procStat.runServer()
+
 /*
 //1 distributing station
 var distStat = new Station("Distributing Station", "192.168.3.63", 3007);
@@ -90,6 +149,7 @@ distStat.runServer = function(){
 }
 distStat.runServer()
 */
+/*
 //1 handling station
 var handStat = new Station("Handling Station", "192.168.3.81", 3005);
 handStat.getEvents(["atFollowE", "atPreviousE", "partAvE", "atSortE", "gripperDownE", "gripperUpE", "colorCheckE", "gripperOpenE"]);
@@ -148,72 +208,8 @@ handStat.runServer = function(){
     });
 }
 handStat.runServer()
-/*
+*/
 
-//2 processing station
-var procStat = new Station("Processing Station", "192.168.3.60", 3006);
-procStat.getEvents(['rotateE','partAvE','workRubE','workTestE','rubUpE','rubDownE','rotPosE','workOKE']);
-procStat.subscribe()
-let rubCounter = 0;
-procStat.runServer = function(){
-    var ref = this;
-    var http = require('http').createServer(app);
-    procSocket = io.of('/processing');
-    app.use(bodyParser);
-
-    app.post('/', function(req, res){
-        let id = req.body.eventID;
-        console.log(id)
-        switch (id) {
-            case ('rotate'):
-                console.log(ref.name, id)
-                procSocket.emit('rotate', req.body.status)
-                break;
-            case ('partAv'):
-                console.log(ref.name, id)
-                procSocket.emit('partAv', req.body.status)
-                break;
-            case ('workRub')://perfect
-                    rubCounter = rubCounter+1
-                console.log(rubCounter);
-                console.log(ref.name, id)
-                procSocket.emit('workRub', req.body.status)
-                break;
-            case ('workTest')://perfect
-                console.log(ref.name, id)
-                procSocket.emit('workTest', req.body.status)
-                break;
-            case ('rubUp')://doesnt work
-                console.log(ref.name, id)
-                procSocket.emit('rubUp', req.body.status)
-                break;
-            case ('rubDown'): //doesnt work
-                console.log(ref.name, id)
-                procSocket.emit('rubDown', req.body.status)
-                break;
-            case ('rotPos'):
-                // possibly use this for rotate event
-                console.log(ref.name, id)
-                procSocket.emit('rotPos', req.body.status)
-                break
-            case ('workOK')://fine
-                console.log(ref.name, id)
-                procSocket.emit('workOK', req.body.status)
-                break;
-            case('colorCheck'):
-                //do something
-                break;
-            default:
-                break;
-        }
-        res.end()
-    })
-
-    http.listen(ref.eventPort, function() {
-        console.log(ref.name, ': listening on port', ref.eventPort);
-    });
-}
-procStat.runServer()
 
 /*
 //4 testing station

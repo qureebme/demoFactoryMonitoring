@@ -8,13 +8,44 @@ let distSocket = io('/distributing'),
     testSocket = io('/testing'),
     storSocket = io('/storing');
 
-//for the handling station
+
+//processing station
+procSocket.on('initialStatus', function(data) {
+    //set initial status of the GUI
+    console.log('proc socket initial status:', data)
+})
+procSocket.on('rotate', function(data){
+    console.log('rotate', data)
+})
+procSocket.on('partAv', function(data){
+    console.log('part av', data)
+})
+procSocket.on('atRub', function(data){
+    console.log('at Rub', data)
+})
+procSocket.on('atTest', function(data){
+    console.log('at test', data)
+})
+procSocket.on('rubIsUp', function(data){
+    console.log('rub up', data)
+})
+procSocket.on('rubIsDown', function(data){
+    console.log('rub down', data)
+})
+procSocket.on('inPosition', function(data){
+    console.log('rot pos', data)
+})
+procSocket.on('wkpcOK', function(data){
+    console.log('workOK', data)
+})
+//for the handling station                  //DONE
 /*
 let wkpcAv = false,
     atPreviousTracker = false,
     atFollowTracker = false,
     atSortTracker = false;
 */
+/*
 handSocket.on('initialStatus', function(data) {
     //set initial status of the GUI
     console.log('hand socket initial status:', data)
@@ -106,28 +137,24 @@ handSocket.on('atPrevious', function(data){
     // use a global var to track wkpc availability
 })
 
-handSocket.on('gripperDown', function(data){
+handSocket.on('gripperDown', function(data){ //no need
     console.log('gripperDown', data);
-    /*if (atPreviousTracker){}
-    else if(atFollowTracker){}
-    else if (atSortTracker){}*/
+
 })
-handSocket.on('gripperUp', function(data){
+handSocket.on('gripperUp', function(data){ //no need
     console.log('gripperUp', data);
-    /*if (atPreviousTracker){}
-    else if(atFollowTracker){}
-    else if (atSortTracker){}*/
+
 })
-/*
-handSocket.on('gripperOpen', (data) => {
+
+handSocket.on('gripperOpen', (data) => { //no need
     console.log('gripperOpen', data);
 })
-handSocket.on('colorCheck', function(data){
+handSocket.on('colorCheck', function(data){ // work this out
     //set workpiece color
     var colorToken = data ? 'black' : 'green'
     //wkpc.attr({fill : colorToken})
 })
-
+*/
 /*
 /////distributing station
 distSocket.on('initialStatus', function(data) {
@@ -171,33 +198,5 @@ testSocket.on('pushCylBack', function(data) {
     console.log('push Cyl back', data)
 })
 
-//processing station
-procSocket.on('initialStatus', function(data) {
-    //set initial status of the GUI
-    console.log('proc socket initial status:', data)
-})
-procSocket.on('rotate', function(data){
-    console.log('rotate', data)
-})
-procSocket.on('partAv', function(data){
-    console.log('part av', data)
-})
-procSocket.on('workRub', function(data){
-    console.log('workRub', data)
-})
-procSocket.on('workTest', function(data){
-    console.log('work test', data)
-})
-procSocket.on('rubUp', function(data){
-    console.log('rub up', data)
-})
-procSocket.on('rubDown', function(data){
-    console.log('rub down', data)
-})
-procSocket.on('rotPos', function(data){
-    console.log('rot pos', data)
-})
-procSocket.on('workOK', function(data){
-    console.log('workOK', data)
-})
+
 */

@@ -139,12 +139,12 @@ var procc = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select(
 
     flange2 = flange1.clone().attr({
         stroke: "#6200ee",
-        id: "flan2"
+        id: "flan2",
     }), //flange 2
 
     flange3 = flange1.clone().attr({
         stroke: "#03dac5",
-        id: "flan3"
+        id: "flan3",
     }), // flange 3
 
     ccc = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select("#proc").attr("y")) + 75, 30).attr({
@@ -160,16 +160,18 @@ var procc = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select(
 s.select("#flan2").transform("r60"); // 60 deg off flange1
 s.select("#flan3").transform("r120"); // 120 deg off flange1
 
+
 var spinner = s.group(flange1, flange2, flange3, ccc).attr({
     id: "spin"
 }).attr({
     opacity: 1
 }); // make the spinner whole
+
 // accesories
 
 let line1 = s.line(663, 840, 638, 840),
-    line2 = s.line(638, 840, 638, 950),
-    line3 = s.line(638, 950, 685, 950),
+    line2 = s.line(638, 837, 638, 950),
+    line3 = s.line(638, 946, 685, 946),
     line4 = s.line(685, 950, 685, 900),
     lines = s.group(line1, line2, line3, line4).attr({
         stroke: "black",
@@ -222,22 +224,16 @@ let body = s.rect(Number(s.select("#proc").attr("x")) + 5, Number(s.select("#pro
         stroke: "black",
     }),
     plunger = s.group(capL, plungerRod, capR);
-
+/*
 var mat = new Snap.Matrix();
 var bb = spinner.getBBox();
 //s.circle(bb.cx, bb.cy, 5).attr({ opacity: 0.5 }); //centre circle
+
 const unitTurn = 6; //degrees
 setInterval(function() {
     mat.rotate(unitTurn, bb.cx, bb.cy);
-    //for (let i = 0; i < 60 / unitTurn; i++) {
-
     s.select("#spin").animate({ transform: mat }, 5);
-    //}
-}, 100);
-/*
-mat.rotate(60,768,867)
-s.select("#spin").animate({ transform: mat.toTransformString() }, 2000);
-*/
+}, 100);*/
 
 // HANDLING STATION COMPONENTS
 let handler = s.rect(Number(s.select("#hand").attr("x")) + 50, Number(s.select("#hand").attr("y")) - 5, 16, 183).attr({
@@ -263,6 +259,7 @@ let handler = s.rect(Number(s.select("#hand").attr("x")) + 50, Number(s.select("
         //visibility: 'hidden',//
         opacity: 0,
     });
+    /*
     console.log('my2: ',line_m.attr('y2'))
     console.log('cy2: ',line_c.attr('y2'))
     console.log('cy1: ',line_c.attr('y1'))
@@ -270,6 +267,7 @@ let handler = s.rect(Number(s.select("#hand").attr("x")) + 50, Number(s.select("
     console.log('ry1: ',line_r.attr('y1'))
     console.log('ly2: ',line_l.attr('y2'))
     console.log('ly1: ',line_l.attr('y1'))
+    */
 /*
     setTimeout(function(){
         line_m.animate({y2: line_m.attr('y1')},2000) //630
