@@ -13,6 +13,22 @@ let distSocket = io('/distributing'),
 procSocket.on('initialStatus', function(data) {
     //set initial status of the GUI
     console.log('proc socket initial status:', data)
+    if(!data.inPosition){
+        //rotary table is out of place. do something
+        //emit sth and then exit the process
+    }
+    else if(data.atTest){
+        //remove something from the test station
+        //emit sth and then exit the process
+    }
+    else if(data.atRub){
+        //remove something from the rubbing station
+        //emit sth and then exit the process
+    }
+    else if(data.inPosition && !data.partAv){
+        //expecting a wkpc
+        //emit sth bt don't exit the process
+    }
 })
 procSocket.on('rotate', function(data){
     console.log('rotate', data)
