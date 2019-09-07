@@ -2,57 +2,92 @@
 let socket = io();
 socket.on('connect', () => console.log('main server is connected'))
 
-let handSocket = io('/handling')
-let distSocket = io('/distributing'),
-    procSocket = io('/processing'),
-    testSocket = io('/testing'),
-    storSocket = io('/storing');
+let handSocket = io.connect('/handling')
+let distSocket = io.connect('/distributing'),
+    procSocket = io.connect('/processing'),
+    testSocket = io.connect('/testing'),
+    storSocket = io.connect('/storing');
 
 
 //processing station
+let inter;
+procSocket.on('connect', function(){
+    console.log('Processing station server is connected');
+})
 procSocket.on('initialStatus', function(data) {
     //set initial status of the GUI
     console.log('proc socket initial status:', data)
-    if(!data.inPosition){
-        //rotary table is out of place. do something
-        //emit sth and then exit the process
+    if(!data.inPosition){   //rotary table is out of place. do something
+        procSocket.emit('initialStatusError', 'Processing Station rotary table OUT OF PLACE');
+        s.select('#proc').attr({
+            stroke: 'red',
+            strokeWidth: 3,
+        })
     }
     else if(data.atTest){
         //remove something from the test station
         //emit sth and then exit the process
+        procSocket.emit('initialStatusError', 'Processing Station has an object at the testing station');
+        s.select('#proc').attr({
+            stroke: 'red',
+            strokeWidth: 3,
+        })
     }
     else if(data.atRub){
         //remove something from the rubbing station
         //emit sth and then exit the process
+        procSocket.emit('initialStatusError', 'Processing Station has an object at the rubbing station');
+        s.select('#proc').attr({
+            stroke: 'red',
+            strokeWidth: 3,
+        })
     }
     else if(data.inPosition && !data.partAv){
         //expecting a wkpc
         //emit sth bt don't exit the process
     }
+    else{
+        //EVERYTHING OKAY. draw green bbox
+        s.select('#proc').attr({
+            stroke: 'green',
+            strokeWidth: 3,
+        })
+    }
 })
 procSocket.on('rotate', function(data){
-    console.log('rotate', data)
+    //console.log('rotate', data)
+    
+    var mat = new Snap.Matrix(),
+        bb = spinner.getBBox();
+        if (data){
+            inter = setInterval(() => {
+                mat.rotate(6, bb.cx, bb.cy);
+                s.select("#spin").animate({ transform: mat }, 10);
+                }, 100);
+        }
+        
 })
 procSocket.on('partAv', function(data){
-    console.log('part av', data)
+    //console.log('part av', data)
 })
 procSocket.on('atRub', function(data){
-    console.log('at Rub', data)
+    //console.log('at Rub', data)
 })
 procSocket.on('atTest', function(data){
-    console.log('at test', data)
+    //console.log('at test', data)
 })
 procSocket.on('rubIsUp', function(data){
-    console.log('rub up', data)
+    //console.log('rub up', data)
 })
 procSocket.on('rubIsDown', function(data){
-    console.log('rub down', data)
+    //console.log('rub down', data)
 })
 procSocket.on('inPosition', function(data){
     console.log('rot pos', data)
+    data ? setTimeout(()=> clearInterval(inter), 50) : null //saved the day. hh!
 })
 procSocket.on('wkpcOK', function(data){
-    console.log('workOK', data)
+    //console.log('workOK', data)
 })
 //for the handling station                  //DONE
 /*

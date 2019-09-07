@@ -1,4 +1,5 @@
 let request = require('request'),
+    chalk = require('chalk')
 
     myIP = '192.168.3.100';
 
@@ -90,11 +91,10 @@ let request = require('request'),
                     
                     if (code == 2){ // success
                         console.log(`${ref.name} has unsubscribed from all events`)
-                        console.log(`${ref.name}: no monitoring will be done`)
+                        console.log(`${ref.name}: ${chalk.red.bold('no monitoring will be done')}`)
                     }
                     else if(code == 4){ // failure
                         console.log(`${ref.name} has no events subscribed`)
-                        console.log('Terminated: initial status error')
                     }
                     else{
                         //dunno yet

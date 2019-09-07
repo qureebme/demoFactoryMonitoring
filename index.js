@@ -1,10 +1,10 @@
-
 var express = require('express'),
     app = require('express')(),
     http = require('http').createServer(app),
     bodyParser = require('body-parser').json({ strict: false }),
     staticFile = require('path').resolve(__dirname, 'public'),
-    io = require('socket.io')(http);
+    io = require('socket.io')(http),
+    chalk = require('chalk');
 
 let handSocket, procSocket, distSocket, testSocket, storSocket;
 
@@ -25,14 +25,6 @@ io.on('connection', (socket) => {
     //testStat.initInputs(testSocket)
     //storStat.initInputs(storSocket)
 })
-/*io.on('reconnected', (socket) => { //check later
-    console.log('main server: connected to a client');
-    handStat.initInputs(handSocket)
-    //procStat.initInputs(procSocket)
-    //distStat.initInputs(distSocket)
-    //testStat.initInputs(testSocket)
-    //storStat.initInputs(storSocket)
-})*/
 
 const port = 3000;
 http.listen(port, function() {
@@ -41,13 +33,22 @@ http.listen(port, function() {
 
 //2 processing station
 var procStat = new Station("Processing Station", "192.168.3.60", 3006);
-procStat.getEvents([/*'rotateE','atRubE','atTestE','wkpcOKE'*/'partAvE','inPositionE']);
+procStat.getEvents(['rotateE','atRubE','atTestE','wkpcOKE','partAvE','inPositionE']);
 procStat.subscribe()
 
 procStat.runServer = function(){
     var ref = this;
     var http = require('http').createServer(app);
-    procSocket = io.of('/processing');
+    procSocket = io.of('/processing')
+                    .on('connection', function(socket){
+                        console.log('processing station client is connected')
+
+                        socket.on('initialStatusError', function(mssg){
+                            console.log('INITIAL STATUS ERROR:', mssg)
+                            procStat.unsubscribe()
+                        })
+                    })
+
     app.use(bodyParser);
 
     app.post('/', function(req, res){
@@ -57,8 +58,8 @@ procStat.runServer = function(){
                 console.log(ref.name, id)
                 procSocket.emit('rotate', req.body.status)
                 break;
-            case ('partAv')://ok
-                console.log(ref.name, id)
+            case ('partAv')://ok?
+                //console.log(ref.name, id)
                 procSocket.emit('partAv', req.body.status)
                 break;
             case ('atRub'):// perfect
@@ -96,6 +97,8 @@ procStat.runServer = function(){
     });
 }
 procStat.runServer()
+
+
 
 /*
 //1 distributing station
@@ -294,3 +297,4 @@ storStat.runServer = function(){
 }
 storStat.runServer()
 */
+

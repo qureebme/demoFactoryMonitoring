@@ -233,10 +233,10 @@ const unitTurn = 6; //degrees
 setInterval(function() {
     mat.rotate(unitTurn, bb.cx, bb.cy);
     s.select("#spin").animate({ transform: mat }, 5);
-}, 100);*/
-
+}, 100);
+*/
 // HANDLING STATION COMPONENTS
-let handler = s.rect(Number(s.select("#hand").attr("x")) + 50, Number(s.select("#hand").attr("y")) - 5, 16, 183).attr({
+let handler = s.rect(Number(s.select("#hand").attr("x")) + 50+42, Number(s.select("#hand").attr("y")) - 5-15, 16, 183).attr({
         id: "handler",
         rx: 5,
         ry: 5,
