@@ -14,6 +14,13 @@ let inter;
 procSocket.on('connect', function(){
     console.log('Processing station server is connected');
 })
+procSocket.on('disconnect', function(){
+    console.log('Processing station server is connected');
+    s.select('#proc').attr({
+        stroke: '',
+        strokeWidth: 0,
+    })
+})
 procSocket.on('initialStatus', function(data) {
     //set initial status of the GUI
     console.log('proc socket initial status:', data)
@@ -84,7 +91,7 @@ procSocket.on('rubIsDown', function(data){
 })
 procSocket.on('inPosition', function(data){
     console.log('rot pos', data)
-    data ? setTimeout(()=> clearInterval(inter), 50) : null //saved the day. hh!
+    data ? setTimeout(() => clearInterval(inter), 50) : null //saved the day. hh!
 })
 procSocket.on('wkpcOK', function(data){
     //console.log('workOK', data)
