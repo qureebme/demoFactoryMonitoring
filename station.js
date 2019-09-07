@@ -29,7 +29,7 @@ let request = require('request'),
             ref.nEvents = arr.length;
         }
 
-        // make a POST request (for fetching IO values)
+        // make a POST request (for fetching IO values) // DELETE?
         fetchIOstatus(uri, body) {
             var ref = this;
             return new Promise(function(resolve, reject) {
@@ -84,17 +84,22 @@ let request = require('request'),
             var ref = this,
                 uri = ref.baseURI,
                 body = {}
-                request.post({uri:uri, body:body, function(err, res, body){
-                    if (res.statusCode.toString.substr(0, 1) == 2){
+
+                request.delete(uri, function(err, res, body){
+                    let code = res.statusCode.toString().substr(0, 1)
+                    
+                    if (code == 2){ // success
                         console.log(`${ref.name} has unsubscribed from all events`)
+                        console.log(`${ref.name}: no monitoring will be done`)
                     }
-                    else if(res.statusCode.toString.substr(0, 1) == 4){
-                        console.log(`${ref.name} has no events`)
+                    else if(code == 4){ // failure
+                        console.log(`${ref.name} has no events subscribed`)
+                        console.log('Terminated: initial status error')
                     }
                     else{
                         //dunno yet
                     }
-                }})
+                })
         }
 
         //get the initial statuses of all inputs,
