@@ -10,12 +10,16 @@ let distSocket = io.connect('/distributing'),
 
 
 //processing station
-let inter;
+let inter,
+    mat = new Snap.Matrix()
+    //bb = spinner.getBBox();
+    console.log('matrix:', mat)
+    //console.log('bb:', bb.cx, bb.cy)
 procSocket.on('connect', function(){
     console.log('Processing station server is connected');
 })
 procSocket.on('disconnect', function(){
-    console.log('Processing station server is connected');
+    console.log('Processing station server is disconnected');
     s.select('#proc').attr({
         stroke: '',
         strokeWidth: 0,
@@ -63,16 +67,13 @@ procSocket.on('initialStatus', function(data) {
 })
 procSocket.on('rotate', function(data){
     //console.log('rotate', data)
-    
-    var mat = new Snap.Matrix(),
-        bb = spinner.getBBox();
-        if (data){
-            inter = setInterval(() => {
-                mat.rotate(6, bb.cx, bb.cy);
-                s.select("#spin").animate({ transform: mat }, 10);
-                }, 100);
-        }
-        
+    bb = spinner.getBBox();
+    if (data){
+        inter = setInterval(() => {
+            mat.rotate(6, bb.cx, bb.cy)
+            spinner = s.select("#spin").animate({ transform: mat }, 10)
+            }, 100)
+    }
 })
 procSocket.on('partAv', function(data){
     //console.log('part av', data)
@@ -91,7 +92,7 @@ procSocket.on('rubIsDown', function(data){
 })
 procSocket.on('inPosition', function(data){
     console.log('rot pos', data)
-    data ? setTimeout(() => clearInterval(inter), 50) : null //saved the day. hh!
+    data ? setTimeout(() => clearInterval(inter), 50) : null
 })
 procSocket.on('wkpcOK', function(data){
     //console.log('workOK', data)
