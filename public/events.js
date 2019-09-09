@@ -66,14 +66,7 @@ procSocket.on('initialStatus', function(data) {
     }
 })
 procSocket.on('rotate', function(data){
-    //console.log('rotate', data)
-    bb = spinner.getBBox();
-    if (data){
-        inter = setInterval(() => {
-            mat.rotate(6, bb.cx, bb.cy)
-            spinner = s.select("#spin").animate({ transform: mat }, 10)
-            }, 100)
-    }
+    console.log('rotate', data)
 })
 procSocket.on('partAv', function(data){
     //console.log('part av', data)
@@ -92,7 +85,13 @@ procSocket.on('rubIsDown', function(data){
 })
 procSocket.on('inPosition', function(data){
     console.log('rot pos', data)
-    data ? setTimeout(() => clearInterval(inter), 50) : null
+   
+   if (data){   //works
+    bb = spinner.getBBox();
+    mat.rotate(60, bb.cx, bb.cy)
+    spinner = s.select("#spin").attr({ transform: mat }) //fallback
+   }
+   
 })
 procSocket.on('wkpcOK', function(data){
     //console.log('workOK', data)
