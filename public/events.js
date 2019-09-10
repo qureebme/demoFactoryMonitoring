@@ -10,10 +10,11 @@ let distSocket = io.connect('/distributing'),
 
 
 //processing station
-let inter,
-    mat = new Snap.Matrix()
-    //bb = spinner.getBBox();
-    console.log('matrix:', mat)
+
+let text,
+    mat = new Snap.Matrix();
+    
+    //console.log('matrix:', mat)
     //console.log('bb:', bb.cx, bb.cy)
 procSocket.on('connect', function(){
     console.log('Processing station server is connected');
@@ -69,13 +70,22 @@ procSocket.on('rotate', function(data){
     console.log('rotate', data)
 })
 procSocket.on('partAv', function(data){
-    //console.log('part av', data)
+    /**
+     * keep just to show an example tricky issue.
+     * Comment body out when running
+     */
+    console.log('part av', data)
+    if(data) wkpc2.attr({visibility: 'visible'})
+    else wkpc2.attr({visibility: 'hidden'})
 })
 procSocket.on('atRub', function(data){
     //console.log('at Rub', data)
+    
 })
 procSocket.on('atTest', function(data){
     //console.log('at test', data)
+    if (data) plunger = s.select('#plun').animate({transform: new Snap.Matrix().translate(10,0)}, 100)
+    else plunger = s.select('#plun').animate({transform: new Snap.Matrix().translate(-10,0)}, 100)
 })
 procSocket.on('rubIsUp', function(data){
     //console.log('rub up', data)
@@ -86,15 +96,29 @@ procSocket.on('rubIsDown', function(data){
 procSocket.on('inPosition', function(data){
     console.log('rot pos', data)
    
-   if (data){   //works
+   if (data){
     bb = spinner.getBBox();
     mat.rotate(60, bb.cx, bb.cy)
-    spinner = s.select("#spin").attr({ transform: mat }) //fallback
+    s.select("#spin").attr({ transform: mat }) //fallback
    }
    
 })
+procSocket.on('testing', function(data){
+    //put it at wkpcOK
+})
 procSocket.on('wkpcOK', function(data){
-    //console.log('workOK', data)
+    console.log('workOK', data)
+    let textCoord = [wkpc2.attr('cx'), wkpc2.attr('cy')]
+    if (data){
+        text = s.text(textCoord[0], textCoord[1], 'OK').attr({
+            stroke: 'green',
+            transform: new Snap.Matrix().translate(-55,85)
+        })
+    }
+
+    setTimeout(function(){ 
+        text.attr({visibility: 'hidden'})
+    }, 500)
 })
 //for the handling station                  //DONE
 /*

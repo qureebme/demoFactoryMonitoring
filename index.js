@@ -33,7 +33,7 @@ http.listen(port, function() {
 
 //2 processing station
 var procStat = new Station("Processing Station", "192.168.3.60", 3006);
-procStat.getEvents(['rotateE','atRubE','atTestE','wkpcOKE','partAvE','inPositionE']);
+procStat.getEvents(['rotateE','atRubE','atTestE','wkpcOKE','partAvE','inPositionE', 'testingE']);
 procStat.subscribe()
 
 procStat.runServer = function(){
@@ -55,7 +55,7 @@ procStat.runServer = function(){
         let id = req.body.eventID;
         switch (id) {
             case ('rotate')://perfect
-                console.log(ref.name, id)
+                //console.log(ref.name, id)
                 procSocket.emit('rotate', req.body.status)
                 break;
             case ('partAv')://ok?
@@ -63,21 +63,23 @@ procStat.runServer = function(){
                 procSocket.emit('partAv', req.body.status)
                 break;
             case ('atRub'):// perfect
-                console.log(ref.name, id, req.body.status)
                 procSocket.emit('atRub', req.body.status)
                 break;
             case ('atTest'):// perfect
                 console.log(ref.name, id, req.body.status)
                 procSocket.emit('atTest', req.body.status)
-                break;           
+                break;
             case ('inPosition')://very good
-                console.log(ref.name, id, req.body.status)
+                //console.log(ref.name, id, req.body.status)
                 procSocket.emit(id, req.body.status)
                 break
             case ('wkpcOK')://good
                 console.log(ref.name, id, req.body.status)
                 procSocket.emit('wkpcOK', req.body.status)
                 break;
+            case ('testing'):
+                //console.log('testing a wkpc')
+                procSocket.emit('testing', req.body.status)
             case ('rubUp')://doesnt work. bad device
                 console.log(ref.name, id)
                 procSocket.emit('rubIsUp', req.body.status)

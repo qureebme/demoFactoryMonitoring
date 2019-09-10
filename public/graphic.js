@@ -128,43 +128,43 @@ var procc = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select(
         rx: 7,
         ry: 7,
         strokeWidth: 2,
-        id: "flan1"
+        id: "flan0"
     }),
 
     hole1 = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select("#proc").attr("y")) + 20, 8).attr({ fill: stationFill }),
 
     hole2 = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select("#proc").attr("y")) + 130, 8).attr({ fill: stationFill }),
 
-    flange1 = s.group(flange0, hole1, hole2).attr({ stroke: "#b00020" }),
+    flange1 = s.group(flange0, hole1, hole2).attr({
+        stroke: "#b00020",
+        id: 'flan1'
+    });
+    s.select("#flan1").transform("r60"); // 60 deg slant
 
-    flange2 = flange1.clone().attr({
+var flange2 = flange1.clone().attr({
         stroke: "#6200ee",
         id: "flan2",
-    }), //flange 2
+    }); //flange 2
+s.select("#flan2").transform("r120"); // 60 deg off flange1
 
-    flange3 = flange1.clone().attr({
+var    flange3 = flange1.clone().attr({
         stroke: "#03dac5",
         id: "flan3",
-    }), // flange 3
+    }); // flange 3
+s.select("#flan3").transform("r0"); // 120 deg off flange1
 
-    ccc = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select("#proc").attr("y")) + 75, 30).attr({
-        fill: "#ffffff",
-        opacity: 1,
-        stroke: "#50ff50",
-        strokeWidth: 2,
-        id: "ccc"
-    }); // the centre circle
+var ccc = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select("#proc").attr("y")) + 75, 30).attr({
+    fill: "#ffffff",
+    opacity: 1,
+    stroke: "#50ff50",
+    strokeWidth: 2,
+    id: "ccc"
+}); // the centre circle
 
+let wkpc2 = s.circle(768,812,10).attr({fill: 'blue', visibility:'hidden'});
 
-// rotate the flanges into position
-s.select("#flan2").transform("r60"); // 60 deg off flange1
-s.select("#flan3").transform("r120"); // 120 deg off flange1
-
-
-var spinner = s.group(flange1, flange2, flange3, ccc).attr({
+var spinner = s.group(flange1, flange2, flange3, ccc, wkpc2).attr({
     id: "spin"
-}).attr({
-    opacity: 1
 }); // make the spinner whole
 
 // accesories
@@ -191,7 +191,7 @@ let base = s.rect(s.select("#proc").attr("x") - 15, Number(s.select("#proc").att
 //console.log("yy: ", s.select("#proc").attr("y"));
 
 s.path("M678 827 l 10 10 l 0 4 L 678 851").attr({
-    stroke: "black",
+    //stroke: "black",
 })
 
 let tip = s.line(695, Number(s.select("#proc").attr("y")) + 47, 701, Number(s.select("#proc").attr("y")) + 47).attr({
@@ -223,18 +223,10 @@ let body = s.rect(Number(s.select("#proc").attr("x")) + 5, Number(s.select("#pro
         strokeWidth: 5,
         stroke: "black",
     }),
-    plunger = s.group(capL, plungerRod, capR);
-/*
-var mat = new Snap.Matrix();
-var bb = spinner.getBBox();
-//s.circle(bb.cx, bb.cy, 5).attr({ opacity: 0.5 }); //centre circle
+    plunger = s.group(capL, plungerRod, capR).attr({
+        id: 'plun'
+    }); //at testing pt
 
-const unitTurn = 6; //degrees
-setInterval(function() {
-    mat.rotate(unitTurn, bb.cx, bb.cy);
-    s.select("#spin").animate({ transform: mat }, 5);
-}, 100);
-*/
 // HANDLING STATION COMPONENTS
 let handler = s.rect(Number(s.select("#hand").attr("x")) + 50+42, Number(s.select("#hand").attr("y")) - 5-15, 16, 183).attr({
         id: "handler",
