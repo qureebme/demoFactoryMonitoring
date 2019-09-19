@@ -9,6 +9,7 @@ let request = require('request'),
             this.ip = ip; // ip of the real station
             this.eventPort = eventPort; // for instances of this object
             this.baseURI = "http://" + ip + "/rest/events/"; // for subscriptions
+            this.baseURI2 = "http://" + ip + "/rest/services/"; // for service consumption
 
             this.events = undefined; // events array
             this.eventCount = 0; // num of successful subscriptions
