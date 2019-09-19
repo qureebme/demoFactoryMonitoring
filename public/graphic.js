@@ -239,7 +239,7 @@ let handler = s.rect(Number(s.select("#hand").attr("x")) + 50+42, Number(s.selec
 
     wkpc = s.circle(Number(s.select("#handler").attr("x")) + 8, Number(s.select("#handler").attr("y")) + Number(s.select("#handler").attr("height")) - 10, 8).attr({
         fill: "red",
-        visibility: "hidden",
+        opacity: 0,
     }),
     line_m = s.line (Number(handler.attr('x'))+8, handler.attr('y'), Number(handler.attr('x'))+8, Number(handler.attr('y'))+150),
     line_c = s.line(line_m.attr('x2')-5, line_m.attr('y2'), Number(line_m.attr('x2'))+5, line_m.attr('y2')),
@@ -355,12 +355,13 @@ var storBox = stor.getBBox(),
 
     line0 = s.line(cp[0] + 10, cp[1], storBox.x + 10, cp[1]).attr({ //hidden line, used for placing circles
         strokeWidth: 2,
-        stroke: "#000000",
+        stroke: 'green',//"#000000",
         id: "line0",
-        opacity: 0
-
+        opacity: 0 //////////////
     }),
-    c0 = s.circle(Number(s.select("#line0").attr("x2")) + rr, s.select("#line0").attr("y2"), rr).attr({
+    [c01, c02] = [Number(s.select("#line0").attr("x2")) + rr, s.select("#line0").attr("y2")],
+
+    c0 = s.circle(c01, c02, rr).attr({
         opacity: 1,
         fill: "#90a4ae", // matches the bg
         strokeWidth: 2
@@ -379,7 +380,7 @@ var storBox = stor.getBBox(),
     }),
 
     gr1a = gr0.clone().attr({
-        transform: "r-55",
+        transform: setTransform(-25, cp[0], cp[1]), //"r-55",
         id: "line1",
         opacity: 1,
         stroke: lev1_color,
@@ -387,58 +388,58 @@ var storBox = stor.getBBox(),
     }), // lowest
 
     gr1b = gr0.clone().attr({
-        transform: "r-30",
+        transform: setTransform(-15, cp[0], cp[1]),
         id: "line2",
         opacity: 1,
         stroke: lev1_color,
     }),
 
     gr1c = gr0.clone().attr({
-        transform: "r-10",
+        transform: setTransform(-5, cp[0], cp[1]),
         id: "line3",
         opacity: 1,
         stroke: lev1_color,
     }),
 
     gr1d = gr0.clone().attr({
-        transform: "r10",
+        transform: setTransform(5, cp[0], cp[1]),
         id: "line4",
         opacity: 1,
         stroke: lev1_color,
     }),
 
     gr1e = gr0.clone().attr({
-        transform: "r30",
+        transform: setTransform(15, cp[0], cp[1]),
         id: "line5",
         opacity: 1,
         stroke: lev1_color,
     }),
 
     gr1f = gr0.clone().attr({
-        transform: "r55",
+        transform: setTransform(25, cp[0], cp[1]),
         id: "line6",
         opacity: 1,
         stroke: lev1_color,
-    }), // highest
+    }); // highest
 
-    gr2a = gr1a.clone().attr({ stroke: lev2_color, transform: "r-55", }),
-    gr2b = gr1b.clone().attr({ stroke: lev2_color, transform: "r-30", }),
-    gr2c = gr1c.clone().attr({ stroke: lev2_color, transform: "r-10", }),
-    gr2d = gr1d.clone().attr({ stroke: lev2_color, transform: "r10", }),
-    gr2e = gr1a.clone().attr({ stroke: lev2_color, transform: "r30", }),
-    gr2f = gr1b.clone().attr({ stroke: lev2_color, transform: "r55", }),
+let gr2a = gr1a.clone().attr({ stroke: lev2_color, }),
+    gr2b = gr1b.clone().attr({ stroke: lev2_color, }),
+    gr2c = gr1c.clone().attr({ stroke: lev2_color, }),
+    gr2d = gr1d.clone().attr({ stroke: lev2_color, }),
+    gr2e = gr1e.clone().attr({ stroke: lev2_color, }),
+    gr2f = gr1f.clone().attr({ stroke: lev2_color, });
 
-    gr3a = gr1a.clone().attr({ stroke: lev3_color, transform: "r-55", }),
-    gr3b = gr1b.clone().attr({ stroke: lev3_color, transform: "r-30", }),
-    gr3c = gr1c.clone().attr({ stroke: lev3_color, transform: "r-10", }),
-    gr3d = gr1d.clone().attr({ stroke: lev3_color, transform: "r10", }),
-    gr3e = gr1a.clone().attr({ stroke: lev3_color, transform: "r30", }),
-    gr3f = gr1b.clone().attr({ stroke: lev3_color, transform: "r55", });
+let gr3a = gr1a.clone().attr({ stroke: lev3_color, }),
+    gr3b = gr1b.clone().attr({ stroke: lev3_color, }),
+    gr3c = gr1c.clone().attr({ stroke: lev3_color, }),
+    gr3d = gr1d.clone().attr({ stroke: lev3_color, }),
+    gr3e = gr1e.clone().attr({ stroke: lev3_color, }),
+    gr3f = gr1f.clone().attr({ stroke: lev3_color, });
 
 
 var bigGr = s.group(gr1a, gr1b, gr1c, gr1d, gr1e, gr1f).attr({ id: "bg1", }), //level1
 
-    bigGr2 = s.group(gr2a, gr2b, gr2c, gr2d, gr2e, gr2f).attr({ transform: transMatrix2 }), //level2
+    bigGr2 = s.group(gr2a, gr2b, gr2c, gr2d, gr2e, gr2f).attr({ transform: transMatrix2 }); //level2
 
     bigGr3 = s.group(gr3a, gr3b, gr3c, gr3d, gr3e, gr3f).attr({ transform: transMatrix3 }); //level3
 
@@ -490,26 +491,6 @@ var gr_2 = s.line(bx0.x, bx0.y - 7, bx0.x, Number(bx0.y) + 7).attr({ //gripper, 
 
 
 
-
-////////////////////////////////////////////////////////////////////////////
-//var dd = hook.getBBox()
-//console.log("dd:::", dd);
-
-//spinner.animate({ transform: "rotate(0 600 5)" }, 3000) // turn spinner 60 deg, duration must be included
-//spinner.transform('R60,768.0000000000001,867', 5000) //does it but no anime
-//s.select("#spinner").animate???
-/*
-    var x = proc.attr("x"),
-        y = proc.attr("y");
-    s.circle(x, y, 5)
-*/
-
-
-
-
-/*
-s.rect(bb.x, bb.y, bb.x2 - bb.x, bb.y2 - bb.y).attr({
-    strokeWidth: 1,
-    opacity: 0.5
-}); // draw bounding box
-*/
+function setTransform(theta, x, y){
+    return new Snap.Matrix().rotate(theta, x, y)
+}
