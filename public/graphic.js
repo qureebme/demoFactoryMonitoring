@@ -270,74 +270,63 @@ let handler = s.rect(Number(s.select("#hand").attr("x")) + 50+42, Number(s.selec
     },2000)*/
 
 
-// HANDLING STATION GROUPS
 
 
 // DISTRIBUTING STATION COMPONENTS
-var holder = s.rect(Number(s.select("#dist").attr("x")) + 30, Number(s.select("#dist").attr("y")) + 100, 180, 30).attr({
+
+var holder = s.rect(Number(s.select("#dist").attr("x")) + 20, Number(s.select("#dist").attr("y")) + 100, 160, 25).attr({
         id: "holder",
-        stroke: "#ffffff",
+        stroke: "#6200ee",//"#ffffff",
         strokeWidth: 1,
-        fill: "#6200ee",
-        opacity: 0.5
-    }),
-
-    cylinder = s.rect(s.select("#holder").attr("x"), s.select("#holder").attr("y"), 50, s.select("#holder").attr("height")).attr({
-        fill: "#03dac5",
-        id: "cyl",
-    }),
-
-    piston = s.rect(Number(s.select("#holder").attr("x")) + 10, Number(s.select("#holder").attr("y")) + 12, 65, 8).attr({
+        fill: "white",
         opacity: 1,
-        id: "piston"
-    }),
+        rx: 3,
+        ry: 3
+    });
 
-    piston_ = s.rect(Number(s.select("#piston").attr("x")), Number(s.select("#cyl").attr("y")) + 2, 5, 26),
-
-    mag = s.circle(Number(s.select("#holder").attr("x")) + 90, Number(s.select("#holder").attr("y")) + 15, 13).attr({
-        fill: "#b00020",
-        opacity: 0.6
-    }),
-
-    hook = s.circle(Number(s.select("#dist").attr("x")) + Number(s.select("#dist").attr("width")) - 100,
-        Number(s.select("#dist").attr("y")) + Number(s.select("#dist").attr("height")) - 100, 10).attr({
-        id: "hook",
-        fill: "#b00020"
-    }),
-    swivel = s.rect(Number(s.select("#hook").attr("cx")) - 40, Number(s.select("#hook").attr("cy")) - 3, 40, 5).attr({
-        fill: "#ffffff"
-    }),
-
-    cylinder2 = s.rect(Number(s.select("#hook").attr("cx")) + 20, Number(s.select("#hook").attr("cy")) - 70, 25, 70).attr({
-        fill: "#ffffff",
-        id: "cyl2"
-    }),
-
-    piston2_ = s.rect(Number(s.select("#cyl2").attr("x")), Number(s.select("#cyl2").attr("y")) + Number(s.select("#cyl2").attr("height")) - 7, 25, 7).attr({
-        id: "pist2_"
-    }),
-
-    piston2 = s.rect(Number(s.select("#cyl2").attr("x")) + 10, s.select("#cyl2").attr("y"), 5, 63);
+var pusher = s.rect(Number(s.select("#dist").attr("x")) + 20, Number(s.select("#dist").attr("y"))-3 + 112.5,0,7).attr({
+    strokeWidth: 2,
+    fill: 'black',
+    rx: 3,
+    ry: 3
+}), // animate the width
+    pusherCasing = s.rect(Number(s.select("#dist").attr("x")) + 20, Number(s.select("#dist").attr("y"))-3 + 103,15,25).attr({
+        opacity: 0.8
+    })
 
 //TESTING STATION COMPONENTS
-var testBase = s.circle(Number(s.select("#cyl2").attr("x")) + 12.5, Number(s.select("#cyl2").attr("y")) - 12.5, 12.5).attr({
-        fill: "#b00020"
-    }),
+var distbBox = s.select('#dist').getBBox();
+var slides = s.rect(distbBox.x2-50, distbBox.y-165,25,210).attr({
+    strokeWidth: 1,
+    stroke: '#b00020',
+    fill: 'white',
+    rx: 3,
+    ry:3
+}),
+testPusher = s.rect(Number(slides.getBBox().x) + 9, slides.getBBox().y2 - 20, 7, 0) //animate x and height
+s.rect(distbBox.x2-50, Number(slides.getBBox().y2)-15,25,15).attr({
+    opacity: 0.8
+}) // testPusherCasing
+s.circle(distbBox.x2, Number(distbBox.y)+90, 10).attr({
+    id: 'circ'
+})
 
-    upperSlide = s.rect(Number(s.select("#cyl2").attr("x")), Number(s.select("#cyl2").attr("y")) - 140, 25, 110),
+drawMyrect(Number(s.select('#circ').attr('cx'))+2, Number(s.select('#circ').attr('cy'))+2, -75,-5).attr({
+    id: 'myrect1',
+    rx: 2,
+    ry: 2
+})
+let knob = s.circle(distbBox.x2, Number(distbBox.y)+90, 10).attr({
+    fill: stationFill,
+    id: 'circ'
+})
+let swivel = s.select('#myrect1').attr({
+    transform: new Snap.Matrix().rotate(15, Number(knob.attr('cx')), Number(knob.attr('cy')))
+})
 
-    sensor1 = s.rect(Number(s.select("#cyl2").attr("x")) - 4, Number(s.select("#pist2_").attr("y")) + 13, 20, 7).attr({
-        id: "sens1"
-    }),
+s.circle(distbBox.x2-50, distbBox.y-2.5, 5).attr({fill: stationFill})
+s.circle(distbBox.x2-25, distbBox.y-2.5, 5).attr({fill: stationFill})
 
-    sensor2 = sensor1.clone().attr({
-        x: Number(s.select("#cyl2").attr("x")) - 10,
-        y: Number(s.select("#sens1").attr("y")) + 12,
-        fill: "#ff5555",
-        id: "sens2"
-    });
-s.select("#sens1").transform("r15");
-s.select("#sens2").transform("r30");
 
 // STORING STATION COMPONENTS
 var rr = 8, // radius of the circles
@@ -353,13 +342,13 @@ var storBox = stor.getBBox(),
     lev2_color = "#b00020", //reddish brown
     lev3_color = "#6200ee", //deep blue
 
-    line0 = s.line(cp[0] + 10, cp[1], storBox.x + 10, cp[1]).attr({ //hidden line, used for placing circles
+    line0 = s.line(cp[0]+10, cp[1], storBox.x + 20, cp[1]).attr({ //hidden line, used for placing circles
         strokeWidth: 2,
-        stroke: 'green',//"#000000",
+        stroke: 'green',
         id: "line0",
-        opacity: 0 //////////////
+        opacity: 0
     }),
-    [c01, c02] = [Number(s.select("#line0").attr("x2")) + rr, s.select("#line0").attr("y2")],
+    [c01, c02] = [Number(s.select("#line0").attr("x2")) + rr, s.select("#line0").attr("y2")];
 
     c0 = s.circle(c01, c02, rr).attr({
         opacity: 1,
@@ -380,7 +369,7 @@ var storBox = stor.getBBox(),
     }),
 
     gr1a = gr0.clone().attr({
-        transform: setTransform(-25, cp[0], cp[1]), //"r-55",
+        transform: setTransform(-25, cp[0], cp[1]),
         id: "line1",
         opacity: 1,
         stroke: lev1_color,
@@ -436,6 +425,11 @@ let gr3a = gr1a.clone().attr({ stroke: lev3_color, }),
     gr3e = gr1e.clone().attr({ stroke: lev3_color, }),
     gr3f = gr1f.clone().attr({ stroke: lev3_color, });
 
+let pickP = s.circle(Number(s.select('#stor').attr('x'))+80, Number(s.select('#stor').attr('y'))+130, rr ).attr({
+    stroke: 'black',
+    opacity: 1,
+});
+
 
 var bigGr = s.group(gr1a, gr1b, gr1c, gr1d, gr1e, gr1f).attr({ id: "bg1", }), //level1
 
@@ -445,24 +439,18 @@ var bigGr = s.group(gr1a, gr1b, gr1c, gr1d, gr1e, gr1f).attr({ id: "bg1", }), //
 
 s.circle(Number(s.select("#pt").attr("cx")) + 10, s.select("#pt").attr("cy"), 2.5).attr({ fill: "#FFFFFF" }); //second dot
 s.circle(Number(s.select("#pt").attr("cx")) + 20, s.select("#pt").attr("cy"), 2.5).attr({ fill: "#FFFFFF" }); //third dot
+
 s.rect(cp[0] - 5, cp[1] - 5, 30, 10).attr({
     opacity: 0.5,
     rx: 2,
     ry: 2
 }); // layer over 3 points
 
-var armMatrix = new Snap.Matrix();
-armMatrix.rotate(10, cp[0], cp[1]);
-armMatrix.translate(0, 0, 0);
-
-
 var s_arm = s.line(s.select("#pt").attr("cx") - 70, s.select("#pt").attr("cy"), s.select("#pt").attr("cx"), s.select("#pt").attr("cy")).attr({ //robot arm
         id: "s_arm",
-        stroke: "#000000",
+        stroke: "black",
         strokeWidth: 4,
-        transformm: armMatrix
     }),
-    s_grip = s.path(),
 
     bx0 = s_arm.getBBox();
 //console.log("bx0:: ", bx0)
@@ -487,10 +475,18 @@ var gr_2 = s.line(bx0.x, bx0.y - 7, bx0.x, Number(bx0.y) + 7).attr({ //gripper, 
     gripper_s = s.group(s_arm, gr_2, gr_u, gr_d)
 
 
-//s.select("#s_arm").animate({ transform: armMatrix }, 5000)
-
-
-
 function setTransform(theta, x, y){
     return new Snap.Matrix().rotate(theta, x, y)
+}
+
+function drawMyrect(x, y, width, height){
+    if (width < 0) {
+        width = Math.abs(width)
+        x = x - width
+    }
+    if (height < 0) {
+        height = Math.abs(height)
+        y = y - height
+    }
+    return s.rect(x, y, width, height)
 }
