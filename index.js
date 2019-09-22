@@ -316,16 +316,17 @@ testStat.runServer = function(){
                         else ref.sendLiftDown()
                     }, 3000)
                 }
-                break/*
+                break
             case ('liftIsDown'):
                 console.log(ref.name, id, req.body.status)
-                if (!height) ref.pushCyl()
-                break*/
+                if (req.body.status){
+                    if (!height) setTimeout(() => ref.pushCyl(), 4000)
+                }
+                break
             case ('heightOK'):
                 console.log(ref.name, id, req.body.status)
                 if (req.body.status) height = req.body.status
                 else setTimeout(()=> height = req.body.status,5000)
-                
                 break
             case('airSlide'):
                 console.log(ref.name, id, req.body.status)
