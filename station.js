@@ -41,6 +41,19 @@ let request = require('request'),
             });
         }
 
+        makeServicePost(uri, body){
+            var ref = this;
+            return new Promise(function(resolve, reject){
+                request.post({uri: ref.baseURI2 + uri, json: true, body: body}, function(err, res, body){
+                    if(res.statusCode.toString().substr(0,1) == 2) resolve(res.body)
+                    else {
+                        reject('BAD SERVICE REQUEST')
+                        console.log('status code:', req.statusCode, uri)
+                    }
+                })
+            })
+        }
+
         //make a POST request (for subscriptions)
         makeSubscriptionPost(uri, body) {
             var ref = this;
