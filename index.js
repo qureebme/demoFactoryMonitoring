@@ -135,11 +135,15 @@ storStat.runServer = function(){
             case ('start'): // dont forget to emit only on rising edge
                 if(req.body.status){
                     //console.log('starrrrrt')
-                    
+                    /*
                     ref.goLinear(1,0,1) // to color ID
                     //ref.goLinear(1,0,0)
                     setTimeout(() => ref.goRotary(0,1,1),2000)
-                    //setTimeout(() => ref.goRotary(0,1,0),2000)
+                    //setTimeout(() => ref.goRotary(0,1,0),2000)*/
+
+                    ref.go([1,0,1,], [0,1,1])
+                    //ref.go([1,0,0], [0,0,0])
+
                     setTimeout(() => ref.extendSlide(), 8000)
                 }
                 
