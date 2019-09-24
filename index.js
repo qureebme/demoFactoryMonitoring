@@ -31,11 +31,96 @@ const port = 3000;
 http.listen(port, function() {
     console.log('Main server: running on port', port);
 });
-/*
+
 //5 storing station
 var storStat = new Station("Storing Station", "192.168.3.65", 3009);
-storStat.getEvents(['redE', 'blackE', 'silverE', 'atmeasE']);
+storStat.getEvents([ 'blackE','startE'/*, 'silverE', 'redE'*/]);
 storStat.subscribe()
+
+let blackCount = 0,
+    redCount = 0,
+    silverCount = 0;
+storStat.goLinear = async function(bit0, bit1, bit2){
+    let ref = this;
+    await Promise.all([
+        await bit0 ? ref.makeServicePost('setBit0', {}) : null,
+        await bit1 ? ref.makeServicePost('setBit1', {}) : null,
+        await bit2 ? ref.makeServicePost('setBit2', {}) : null
+        ])
+
+    await ref.makeServicePost('setLinear', {});
+        /*await bit0 ? ref.makeServicePost('setBit0', {}) : null;
+        await bit1 ? ref.makeServicePost('setBit1', {}) : null;
+        await bit2 ? ref.makeServicePost('setBit2', {}) : null;*/
+        //await ref.makeServicePost('setLinear', {});
+
+    //console.log('going linear')
+    ref.reset('linear')
+        
+}
+
+storStat.goRotary = async function(bit0, bit1, bit2){
+    let ref = this;
+    await Promise.all([
+        await bit0 ? ref.makeServicePost('setBit0', {}) : null,
+        await bit1 ? ref.makeServicePost('setBit1', {}) : null,
+        await bit2 ? ref.makeServicePost('setBit2', {}) : null
+        ])
+
+    await ref.makeServicePost('setRotary', {})
+        /*await bit0 ? ref.makeServicePost('setBit0', {}) : null
+        await bit1 ? ref.makeServicePost('setBit1', {}) : null
+        await bit2 ? ref.makeServicePost('setBit2', {}) : null*/
+        //await ref.makeServicePost('setRotary', {})
+
+    //console.log('going rotary') //not logging!!!!!!!!!!!!!!!!
+    ref.reset('rotary') //make this retun a promise?
+
+        
+}
+
+storStat.go = async function(linArr, rotArr){
+    let ref = this;
+    await ref.goLinear(linArr[0], linArr[1], linArr[2])
+    ref.goRotary(rotArr[0], rotArr[1], rotArr[2])
+}
+
+storStat.reset = function(axis){
+    let ref = this;
+    //console.log('resetting')
+    //ref.makeServicePost('resetBits', {})
+    request.post({uri: ref.baseURI2 + 'resetBits', json: true, body:{}})
+    setTimeout(() => {
+        if (axis.toLowerCase() =='linear') request.post({uri: ref.baseURI2 + 'resetLinear', json: true, body:{}})
+        else if(axis.toLowerCase() == 'rotary') request.post({uri: ref.baseURI2 + 'resetRotary', json: true, body:{}})
+    }, 500)
+}
+
+storStat.extendSlide = function(){
+    let ref = this;
+    ref.makeServicePost('extSlide', {})
+}
+storStat.retractSlide = function(){
+    let ref = this;
+    ref.makeServicePost('retSlide', {})
+}
+storStat.closeGripper = function(){
+    let ref = this;
+    ref.makeServicePost('clsGripper', {})
+}
+storStat.openGripper = function(){
+    let ref = this;
+    ref.makeServicePost('openGripper', {})
+}
+storStat.transferWkpc = async function(linArr, rotArr){
+    let ref = this;
+    await ref.goLinear(1,1,1)//to pick up //for now
+    //setTimeout(() => ref.closeGripper(), 2000) //out for now
+    //await ref.closeGripper()
+    await ref.goLinear(1,0,1) // lift wkpc out
+    setTimeout(() => ref.retractSlide(), 2000)
+    setTimeout(() => ref.go(linArr, rotArr), 3000)
+}
 
 storStat.runServer = function(){
     var ref = this;
@@ -45,21 +130,86 @@ storStat.runServer = function(){
 
     app.post('/', function(req, res){
         let id = req.body.eventID
-        console.log(res.body);
         
         switch (id) {
-            case (wxyz):
-                console.log()
+            case ('start'): // dont forget to emit only on rising edge
+                if(req.body.status){
+                    //console.log('starrrrrt')
+                    
+                    ref.goLinear(1,0,1) // to color ID
+                    //ref.goLinear(1,0,0)
+                    setTimeout(() => ref.goRotary(0,1,1),2000)
+                    //setTimeout(() => ref.goRotary(0,1,0),2000)
+                    setTimeout(() => ref.extendSlide(), 8000)
+                }
+                
                 break
-            case (wxyz):
-                console.log()
+            case ('linearComplete'):
+                //reset start linear. resetBits?
+                //console.log()
                 break
-            case (wxyz):
-                console.log()
+            case ('rotaryComplete'):
+                //reset start rotary. resetBits?
+                //console.log()
                 break
-            case (wxyz):
-                console.log()
+            case ('isBlack'):
+                if (req.body.status){
+                    console.log('Black detected')
+                    if (blackCount == 0){ // still some yet unfilled places?
+                        ref.transferWkpc([1, 0, 0], [0,0,0])
+                        blackCount++
+                        console.log(blackCount)
+                    }
+                    else if (blackCount == 1) {
+                        ref.transferWkpc([1, 0, 0], [1,0,0])
+                        blackCount++
+                        console.log(blackCount)
+                    }
+                    else if (blackCount == 2) {
+                        ref.transferWkpc([1, 0, 0], [0,1,0])
+                        blackCount++
+                        console.log(blackCount)
+                    }
+                    else if (blackCount == 3) {
+                        ref.transferWkpc([1, 0, 0], [1,1,0])
+                        blackCount++
+                        console.log(blackCount)
+                    }
+                    else if (blackCount == 4) {
+                        ref.transferWkpc([1, 0, 0], [0,0,1])
+                        blackCount++
+                        console.log(blackCount)
+                    }
+                    else if (blackCount == 5) {
+                        ref.transferWkpc([1, 0, 0], [1,0,1])
+                        blackCount++
+                        console.log(blackCount)
+                    }
+                    else console.log('FULL') //full
+                }
                 break
+                /*
+            case ('isSilver'):
+                if (req.body.status){
+                    console.log('Silver detected')
+                    if (silverCount == 0){ // still some yet unfilled places?
+                    }
+                    else if (silverCount == 1) ref.transferWkpc([1, 0, 0], [1,0,0])
+                    else if (sliverCount == 2) ref.transferWkpc([1, 0, 0], [0,1,0])
+                    else if (silverCount == 3) ref.transferWkpc([1, 0, 0], [1,1,0])
+                    else if (silverCount == 4) ref.transferWkpc([1, 0, 0], [0,0,1])
+                    else if (silverCount == 5) ref.transferWkpc([1, 0, 0], [1,0,1])
+                    else console.log('FULL') //full
+                }
+                break
+            case ('isRed'):
+                if (req.body.status){
+                    console.log('Red detected')
+                    if (redCount < 6){ // still some yet unfilled places?
+                    }
+                }
+                break
+                */
             default:
                 break
         }
@@ -71,7 +221,7 @@ storStat.runServer = function(){
     })
 }
 storStat.runServer()
-*/
+
 /*
 //2 processing station
 var procStat = new Station("Processing Station", "192.168.3.60", 3006);
@@ -266,7 +416,7 @@ distStat.runServer()
 
 
 
-
+/*
 //4 testing station
 var testStat = new Station("Testing Station", "192.168.3.27", 3008);
 testStat.getEvents(['liftIsDownE','liftIsUpE','heightOKE','partAvE','pushCylBackE', 'airSlideE', 'startE']);
@@ -331,14 +481,13 @@ testStat.runServer = function(){
             case('airSlide'):
                 console.log(ref.name, id, req.body.status)
                 if(!req.body.status) setTimeout(()=> ref.sendLiftDown())
-                /*
             case ('partAv'):
-                console.log(ref.name, id, req.body.status)
+                //console.log(ref.name, id, req.body.status)
                 break
             case ('pushCylBack'):
-                console.log(ref.name, id, req.body.status)
-                cyl = req.body.status
-                break*/
+                //console.log(ref.name, id, req.body.status)
+                //cyl = req.body.status
+                break
             default:
                 break
         }
@@ -350,3 +499,4 @@ testStat.runServer = function(){
     });
 }
 testStat.runServer()
+*/
