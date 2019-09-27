@@ -1,5 +1,5 @@
 let request = require('request'),
-    chalk = require('chalk')
+    chalk = require('chalk'),
 
     myIP = '192.168.3.100';
 
@@ -45,11 +45,8 @@ let request = require('request'),
             var ref = this;
             return new Promise(function(resolve, reject){
                 request.post({uri: ref.baseURI2 + uri, json: true, body: body}, function(err, res, body){
-                    if(res.statusCode.toString().substr(0,1) == 2) resolve(res.body)
-                    else {
-                        reject('BAD SERVICE REQUEST')
-                        console.log('status code:', req.statusCode, uri)
-                    }
+                    //if(res.statusCode.toString().substr(0,1) == 2) resolve(res.body)
+                    if (res) resolve(res.body)
                 })
             })
         }
@@ -61,7 +58,7 @@ let request = require('request'),
                 request.post({ uri: uri, json: true, body: body }, function(err, res, body) {
                     if (res) {
                         resolve(res.statusCode);
-                    } else reject(new Error(ref.name + ": 1 subscription failed.   statusCode:", res.statusCode));
+                    } else console.log('line 65...', uri) //in case it's broken
                 });
             })
         }
@@ -76,21 +73,18 @@ let request = require('request'),
                 ref.makeSubscriptionPost(uri, body)
                     .then(function(data) { // data is the response code to the most recent subscription
                         if (data.toString().substr(0, 1) == 2) { // success = 2xx
-                            console.log(ref.events[ref.eventCount], 'SUBSCRIBED!');
+                            console.log(ref.name, ref.events[ref.eventCount], 'SUBSCRIBED!');
                             ref.eventCount++;
                             if (ref.eventCount < ref.nEvents) {
                                 return ref.subscribe(); // recursive
                             }
-                        } else {
-                            // what to do when a subscription fails?***************
-                            //NOTIFY THE OPERATOR!
-                        }
+                        } 
                     })
                     .catch(function(err) {
-                        console.error(err);
+                        console.error(`Subscription error in, ${ref.name}, ${err}`);
                     });
             } else {
-                console.log(ref.name, ": No events specified, therefore no subscriptions.");
+                console.log(ref.name, chalk.yellow(': No events specified, therefore no subscriptions.'));
             }
         }
 
@@ -123,11 +117,11 @@ let request = require('request'),
         initInputs(socket) {
             let uri = "http://" + this.ip + "/rest/services/showAllInputs";
             request.post({ uri: uri, json: true, body: {} }, function(err, res, body) {
-                this.inputs = Object.keys(res.body);
-                this.nInputs = this.inputs.length;
-
-                // and then emit an event carrying the statuses of the Inputs
-                setTimeout(() => socket.emit('initialStatus', res.body), 2000)
+                if (res){
+                    this.inputs = Object.keys(res.body);
+                    this.nInputs = this.inputs.length;
+                    setTimeout(() => socket.emit('initialStatus', res.body), 2000)
+                }
             })
         }
 
