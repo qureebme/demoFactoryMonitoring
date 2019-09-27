@@ -75,7 +75,6 @@ let handSocket = io.of('/handling')
     distSocket = io.of('/distributing')
                     .on('connection', function(socket){
                         console.log(chalk.green(`dist client is connected`))
-                        distSocket.emit('ter')/////
 
                         socket.on('initialStatusError', function(mssg){
                             console.log(chalk.red.bold(`Dist Station, INITIAL STATUS ERROR: ${mssg}`))
