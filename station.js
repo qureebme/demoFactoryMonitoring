@@ -63,10 +63,13 @@ let request = require('request'),
                 ref.makeSubscriptionPost(uri, body)
                     .then(function(data) { // data is the response code to the most recent subscription
                         if (data.toString().substr(0, 1) == 2) { // success = 2xx
-                            console.log(ref.name, ref.events[ref.eventCount], 'SUBSCRIBED!');
+                            //console.log(ref.name, ref.events[ref.eventCount], 'SUBSCRIBED!');
                             ref.eventCount++;
                             if (ref.eventCount < ref.nEvents) {
                                 return ref.subscribe(); // recursive
+                            }
+                            else if(ref.eventCount == ref.nEvents) {
+                                console.log(chalk.green(`${ref.name}: all subscriptions successful!`))
                             }
                         } 
                     })
@@ -127,6 +130,16 @@ let request = require('request'),
                     console.log("Error: check that no output on the station is active.");
                 }
             })
+        }
+
+        light(color, state){
+            let ref = this;
+            let uri = 'light' + color;
+            ref.makeServicePost(uri, {})
+                .then((data) => {
+                    if (state != data.status) ref.makeServicePost(uri, {})
+                })
+                .catch((err) => console.log(chalk.red.bold('Error in lighting:', ref.name, uri)))
         }
 
         //run a server
