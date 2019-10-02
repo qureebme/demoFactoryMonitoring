@@ -31,16 +31,6 @@ let request = require('request'),
             ref.nEvents = arr.length;
         }
 
-        // make a POST request (for fetching IO values) // DELETE?
-        fetchIOstatus(uri, body) {
-            var ref = this;
-            return new Promise(function(resolve, reject) {
-                request.post({ uri: uri, json: true, body: {} }, function(err, res, body) {
-                    resolve(res.body); // expected body = {"IO_name": value}**********
-                });
-            });
-        }
-
         makeServicePost(uri, body){
             var ref = this;
             return new Promise(function(resolve, reject){
