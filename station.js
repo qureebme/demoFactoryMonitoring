@@ -56,6 +56,8 @@ let request = require('request'),
         //make subscriptions
         subscribe() {
             var ref = this;
+            ref.unsubscribe()
+            
             if (ref.nEvents) {
                 var uri = ref.baseURI + ref.events[ref.eventCount] + "/notifs";
                 var body = { destUrl: "http://" + myIP + ":" + ref.eventPort };
