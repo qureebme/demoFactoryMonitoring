@@ -56,8 +56,7 @@ let request = require('request'),
         //make subscriptions
         subscribe() {
             var ref = this;
-            ref.unsubscribe()
-            
+
             if (ref.nEvents) {
                 var uri = ref.baseURI + ref.events[ref.eventCount] + "/notifs";
                 var body = { destUrl: "http://" + myIP + ":" + ref.eventPort };
@@ -88,7 +87,7 @@ let request = require('request'),
             var ref = this,
                 uri = ref.baseURI,
                 body = {}
-
+                
                 request.delete(uri, function(err, res, body){
                     let code = res.statusCode.toString().substr(0, 1)
                     
