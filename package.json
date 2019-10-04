@@ -1,0 +1,25 @@
+{
+  "name": "demo_factory_app",
+  "version": "1.0.0",
+  "description": "app for monitoring a Festo MPS-5000 demo factory",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "keywords": [
+    "automation",
+    "factory",
+    "informatics",
+    "REST"
+  ],
+  "author": "qureeb hameed",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "chalk": "^2.4.2",
+    "express": "^4.16.3",
+    "request": "^2.88.0",
+    "socket.io": "^2.2.0"
+  }
+}
