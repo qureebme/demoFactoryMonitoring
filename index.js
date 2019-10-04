@@ -6,8 +6,6 @@ var express = require('express'),
     io = require('socket.io')(http),
     chalk = require('chalk');
 
-//let  distSocket, testSocket, storSocket; //procSocket, handSocket,
-
 app.use(bodyParser);
 app.use(express.static(staticFile));
 
@@ -49,6 +47,17 @@ let handSocket = io.of('/handling')
                         socket.on('initialStatusError', function(mssg){
                             console.log(chalk.red.bold(`Hand station, INITIAL STATUS ERROR: ${mssg}`))
                             hand.handStat.unsubscribe()
+                            hand.handStat.light('Red', true)
+                            hand.handStat.light('Green', false)
+                        })
+
+                        socket.on('success', function(data){
+                            hand.handStat.light('Green', true)
+                            hand.handStat.light('Red', false)
+                        })
+
+                        socket.on('failure', function(data){
+                            hand.handStat.unsubscribe()
                         })
                     }),
 
@@ -58,6 +67,17 @@ let handSocket = io.of('/handling')
 
                         socket.on('initialStatusError', function(mssg){
                             console.log(chalk.red.bold(`Proc station, INITIAL STATUS ERROR: ${mssg}`))
+                            proc.procStat.unsubscribe()
+                            proc.procStat.light('Red', true)
+                            proc.procStat.light('Green', false)
+                        })
+
+                        socket.on('success', function(data){
+                            proc.procStat.light('Green', true)
+                            proc.procStat.light('Red', false)
+                        })
+
+                        socket.on('failure', function(data){
                             proc.procStat.unsubscribe()
                         })
                     }),
@@ -69,6 +89,17 @@ let handSocket = io.of('/handling')
                         socket.on('initialStatusError', function(mssg){
                             console.log(chalk.red.bold(`test station, INITIAL STATUS ERROR: ${mssg}`))
                             test.testStat.unsubscribe()
+                            test.testStat.light('Red', true)
+                            test.testStat.light('Green', false)
+                        })
+
+                        socket.on('success', function(data){
+                            test.testStat.light('Green', true)
+                            test.testStat.light('Red', false)
+                        })
+
+                        socket.on('failure', function(data){
+                            test.testStat.unsubscribe()
                         })
                     }),
 
@@ -79,6 +110,17 @@ let handSocket = io.of('/handling')
                         socket.on('initialStatusError', function(mssg){
                             console.log(chalk.red.bold(`Dist Station, INITIAL STATUS ERROR: ${mssg}`))
                             dist.distStat.unsubscribe()
+                            dist.distStat.light('Red', true)
+                            dist.distStat.light('Green', false)
+                        })
+
+                        socket.on('success', function(data){
+                            dist.distStat.light('Green', true)
+                            dist.distStat.light('Red', false)
+                        })
+
+                        socket.on('failure', function(data){
+                            dist.distStat.unsubscribe()
                         })
                     }),
 
@@ -88,6 +130,14 @@ let handSocket = io.of('/handling')
 
                         socket.on('initialStatusError', function(mssg){
                             console.log(chalk.red.bold(`Storing Station, INITIAL STATUS ERROR: ${mssg}`))
+                            stor.storStat.unsubscribe()
+                        })
+
+                        socket.on('success', function(data){
+                            //stor.storStat.light('Green', true) // has no light
+                        })
+
+                        socket.on('failure', function(data){
                             stor.storStat.unsubscribe()
                         })
                     });
