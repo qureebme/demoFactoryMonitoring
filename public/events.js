@@ -250,7 +250,7 @@ procSocket.on('wkpcOK', function(data){
 
 
 /////distributing station
-let objInMag, objToPick;
+let objInMag, objToPick, vacuumOn, objPicked;
 //connect
 distSocket.on('connect', function(){
     console.log('Distributing station server is connected');
@@ -318,40 +318,51 @@ distSocket.on('initialStatus', function(data) {
 
 distSocket.on('magEmpty', function(data){ //okay
     console.log('magempty', data)
+    
     if(data) wkpc_dist2 = wkpc_dist2.attr({opacity: 0})
     else wkpc_dist2 = wkpc_dist2.attr({opacity: 1})
+
+    if (data) objInMag = false
+    else objInMag = true
 })
 
 distSocket.on('armPut', function(data){
     //console.log('armput',data)
+    //if(!vacuumOn) objPicked = false
     if (!objToPick){ //okay
         swivel = swivel.attr({transform: new Snap.Matrix().rotate(60, Number(knob.attr('cx')), Number(knob.attr('cy')))})
     }
     else{
         // move swivel
-        swivel = swivel.attr({transform: new Snap.Matrix().rotate(60, Number(knob.attr('cx')), Number(knob.attr('cy')))})
+        //swivel = swivel.attr({transform: new Snap.Matrix().rotate(60, Number(knob.attr('cx')), Number(knob.attr('cy')))})
         
-        // and objtopick
+        if (objPicked){
+            swivel = swivel.attr({transform: new Snap.Matrix().rotate(60, Number(knob.attr('cx')), Number(knob.attr('cy')))})
+            wkpc_dist[0] = wkpc_dist[0].attr({transform: new Snap.Matrix().rotate(78, Number(knob.attr('cx')), Number(knob.attr('cy')))})
+            wkpc_dist[1] = wkpc_dist[1].attr({transform: new Snap.Matrix().rotate(78, Number(knob.attr('cx')), Number(knob.attr('cy')))})
+        }
+        else swivel = swivel.attr({transform: new Snap.Matrix().rotate(60, Number(knob.attr('cx')), Number(knob.attr('cy')))})
         
-        swivel = swivel.attr({transform: new Snap.Matrix().rotate(60, Number(knob.attr('cx')), Number(knob.attr('cy')))})
-        wkpc_dist[0] = wkpc_dist[0].attr({transform: new Snap.Matrix().rotate(60, Number(knob.attr('cx')), Number(knob.attr('cy')))})
-        wkpc_dist[1] = wkpc_dist[1].attr({transform: new Snap.Matrix().rotate(60, Number(knob.attr('cx')), Number(knob.attr('cy')))})
         
        //assign wkpc dist to wkpc_test????
-        //objToPick = false;
+        objToPick = false;
     }
     
 })
 distSocket.on('armTake', function(data){ //okay
     //console.log('armtake', data)
     swivel = swivel.attr({transform: new Snap.Matrix().rotate(-17, Number(knob.attr('cx')), Number(knob.attr('cy')))})
+    if (vacuumOn){
+        //we beliv obj will be picked, so group wkpc and swivel? or animate each separately?
+        objPicked = true
+    }
 })
 distSocket.on('pushCylFront', function(data){ //okay
     //console.log('pushCylF', data)
     if (data) {
         wkpc_dist = makeWkpc(s, Number(pusherCasing.getBBox().x2) + 8, pusherCasing.getBBox().y2-12.5)
                     .attr({opacity: 1})
-        //wkpc_dist.animate({cx: Number(wkpc_dist[0].attr('cx'))+125}, 100, mina.linear, ()=> {objToPick = true})
+
         wkpc_dist[0] = wkpc_dist[0].animate({cx: Number(wkpc_dist[0].attr('cx'))+125}, 100, mina.linear, ()=> {objToPick = true})
         wkpc_dist[1] = wkpc_dist[1].animate({cx: Number(wkpc_dist[0].attr('cx'))+125}, 100, mina.linear, ()=> {objToPick = true})
     }
@@ -359,7 +370,17 @@ distSocket.on('pushCylFront', function(data){ //okay
 distSocket.on('pushCylBack', function(data){
     //console.log('pushCylBack', data)
     
-});
+})
+distSocket.on('vacuum', function(data){
+    if (data) {
+        vacuumOn = true
+        //objPicked = true
+    }
+    else {
+        vacuumOn = false
+        objPicked = false
+    }
+})
 
 
 //testing station
