@@ -136,11 +136,18 @@ let request = require('request'),
         light(color, state){
             let ref = this;
             let uri = 'light' + color;
-            ref.makeServicePost(uri, {})
+            ref.makeServicePost('showLights', {})
+                .then((outputs) => {
+                    if ((color == 'Red') && (outputs.d1 !== state)) ref.makeServicePost(uri, {})
+                    else if ((color == 'Amber') && (outputs.d2 !== state)) ref.makeServicePost(uri, {})
+                    else if ((color == 'Green') && (outputs.d3 !== state)) ref.makeServicePost(uri, {})
+                })
+                .catch((err) => console.log(chalk.red.bold('Error in lighting:', ref.name, uri)))
+            /*ref.makeServicePost(uri, {})
                 .then((data) => {
                     if (state != data.status) ref.makeServicePost(uri, {})
                 })
-                .catch((err) => console.log(chalk.red.bold('Error in lighting:', ref.name, uri)))
+                .catch((err) => console.log(chalk.red.bold('Error in lighting:', ref.name, uri)))*/
         }
 
         //run a server

@@ -1,4 +1,3 @@
-//2 processing station
 
 var app = require('express')(),
     http = require('http').createServer(app),
@@ -18,6 +17,11 @@ procStat.runServer = function(){
 
     app.post('/', function(req, res){
         let id = req.body.eventID;
+
+        clearTimeout(idle)
+        ref.light('Amber', false)
+        idle = setTimeout(() => ref.light('Amber', true), 300000)
+
         switch (id) {
             case ('rotate'):
                 sockets.procSocket.emit('rotate', req.body.status)
@@ -56,4 +60,5 @@ procStat.runServer = function(){
     });
 }
 
+let idle = setTimeout(() => procStat.light('Amber', true), 300000)
 module.exports = {procStat}

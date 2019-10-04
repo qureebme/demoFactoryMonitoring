@@ -161,9 +161,9 @@ var ccc = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select("#
     id: "ccc"
 }); // the centre circle
 
-let wkpc2 = s.circle(768,812,10).attr({fill: 'blue', visibility:'hidden'});
+let wkpc_proc = makeWkpc(s,768,812) // opacity to 0
 
-var spinner = s.group(flange1, flange2, flange3, ccc, wkpc2).attr({
+var spinner = s.group(flange1, flange2, flange3, ccc, wkpc_proc).attr({
     id: "spin"
 }); // make the spinner whole
 
@@ -237,10 +237,6 @@ let handler = s.rect(Number(s.select("#hand").attr("x")) + 50+42, Number(s.selec
         strokeWidth: 4
     }), //anim to h=~185 to reach nxt station
 
-    wkpc = s.circle(Number(s.select("#handler").attr("x")) + 8, Number(s.select("#handler").attr("y")) + Number(s.select("#handler").attr("height")) - 10, 8).attr({
-        fill: "red",
-        opacity: 0,
-    }),
     line_m = s.line (Number(handler.attr('x'))+8, handler.attr('y'), Number(handler.attr('x'))+8, Number(handler.attr('y'))+150),
     line_c = s.line(line_m.attr('x2')-5, line_m.attr('y2'), Number(line_m.attr('x2'))+5, line_m.attr('y2')),
     line_r = s.line(line_c.attr('x2'), line_c.attr('y2'), line_c.attr('x2'), Number(line_c.attr('y2'))+20),
@@ -248,35 +244,16 @@ let handler = s.rect(Number(s.select("#hand").attr("x")) + 50+42, Number(s.selec
     gr_line = s.group(line_m, line_c, line_r, line_l).attr({
         stroke: 'black',
         strokeWidth: 3,
-        //visibility: 'hidden',//
         opacity: 0,
-    });
-    /*
-    console.log('my2: ',line_m.attr('y2'))
-    console.log('cy2: ',line_c.attr('y2'))
-    console.log('cy1: ',line_c.attr('y1'))
-    console.log('ry2: ',line_r.attr('y2'))
-    console.log('ry1: ',line_r.attr('y1'))
-    console.log('ly2: ',line_l.attr('y2'))
-    console.log('ly1: ',line_l.attr('y1'))
-    */
-/*
-    setTimeout(function(){
-        line_m.animate({y2: line_m.attr('y1')},2000) //630
-        line_c.animate({y1: line_m.attr('y1'), y2: line_m.attr('y1')},2000)
-        line_r.animate({y1: line_m.attr('y1'), y2: line_m.attr('y1')},2000)
-        line_l.animate({y1: line_m.attr('y1'), y2: line_m.attr('y1')},2000)
-        gr_line.animate({opacity:0},2200)
-    },2000)*/
+    }),
 
-
-
-
+    wkpc_hand = makeWkpc(s,Number(s.select("#handler").attr("x")) + 8, Number(s.select("#handler").attr("y")) + Number(s.select("#handler").attr("height")) - 10)
+    //wkpc_hand.attr({opacity: 1}) //delete
 // DISTRIBUTING STATION COMPONENTS
 
-var holder = s.rect(Number(s.select("#dist").attr("x")) + 20, Number(s.select("#dist").attr("y")) + 100, 160, 25).attr({
+var holder = s.rect(Number(s.select("#dist").attr("x")) + 23, Number(s.select("#dist").attr("y")) + 100, 160, 25).attr({
         id: "holder",
-        stroke: "#6200ee",//"#ffffff",
+        stroke: "#6200ee",
         strokeWidth: 1,
         fill: "white",
         opacity: 1,
@@ -290,12 +267,21 @@ var pusher = s.rect(Number(s.select("#dist").attr("x")) + 20, Number(s.select("#
     rx: 3,
     ry: 3
 }), // animate the width
-    pusherCasing = s.rect(Number(s.select("#dist").attr("x")) + 20, Number(s.select("#dist").attr("y"))-3 + 103,15,25).attr({
-        opacity: 0.8
-    })
+    pusherCasing = s.rect(Number(s.select("#dist").attr("x")) + 23, Number(s.select("#dist").attr("y"))-3 + 103,15,25).attr({
+        opacity: 0.8,
+        rx: 3,
+        ry:3
+    }),
 
-//TESTING STATION COMPONENTS
+wkpc_dist2 = makeWkpc(s, Number(pusherCasing.getBBox().x2) + 8, pusherCasing.getBBox().y2-12.5)
+////////////////////////
+//wkpc_dist.attr({opacity: 1})
+
+//console.log('dist ', wkpc_dist[0].attr('cx'), wkpc_dist[0].attr('cy')) //239.60000000000002 904.5
+//////////////////////
 var distbBox = s.select('#dist').getBBox();
+//TESTING STATION COMPONENTS
+
 var slides = s.rect(distbBox.x2-50, distbBox.y-165,25,210).attr({
     strokeWidth: 1,
     stroke: '#b00020',
@@ -303,26 +289,56 @@ var slides = s.rect(distbBox.x2-50, distbBox.y-165,25,210).attr({
     rx: 3,
     ry:3
 }),
-testPusher = s.rect(Number(slides.getBBox().x) + 9, slides.getBBox().y2 - 20, 7, 0) //animate x and height
-s.rect(distbBox.x2-50, Number(slides.getBBox().y2)-15,25,15).attr({
-    opacity: 0.8
+testPusher = s.rect(Number(slides.getBBox().x) + 9, slides.getBBox().y2 - 20, 7, 0), //animate x and height
+testCasing = s.rect(distbBox.x2-50, Number(slides.getBBox().y2)-15,25,15).attr({
+    opacity: 0.8,
+    rx: 3,
+    ry:3
 }) // testPusherCasing
 s.circle(distbBox.x2, Number(distbBox.y)+90, 10).attr({
     id: 'circ'
-})
+}) //black
 
-drawMyrect(Number(s.select('#circ').attr('cx'))+2, Number(s.select('#circ').attr('cy'))+2, -75,-5).attr({
+let swivel = drawMyrect(Number(s.select('#circ').attr('cx'))+2, Number(s.select('#circ').attr('cy'))+2, -77,-5).attr({
     id: 'myrect1',
     rx: 2,
     ry: 2
 })
+
 let knob = s.circle(distbBox.x2, Number(distbBox.y)+90, 10).attr({
     fill: stationFill,
-    id: 'circ'
+    id: 'circ2'
 })
-let swivel = s.select('#myrect1').attr({
-    transform: new Snap.Matrix().rotate(15, Number(knob.attr('cx')), Number(knob.attr('cy')))
-})
+/*
+let swivel = drawMyrect(Number(s.select('#circ').attr('cx'))+2, Number(s.select('#circ').attr('cy'))+2, -77,-5).attr({
+    id: 'myrect1',
+    transform: new Snap.Matrix().rotate(22, Number(knob.attr('cx')), Number(knob.attr('cy'))),
+    rx: 2,
+    ry: 2
+})*/
+/*
+swivel = swivel.attr({ //60 to test, -17 to distr
+    transform: new Snap.Matrix().rotate(22, Number(knob.attr('cx')), Number(knob.attr('cy')))
+})*/
+
+let wkpc_test = makeWkpc(s, Number(testCasing.getBBox().x) + 12.5, testCasing.getBBox().y - 8)
+////////////////
+//wkpc_test.attr({opacity: 1})
+//wkpc_test[0].animate({cy: wkpc_test[0].attr('cy')-24}, 200)
+//wkpc_test[1].animate({cy: wkpc_test[1].attr('cy')-24}, 200)
+//console.log('test ', wkpc_test[0].attr('cx'), wkpc_test[0].attr('cy')) //406.1 814
+var wkpc_path = s.path("M 364 904 Q 384 800 406 814").attr({
+    stroke: 'green',
+    strokeWidth: 2,
+    opacity: 0
+}),
+
+    length = wkpc_path.getTotalLength();//used in anim function for the swivel
+
+let rotMatrix = new Snap.Matrix() //used in anim function for the swivel
+
+//animate(-3)
+///////////////
 
 s.circle(distbBox.x2-50, distbBox.y-2.5, 5).attr({fill: stationFill})
 s.circle(distbBox.x2-25, distbBox.y-2.5, 5).attr({fill: stationFill})
@@ -489,4 +505,21 @@ function drawMyrect(x, y, width, height){
         y = y - height
     }
     return s.rect(x, y, width, height)
+}
+
+function makeWkpc(s, x, y){
+    let part1 = s.circle(x,y,3).attr({
+        fill: 'yellow',
+    }),
+        part2 = s.circle(x,y,8).attr({
+            fill: '09AF00',
+        });
+    return s.group(part2, part1).attr({opacity: 0})
+}
+
+function animate(val){
+    Snap.animate(length, 0, (step)=>{
+        rotMatrix.rotate(val, Number(knob.attr('cx')), Number(knob.attr('cy')))
+        swivel = swivel.attr({transform: rotMatrix})
+    }, 100, mina.easein)
 }

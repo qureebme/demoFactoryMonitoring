@@ -16,7 +16,11 @@ distStat.runServer = function(){
 
     app.post('/', function(req, res){
         let id = req.body.eventID;
-        
+
+        clearTimeout(idle)
+        ref.light('Amber', false)
+        idle = setTimeout(() => ref.light('Amber', true), 300000)
+
         switch (id) {
             case ('magEmpty'):
                 sockets.distSocket.emit('magEmpty', req.body.status)
@@ -34,7 +38,6 @@ distStat.runServer = function(){
                 sockets.distSocket.emit('pushCylBack', req.body.status)
                 break;
             case ('vacuum'):
-                //console.log(ref.name, id)
                 sockets.distSocket.emit('vacuum', req.body.status)
                 break;
             default:
@@ -48,4 +51,5 @@ distStat.runServer = function(){
     });
 }
 
+let idle = setTimeout(() => distStat.light('Amber', true), 300000)
 module.exports = {distStat}

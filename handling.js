@@ -17,9 +17,13 @@ handStat.runServer = function(){
     app.post('/', function(req, res) {
         let id = req.body.eventID;
 
+        clearTimeout(idle)
+        ref.light('Amber', false)
+        idle = setTimeout(() => ref.light('Amber', true), 300000)
+
         switch (id) {
             case ('partAv'):
-                console.log(ref.name, id, req.body.status)
+                //console.log(ref.name, id, req.body.status)
                 sockets.handSocket.emit('partAv', req.body.status)
                 break;
             case('atPrevious'):
@@ -54,4 +58,5 @@ handStat.runServer = function(){
     });
 }
 
+let idle = setTimeout(() => handStat.light('Amber', true), 300000)
 module.exports = {handStat}

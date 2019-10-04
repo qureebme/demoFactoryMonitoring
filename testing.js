@@ -1,6 +1,7 @@
 var app = require('express')(),
     http = require('http').createServer(app),
-    bodyParser = require('body-parser').json({ strict: false });
+    bodyParser = require('body-parser').json({ strict: false }),
+    request = require('request');
     
 const Station = require('./station');
 const sockets = require('./index');
@@ -43,6 +44,10 @@ testStat.runServer = function(){
 
     app.post('/', function(req, res){
         let id = req.body.eventID;
+
+        clearTimeout(idle)
+        ref.light('Amber', false)
+        idle = setTimeout(() => ref.light('Amber', true), 300000)
         
         switch (id) {
             case ('start'):
@@ -79,7 +84,7 @@ testStat.runServer = function(){
                 sockets.testSocket.emit('partAv', req.body.status)
                 break
             case ('pushCylBack'):
-                console.log(ref.name, id, req.body.status)
+                //console.log(ref.name, id, req.body.status)
                 break
             default:
                 break
@@ -92,4 +97,5 @@ testStat.runServer = function(){
     });
 }
 
+let idle = setTimeout(() => testStat.light('Amber', true), 300000)
 module.exports = {testStat}
