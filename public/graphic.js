@@ -309,37 +309,11 @@ let knob = s.circle(distbBox.x2, Number(distbBox.y)+90, 10).attr({
     fill: stationFill,
     id: 'circ2'
 })
-/*
-let swivel = drawMyrect(Number(s.select('#circ').attr('cx'))+2, Number(s.select('#circ').attr('cy'))+2, -77,-5).attr({
-    id: 'myrect1',
-    transform: new Snap.Matrix().rotate(22, Number(knob.attr('cx')), Number(knob.attr('cy'))),
-    rx: 2,
-    ry: 2
-})*/
-/*
-swivel = swivel.attr({ //60 to test, -17 to distr
-    transform: new Snap.Matrix().rotate(22, Number(knob.attr('cx')), Number(knob.attr('cy')))
-})*/
+//////////////////////////////
 
-let wkpc_test = makeWkpc(s, Number(testCasing.getBBox().x) + 12.5, testCasing.getBBox().y - 8)
-////////////////
-//wkpc_test.attr({opacity: 1})
-//wkpc_test[0].animate({cy: wkpc_test[0].attr('cy')-24}, 200)
-//wkpc_test[1].animate({cy: wkpc_test[1].attr('cy')-24}, 200)
-//console.log('test ', wkpc_test[0].attr('cx'), wkpc_test[0].attr('cy')) //406.1 814
-var wkpc_path = s.path("M 364 904 Q 384 800 406 814").attr({
-    stroke: 'green',
-    strokeWidth: 2,
-    opacity: 0
-}),
+//let wkpc_test = makeWkpc(s, Number(testCasing.getBBox().x) + 12.5, testCasing.getBBox().y - 8).attr({opacity:1})
 
-    length = wkpc_path.getTotalLength();//used in anim function for the swivel
-
-let rotMatrix = new Snap.Matrix() //used in anim function for the swivel
-
-//animate(-3)
-///////////////
-
+////////////////////////
 s.circle(distbBox.x2-50, distbBox.y-2.5, 5).attr({fill: stationFill})
 s.circle(distbBox.x2-25, distbBox.y-2.5, 5).attr({fill: stationFill})
 
@@ -512,14 +486,7 @@ function makeWkpc(s, x, y){
         fill: 'yellow',
     }),
         part2 = s.circle(x,y,8).attr({
-            fill: '09AF00',
+            fill: 'green',
         });
     return s.group(part2, part1).attr({opacity: 0})
-}
-
-function animate(val){
-    Snap.animate(length, 0, (step)=>{
-        rotMatrix.rotate(val, Number(knob.attr('cx')), Number(knob.attr('cy')))
-        swivel = swivel.attr({transform: rotMatrix})
-    }, 100, mina.easein)
 }
