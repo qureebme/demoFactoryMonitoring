@@ -89,6 +89,12 @@ var asrs = s.rect(c_x - 150, c_y2 - 100, 300, 250).attr({
         fill: stationFill
     }); // storing station
 
+let text2 = s.text(Number(stor.attr('x'))+2, Number(stor.attr('y'))+13, 'dblClick to retrieve wkpc').attr({
+    opacity: 0
+});
+    
+stor.hover(function(){return text2.attr({opacity:1})}, function(){return text2.attr({opacity:0})})
+
 
 // LOWER SIDE
 var hand = s.rect(c_x - 100, c_y1, s_width, s_height).attr({
@@ -343,22 +349,13 @@ var storBox = stor.getBBox(),
     c0 = s.circle(c01, c02, rr).attr({
         opacity: 1,
         fill: "#90a4ae", // matches the bg
-        strokeWidth: 2
+        strokeWidth: 2,
+        class: 'slot'
     }),
 
     gr0 = s.group(line0, c0).attr({}), // a (hidden) line with a circle on its end
 
-    gr0b = gr0.clone().attr({
-        stroke: lev2_color,
-        opacity: 0,
-    }),
-
-    gr0c = gr0.clone().attr({
-        stroke: lev3_color,
-        opacity: 0,
-    }),
-
-    gr1a = gr0.clone().attr({
+    gr1f = gr0.clone().attr({
         transform: setTransform(-25, cp[0], cp[1]),
         id: "line1",
         opacity: 1,
@@ -366,35 +363,35 @@ var storBox = stor.getBBox(),
 
     }), // lowest
 
-    gr1b = gr0.clone().attr({
+    gr1e = gr0.clone().attr({
         transform: setTransform(-15, cp[0], cp[1]),
         id: "line2",
         opacity: 1,
         stroke: lev1_color,
     }),
 
-    gr1c = gr0.clone().attr({
+    gr1d = gr0.clone().attr({
         transform: setTransform(-5, cp[0], cp[1]),
         id: "line3",
         opacity: 1,
         stroke: lev1_color,
     }),
 
-    gr1d = gr0.clone().attr({
+    gr1c = gr0.clone().attr({
         transform: setTransform(5, cp[0], cp[1]),
         id: "line4",
         opacity: 1,
         stroke: lev1_color,
     }),
 
-    gr1e = gr0.clone().attr({
+    gr1b = gr0.clone().attr({
         transform: setTransform(15, cp[0], cp[1]),
         id: "line5",
         opacity: 1,
         stroke: lev1_color,
     }),
 
-    gr1f = gr0.clone().attr({
+    gr1a = gr0.clone().attr({
         transform: setTransform(25, cp[0], cp[1]),
         id: "line6",
         opacity: 1,
@@ -415,17 +412,25 @@ let gr3a = gr1a.clone().attr({ stroke: lev3_color, }),
     gr3e = gr1e.clone().attr({ stroke: lev3_color, }),
     gr3f = gr1f.clone().attr({ stroke: lev3_color, });
 
+let getRed = drawMyrect(storBox.x2-5, Number(storBox.y)+3, -20, 10).attr({rx:2, ry:2, fill: 'red'}),
+    getSilver = drawMyrect(storBox.x2-28, Number(storBox.y)+3, -20, 10).attr({rx:2, ry:2, fill: 'white'}),
+    getBlack = drawMyrect(storBox.x2-51, Number(storBox.y)+3, -20, 10).attr({rx:2, ry:2});
+
+getRed.dblclick(() => {storSocket.emit('getRed')})
+getSilver.dblclick(() => {storSocket.emit('getSilver')})
+getBlack.dblclick(() => {storSocket.emit('getBlack')})
+
 let pickP = s.circle(Number(s.select('#stor').attr('x'))+80, Number(s.select('#stor').attr('y'))+130, rr ).attr({
     stroke: 'black',
     opacity: 1,
 });
 
 
-var bigGr = s.group(gr1a, gr1b, gr1c, gr1d, gr1e, gr1f).attr({ id: "bg1", }), //level1
+var bigGr = s.group(gr1a, gr1b, gr1c, gr1d, gr1e, gr1f).attr({ id: "bg1", }), //level1, red pcs
 
-    bigGr2 = s.group(gr2a, gr2b, gr2c, gr2d, gr2e, gr2f).attr({ transform: transMatrix2 }); //level2
+    bigGr2 = s.group(gr2a, gr2b, gr2c, gr2d, gr2e, gr2f).attr({ transform: transMatrix2 }); //level2, silver pcs
 
-    bigGr3 = s.group(gr3a, gr3b, gr3c, gr3d, gr3e, gr3f).attr({ transform: transMatrix3 }); //level3
+    bigGr3 = s.group(gr3a, gr3b, gr3c, gr3d, gr3e, gr3f).attr({ transform: transMatrix3 }); //level3, black pcs
 
 s.circle(Number(s.select("#pt").attr("cx")) + 10, s.select("#pt").attr("cy"), 2.5).attr({ fill: "#FFFFFF" }); //second dot
 s.circle(Number(s.select("#pt").attr("cx")) + 20, s.select("#pt").attr("cy"), 2.5).attr({ fill: "#FFFFFF" }); //third dot
@@ -464,7 +469,119 @@ var gr_2 = s.line(bx0.x, bx0.y - 7, bx0.x, Number(bx0.y) + 7).attr({ //gripper, 
 
     gripper_s = s.group(s_arm, gr_2, gr_u, gr_d)
 
+// utilities
 
+let red1 = makeWkpc2(s,gr1a.children()[1].attr('cx'),gr1a.children()[1].attr('cy'),'red').attr({
+    //opacity: 1,
+    transform: gr1a.attr('transform')
+    }),
+    red2 = makeWkpc2(s,gr1b.children()[1].attr('cx'),gr1b.children()[1].attr('cy'),'red').attr({
+        //opacity: 1,
+        transform: gr1b.attr('transform')
+    }),
+    red3 = makeWkpc2(s,gr1c.children()[1].attr('cx'),gr1c.children()[1].attr('cy'),'red').attr({
+        //opacity: 1,
+        transform: gr1c.attr('transform')
+    }),
+    red4 = makeWkpc2(s,gr1d.children()[1].attr('cx'),gr1d.children()[1].attr('cy'),'red').attr({
+        //opacity: 1,
+        transform: gr1d.attr('transform')
+    }),
+    red5 = makeWkpc2(s,gr1e.children()[1].attr('cx'),gr1e.children()[1].attr('cy'),'red').attr({
+        //opacity: 1,
+        transform: gr1e.attr('transform')
+    }),
+    red6 = makeWkpc2(s,gr1f.children()[1].attr('cx'),gr1f.children()[1].attr('cy'),'red').attr({
+        //opacity: 1,
+        transform: gr1f.attr('transform')
+    });
+
+let sil1 = makeWkpc2(s,gr2a.children()[1].attr('cx'),gr2a.children()[1].attr('cy'),'white').attr({
+    //opacity: 1,
+    transform: gr2a.attr('transform')
+    }),
+    sil2 = makeWkpc2(s,gr2b.children()[1].attr('cx'),gr2b.children()[1].attr('cy'),'white').attr({
+        //opacity: 1,
+        transform: gr2b.attr('transform')
+    }),
+    sil3 = makeWkpc2(s,gr2c.children()[1].attr('cx'),gr2c.children()[1].attr('cy'),'white').attr({
+        //opacity: 1,
+        transform: gr2c.attr('transform')
+    }),
+    sil4 = makeWkpc2(s,gr2d.children()[1].attr('cx'),gr2d.children()[1].attr('cy'),'white').attr({
+        //opacity: 1,
+        transform: gr2d.attr('transform')
+    }),
+    sil5 = makeWkpc2(s,gr2e.children()[1].attr('cx'),gr2e.children()[1].attr('cy'),'white').attr({
+        //opacity: 1,
+        transform: gr2e.attr('transform')
+    }),
+    sil6 = makeWkpc2(s,gr2f.children()[1].attr('cx'),gr2f.children()[1].attr('cy'),'white').attr({
+        //opacity: 1,
+        transform: gr2f.attr('transform')
+    });
+
+sil1[0].animate({'cx': Number(sil1[0].attr('cx'))+9.5, 'cy': Number(sil1[0].attr('cy'))-4},500);
+sil1[1].animate({'cx': Number(sil1[1].attr('cx'))+9.5, 'cy': Number(sil1[1].attr('cy'))-4},500);
+
+sil2[0].animate({'cx': Number(sil2[0].attr('cx'))+9.5, 'cy': Number(sil2[0].attr('cy'))-2.5},500); 
+sil2[1].animate({'cx': Number(sil2[1].attr('cx'))+9.5, 'cy': Number(sil2[1].attr('cy'))-2.5},500);
+
+sil3[0].animate({'cx': Number(sil3[0].attr('cx'))+9.5, 'cy': Number(sil3[0].attr('cy'))-1},500); 
+sil3[1].animate({'cx': Number(sil3[1].attr('cx'))+9.5, 'cy': Number(sil3[1].attr('cy'))-1},500);
+
+sil4[0].animate({'cx': Number(sil4[0].attr('cx'))+9.5, 'cy': Number(sil4[0].attr('cy'))+1},500); 
+sil4[1].animate({'cx': Number(sil4[1].attr('cx'))+9.5, 'cy': Number(sil4[1].attr('cy'))+1},500);
+
+sil5[0].animate({'cx': Number(sil5[0].attr('cx'))+9.5, 'cy': Number(sil5[0].attr('cy'))+2.5},500); 
+sil5[1].animate({'cx': Number(sil5[1].attr('cx'))+9.5, 'cy': Number(sil5[1].attr('cy'))+2.5},500);
+
+sil6[0].animate({'cx': Number(sil4[0].attr('cx'))+9.5, 'cy': Number(sil6[0].attr('cy'))+4},500);
+sil6[1].animate({'cx': Number(sil4[1].attr('cx'))+9.5, 'cy': Number(sil6[1].attr('cy'))+4},500);
+
+let bla1 = makeWkpc2(s,gr3a.children()[1].attr('cx'),gr3a.children()[1].attr('cy'),'black').attr({
+        //opacity: 1,
+        transform: gr3a.attr('transform')
+        }),
+    bla2 = makeWkpc2(s,gr3b.children()[1].attr('cx'),gr3b.children()[1].attr('cy'),'black').attr({
+        //opacity: 1,
+        transform: gr3b.attr('transform')
+        }),
+    bla3 = makeWkpc2(s,gr3c.children()[1].attr('cx'),gr3c.children()[1].attr('cy'),'black').attr({
+        //opacity: 1,
+        transform: gr3c.attr('transform')
+        }),
+    bla4 = makeWkpc2(s,gr3d.children()[1].attr('cx'),gr3d.children()[1].attr('cy'),'black').attr({
+        //opacity: 1,
+        transform: gr3d.attr('transform')
+        }),
+    bla5 = makeWkpc2(s,gr3e.children()[1].attr('cx'),gr3e.children()[1].attr('cy'),'black').attr({
+        //opacity: 1,
+        transform: gr3e.attr('transform')
+        }),
+    bla6 = makeWkpc2(s,gr3f.children()[1].attr('cx'),gr3f.children()[1].attr('cy'),'black').attr({
+        //opacity: 1,
+        transform: gr3f.attr('transform')
+        });
+bla1[0].animate({'cx': Number(bla1[0].attr('cx'))+18, 'cy': Number(bla1[0].attr('cy'))-8.5},1000);
+bla1[1].animate({'cx': Number(bla1[1].attr('cx'))+18, 'cy': Number(bla1[1].attr('cy'))-8.5},1000);
+
+bla2[0].animate({'cx': Number(bla2[0].attr('cx'))+19, 'cy': Number(bla2[0].attr('cy'))-5},1000);
+bla2[1].animate({'cx': Number(bla2[1].attr('cx'))+19, 'cy': Number(bla2[1].attr('cy'))-5},1000);
+
+bla3[0].animate({'cx': Number(bla3[0].attr('cx'))+20, 'cy': Number(bla3[0].attr('cy'))-2},1000);
+bla3[1].animate({'cx': Number(bla3[1].attr('cx'))+20, 'cy': Number(bla3[1].attr('cy'))-2},1000);
+
+bla4[0].animate({'cx': Number(bla4[0].attr('cx'))+20, 'cy': Number(bla4[0].attr('cy'))+2},1000);
+bla4[1].animate({'cx': Number(bla4[1].attr('cx'))+20, 'cy': Number(bla4[1].attr('cy'))+2},1000);
+
+bla5[0].animate({'cx': Number(bla5[0].attr('cx'))+19, 'cy': Number(bla5[0].attr('cy'))+5},1000);
+bla5[1].animate({'cx': Number(bla5[1].attr('cx'))+19, 'cy': Number(bla5[1].attr('cy'))+5},1000);
+
+bla6[0].animate({'cx': Number(bla6[0].attr('cx'))+18, 'cy': Number(bla6[0].attr('cy'))+8.5},1000);
+bla6[1].animate({'cx': Number(bla6[1].attr('cx'))+18, 'cy': Number(bla6[1].attr('cy'))+8.5},1000);
+
+//sil5.attr({opacity: 0})
 function setTransform(theta, x, y){
     return new Snap.Matrix().rotate(theta, x, y)
 }
@@ -487,6 +604,16 @@ function makeWkpc(s, x, y){
     }),
         part2 = s.circle(x,y,8).attr({
             fill: 'green',
+        });
+    return s.group(part2, part1).attr({opacity: 0})
+}
+
+function makeWkpc2(s, x, y, color){
+    let part1 = s.circle(x,y,3).attr({
+        fill: 'yellow',
+    }),
+        part2 = s.circle(x,y,8).attr({
+            fill: color,
         });
     return s.group(part2, part1).attr({opacity: 0})
 }
