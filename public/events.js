@@ -32,7 +32,7 @@ handSocket.on('initialStatus', function(data) {
             stroke: 'red',
             strokeWidth: 3,
         })
-        handSocket.emit('failure')
+        //handSocket.emit('failure')
         return
     }
     else{
@@ -517,4 +517,72 @@ storSocket.on('disconnect', function(){
 
 storSocket.on('initialStatus', function(data) {
     console.log('stor socket initial status:', data)
+    if (!data.linearComplete){
+        storSocket.emit('initialStatusError', 'Check input linearComplete')
+        return
+    }
+    if (!data.rotaryComplete){
+        storSocket.emit('initialStatusError', 'Check input rotaryComplete')
+        return
+    }
+
+    s.select('#stor').attr({
+        stroke: 'green',
+        strokeWidth: 3,
+    })
+    storSocket.emit('success')
+})
+
+storSocket.on('placed', function(data){
+    if (data.color=='black'){
+        if(data.num==1) bla1.animate({opacity:1},1000)
+        else if(data.num==2) bla2.animate({opacity:1},1000)
+        else if(data.num==3) bla3.animate({opacity:1},1000)
+        else if(data.num==4) bla4.animate({opacity:1},1000)
+        else if(data.num==5) bla5.animate({opacity:1},1000)
+        else if(data.num==6) bla6.animate({opacity:1},1000)
+    }
+    else if(data.color=='red'){
+        if(data.num==1) red1.animate({opacity:1},1000)
+        else if(data.num==2) red2.animate({opacity:1},1000)
+        else if(data.num==3) red3.animate({opacity:1},1000)
+        else if(data.num==4) red4.animate({opacity:1},1000)
+        else if(data.num==5) red5.animate({opacity:1},1000)
+        else if(data.num==6) red6.animate({opacity:1},1000)
+    }
+    else if(data.color=='silver'){
+        if(data.num==1) sil1.animate({opacity:1},1000)
+        else if(data.num==2) sil2.animate({opacity:1},1000)
+        else if(data.num==3) sil3.animate({opacity:1},1000)
+        else if(data.num==4) sil4.animate({opacity:1},1000)
+        else if(data.num==5) sil5.animate({opacity:1},1000)
+        else if(data.num==6) sil6.animate({opacity:1},1000)
+    }
+})
+
+storSocket.on('removeRed', function(data){
+    if (data.num==1) red1.animate({opacity:0},1000)
+    else if(data.num==2) red2.animate({opacity:0},1000)
+    else if(data.num==3) red3.animate({opacity:0},1000)
+    else if(data.num==4) red4.animate({opacity:0},1000)
+    else if(data.num==5) red5.animate({opacity:0},1000)
+    else if(data.num==6) red6.animate({opacity:0},1000)
+})
+
+storSocket.on('removeBlack', function(data){
+    if (data.num==1) bla1.animate({opacity:0},1000)
+    else if(data.num==2) bla2.animate({opacity:0},1000)
+    else if(data.num==3) bla3.animate({opacity:0},1000)
+    else if(data.num==4) bla4.animate({opacity:0},1000)
+    else if(data.num==5) bla5.animate({opacity:0},1000)
+    else if(data.num==6) bla6.animate({opacity:0},1000)
+})
+
+storSocket.on('removeSilver', function(data){
+    if (data.num==1) sil1.animate({opacity:0},1000)
+    else if(data.num==2) sil2.animate({opacity:0},1000)
+    else if(data.num==3) sil3.animate({opacity:0},1000)
+    else if(data.num==4) sil4.animate({opacity:0},1000)
+    else if(data.num==5) sil5.animate({opacity:0},1000)
+    else if(data.num==6) sil6.animate({opacity:0},1000)
 })
