@@ -191,6 +191,10 @@ procSocket.on('initialStatus', function(data) {
         })
         procSocket.emit('success')
     }
+
+    if (data.partAv){
+        wkpc_proc.attr({visibility: 'visible'})
+    }
 })
 procSocket.on('rotate', function(data){
     //console.log('rotate', data)
@@ -201,8 +205,8 @@ procSocket.on('partAv', function(data){
      //* Comment body out when running
      //
     console.log('part av', data)
-    if(data) wkpc_proc.attr({visibility: 'visible'})
-    else wkpc_proc.attr({visibility: 'hidden'})
+    if(data) wkpc_proc.attr({opacity: 1})
+    else wkpc_proc.attr({opacity: 0})
 })
 procSocket.on('atRub', function(data){
     //console.log('at Rub', data)
@@ -264,7 +268,7 @@ distSocket.on('disconnect', function(){
         strokeWidth: 0,
     })
 })
-
+//initial status
 distSocket.on('initialStatus', function(data) {
     //set initial status of the GUI
     console.log('dist socket initial status:', data)
@@ -340,21 +344,30 @@ distSocket.on('pushCylFront', function(data){ //okay
     }
 })
 
-distSocket.on('armTake', function(data){ //okay
-    //console.log('armtake', data)
+distSocket.on('armTake', function(data){
     if (!data) {
         objToPick = false;
-        //swivel = swivel.attr({transform: new Snap.Matrix().rotate(22, Number(knob.attr('cx')), Number(knob.attr('cy')))})
+        //swivel = swivel.attr({transform: new Snap.Matrix().rotate(22, Number(knob.attr('cx')), Number(knob.attr('cy')))})***out b4
+        Snap.animate(-17, 10, function(step){
+            swivel = swivel.attr({transform: new Snap.Matrix().rotate(step, cir.attr('cx'), cir.attr('cy'))})
+        },350, mina.linear)
     }
-    else swivel = swivel.attr({transform: new Snap.Matrix().rotate(-17, Number(knob.attr('cx')), Number(knob.attr('cy')))})
+    else {
+        //swivel = swivel.attr({transform: new Snap.Matrix().rotate(-17, Number(knob.attr('cx')), Number(knob.attr('cy')))})
+        Snap.animate(10, -17, function(step){
+            swivel = swivel.attr({transform: new Snap.Matrix().rotate(step, cir.attr('cx'), cir.attr('cy'))})
+        },350, mina.linear)
+    }
     
 })
 distSocket.on('armPut', function(data){
     //console.log('armput',data)
     //if(!vacuumOn) objPicked = false
     if (data){ ////////////////////////////////////all okay
-        swivel = swivel.attr({transform: new Snap.Matrix().rotate(60, Number(knob.attr('cx')), Number(knob.attr('cy')))})
-
+        Snap.animate(10, 60, function(step){
+            swivel = swivel.attr({transform: new Snap.Matrix().rotate(step, cir.attr('cx'), cir.attr('cy'))})
+        },350, mina.linear)
+        /*swivel = swivel.attr({transform: new Snap.Matrix().rotate(60, Number(knob.attr('cx')), Number(knob.attr('cy')))})
         wkpc_dist[0] = wkpc_dist[0].attr({
             transform: new Snap.Matrix().rotate(78, Number(knob.attr('cx')), Number(knob.attr('cy'))),
             opacity: 0
@@ -367,9 +380,14 @@ distSocket.on('armPut', function(data){
 
         wkpc_test = makeWkpc(s, Number(testCasing.getBBox().x) + 12.5, testCasing.getBBox().y - 8).attr({
             opacity: 1
-        })
+        })*/
     }
-    //else swivel = swivel.attr({transform: new Snap.Matrix().rotate(22, Number(knob.attr('cx')), Number(knob.attr('cy')))})
+    else {
+        //swivel = swivel.attr({transform: new Snap.Matrix().rotate(22, Number(knob.attr('cx')), Number(knob.attr('cy')))})
+        Snap.animate(60, 10, function(step){
+            swivel = swivel.attr({transform: new Snap.Matrix().rotate(step, cir.attr('cx'), cir.attr('cy'))})
+        },350, mina.linear)
+    }
     
 })
 
@@ -407,7 +425,7 @@ testSocket.on('disconnect', function(){
         strokeWidth: 0,
     })
 })
-
+//initial status
 testSocket.on('initialStatus', function(data) {
     console.log('test socket initial status:', data)
 
@@ -501,11 +519,11 @@ testSocket.on('pushCylBack', function(data) {
 
 
 //storing station
+let storeMode, retrieveMode; //bool
 //connect
 storSocket.on('connect', function(){
     console.log('Storing station server is connected');
 })
-
 //disconnect
 storSocket.on('disconnect', function(){
     console.log('Storing station server is disconnected');
@@ -514,7 +532,7 @@ storSocket.on('disconnect', function(){
         strokeWidth: 0,
     })
 })
-
+//initial status
 storSocket.on('initialStatus', function(data) {
     console.log('stor socket initial status:', data)
     if (!data.linearComplete){
@@ -533,7 +551,15 @@ storSocket.on('initialStatus', function(data) {
     storSocket.emit('success')
 })
 
+storSocket.on('color', function(data){
+    pc = makeWkpc2(s, pickP.attr('cx'), pickP.attr('cy'), data).attr({opacity:1})
+    storeMode = true;
+    retrieveMode = false;
+})
+
 storSocket.on('placed', function(data){
+    storeMode = false
+    retrieveMode = false;
     if (data.color=='black'){
         if(data.num==1) bla1.animate({opacity:1},1000)
         else if(data.num==2) bla2.animate({opacity:1},1000)
@@ -561,28 +587,144 @@ storSocket.on('placed', function(data){
 })
 
 storSocket.on('removeRed', function(data){
-    if (data.num==1) red1.animate({opacity:0},1000)
-    else if(data.num==2) red2.animate({opacity:0},1000)
-    else if(data.num==3) red3.animate({opacity:0},1000)
-    else if(data.num==4) red4.animate({opacity:0},1000)
-    else if(data.num==5) red5.animate({opacity:0},1000)
-    else if(data.num==6) red6.animate({opacity:0},1000)
+    storeMode = false;
+    retrieveMode = true; 
+    if (data.num==1) {
+        red1.animate({opacity:0},1000)
+        coord = findCoords(30,cp[0],cp[1])
+        pc = makeWkpc2(s, coord[0], coord[1],'red').animate({opacity:1},800)
+    }
+    else if(data.num==2) {
+        red2.animate({opacity:0},1000)
+        coord = findCoords(18,cp[0],cp[1])
+        pc = makeWkpc2(s, coord[0], coord[1],'red').animate({opacity:1},800)
+    }
+    else if(data.num==3) {
+        red3.animate({opacity:0},1000)
+        coord = findCoords(6,cp[0],cp[1])
+        pc = makeWkpc2(s, coord[0], coord[1],'red').animate({opacity:1},800)
+    }
+    else if(data.num==4) {
+        red4.animate({opacity:0},1000)
+        coord = findCoords(-6,cp[0],cp[1])
+        pc = makeWkpc2(s, coord[0], coord[1],'red').animate({opacity:1},800)}
+    else if(data.num==5) {
+        red5.animate({opacity:0},1000)
+        coord = findCoords(-18,cp[0],cp[1])
+        pc = makeWkpc2(s, coord[0], coord[1],'red').animate({opacity:1},800)
+}
+    else if(data.num==6) {
+        red6.animate({opacity:0},1000)
+        coord = findCoords(-30,cp[0],cp[1])
+        pc = makeWkpc2(s, coord[0], coord[1],'red').animate({opacity:1},800)}
 })
 
+let coords, pc;
 storSocket.on('removeBlack', function(data){
-    if (data.num==1) bla1.animate({opacity:0},1000)
-    else if(data.num==2) bla2.animate({opacity:0},1000)
-    else if(data.num==3) bla3.animate({opacity:0},1000)
-    else if(data.num==4) bla4.animate({opacity:0},1000)
-    else if(data.num==5) bla5.animate({opacity:0},1000)
-    else if(data.num==6) bla6.animate({opacity:0},1000)
+    storeMode = false;
+    retrieveMode = true; 
+    if (data.num==1) {
+        bla1.animate({opacity:0},1000)
+        coord = findCoords(30,cp[0],cp[1])
+        pc = makeWkpc2(s, coord[0], coord[1],'black').animate({opacity:1},800)
+    }
+    else if(data.num==2) {
+        bla2.animate({opacity:0},1000)
+        coord = findCoords(18,cp[0],cp[1])
+        pc = makeWkpc2(s, coord[0], coord[1],'black').animate({opacity:1},800)
+    }
+    else if(data.num==3) {
+        bla3.animate({opacity:0},1000)
+        coord = findCoords(6,cp[0],cp[1])
+        pc = makeWkpc2(s, coord[0], coord[1],'black').animate({opacity:1},800)
+    }
+    else if(data.num==4) {
+        bla4.animate({opacity:0},1000)
+        coord = findCoords(-6,cp[0],cp[1])
+        pc = makeWkpc2(s, coord[0], coord[1],'black').animate({opacity:1},800)
+    }
+    else if(data.num==5) {
+        bla5.animate({opacity:0},1000)
+        coord = findCoords(-18,cp[0],cp[1])
+        pc = makeWkpc2(s, coord[0], coord[1],'black').animate({opacity:1},800)
+    }
+    else if(data.num==6) {
+        bla6.animate({opacity:0},1000)
+        coord = findCoords(-30,cp[0],cp[1])
+        pc = makeWkpc2(s, coord[0], coord[1],'black').animate({opacity:1},800)
+    }
+    
 })
 
-storSocket.on('removeSilver', function(data){
-    if (data.num==1) sil1.animate({opacity:0},1000)
-    else if(data.num==2) sil2.animate({opacity:0},1000)
-    else if(data.num==3) sil3.animate({opacity:0},1000)
-    else if(data.num==4) sil4.animate({opacity:0},1000)
-    else if(data.num==5) sil5.animate({opacity:0},1000)
-    else if(data.num==6) sil6.animate({opacity:0},1000)
+storSocket.on('removeSilver', function(data){// do retrieve anime here
+    storeMode = false;
+    retrieveMode = true;
+
+    if (data.num==1) {
+        sil1.animate({opacity:0},1000)
+        coord = findCoords(30,cp[0],cp[1])
+        pc = makeWkpc2(s, coord[0], coord[1],'white').animate({opacity:1},800)
+    }
+    else if(data.num==2) {
+        sil2.animate({opacity:0},1000)
+        coord = findCoords(18,cp[0],cp[1])
+        pc = makeWkpc2(s, coord[0], coord[1],'white').animate({opacity:1},800)
+}
+    else if(data.num==3) {
+        sil3.animate({opacity:0},1000)
+        coord = findCoords(6,cp[0],cp[1])
+        pc = makeWkpc2(s, coord[0], coord[1],'white').animate({opacity:1},800)
+    }
+    else if(data.num==4) {
+        sil4.animate({opacity:0},1000)
+        coord = findCoords(-6,cp[0],cp[1])
+        pc = makeWkpc2(s, coord[0], coord[1],'white').animate({opacity:1},800)}
+    else if(data.num==5) {
+        sil5.animate({opacity:0},1000)
+        coord = findCoords(-18,cp[0],cp[1])
+        pc = makeWkpc2(s, coord[0], coord[1],'white').animate({opacity:1},800)
+    }
+    else if(data.num==6) {
+        sil6.animate({opacity:0},1000)
+        coord = findCoords(-30,cp[0],cp[1])
+        pc = makeWkpc2(s, coord[0], coord[1],'white').animate({opacity:1},800)
+    }
+    
+})
+
+let toPos,  fromPos2=7;
+storSocket.on('rotate', function(data){
+    //set toPos
+    if(data.bit0 && data.bit1 && data.bit2) {
+        toPos=0
+        rotateGroup(gripper_s,fromPos2, toPos)
+    }
+    else if(!data.bit0 && !data.bit1 && !data.bit2) {
+        toPos=1
+        rotateGroup(gripper_s,fromPos2, toPos)
+    }
+    else if(data.bit0 && !data.bit1 && !data.bit2) {
+        toPos=2
+        rotateGroup(gripper_s,fromPos2, toPos)
+    }
+    else if(!data.bit0 && data.bit1 && !data.bit2) {
+        toPos=3
+        rotateGroup(gripper_s,fromPos2, toPos)
+    }
+    else if(data.bit0 && data.bit1 && !data.bit2) {
+        toPos=4
+        rotateGroup(gripper_s,fromPos2, toPos)
+    }
+    else if(!data.bit0 && !data.bit1 && data.bit2) {
+        toPos=5
+        rotateGroup(gripper_s,fromPos2, toPos)
+    }
+    else if(data.bit0 && !data.bit1 && data.bit2) {
+        toPos=6
+        rotateGroup(gripper_s,fromPos2, toPos)
+    }
+    else if(!data.bit0 && data.bit1 && data.bit2) { //holder position
+        toPos=7
+        rotateGroup(gripper_s,fromPos2, toPos)
+    }
 })

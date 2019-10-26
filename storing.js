@@ -6,13 +6,13 @@ const Station = require('./station');
 const sockets = require('./index');
 
 var storStat = new Station("Storing Station", "192.168.3.65", 3009);
-storStat.getEvents(['colorE','placedE','removeRedE','removeBlackE','removeSilverE'/*, 'rotateE', 'translateE', 'linearDoneE','rotaryDoneE', */]);
-storStat.subscribe()
+storStat.getEvents(['colorE','placedE','removeRedE','removeBlackE','removeSilverE', 'rotateE'/*, 'translateE', 'linearDoneE','rotaryDoneE', */]);
+//storStat.subscribe()
 
 let rot, trans; //for holding info abt current bits' status
 let blackCount = 0, //wkpc tracking has to be done here
     redCount = 0,
-    silverCount = 0;
+    silverCount = 0;//testing
 
 storStat.runServer = function(){
     var ref = this;
@@ -29,22 +29,24 @@ storStat.runServer = function(){
         switch (id) {
             case('rotate'):
                 rot = req.body
-                console.log('rotation: ', rot)
+                //console.log('rotation: ', rot)
+                sockets.storSocket.emit('rotate', req.body.status)
                 break
             case('translate'):
                 trans = req.body
-                console.log('       translation: ', trans)
+                //console.log('       translation: ', trans)
+                sockets.storSocket.emit('translate', req.body)
                 break    
-            case ('linearComplete'):
+            case ('linearComplete')://or use translate event?
                 //redraw the gripper
                 console.log('linear is done')
                 break
-            case ('rotaryComplete'):
+            case ('rotaryComplete'):// or use rotate event?
                 //redraw the gripper
                 console.log('rotary is done')
                 break
             case('placed'):
-                console.log('placed:', req.body)
+                //console.log('placed:', req.body)
                 if (req.body.black){
                     blackCount++;
                     sockets.storSocket.emit('placed', {color: 'black', num: blackCount})
@@ -70,15 +72,15 @@ storStat.runServer = function(){
                 sockets.storSocket.emit('removeSilver', {color: 'silver', num: silverCount})
                 silverCount--;
                 break;
-            case('color')://use for showing wkpc in holder
+            case('color'):
                 if (req.body.red){
-                    console.log('REDDDDD\n')
+                    sockets.storSocket.emit('color', 'red')
                 }
                 else if(req.body.black){
-                    console.log('BLACKKK\n')
+                    sockets.storSocket.emit('color', 'black')
                 }
                 else if(req.body.silver){
-                    console.log('SILVERRR\n')
+                    sockets.storSocket.emit('color', 'silver')
                 }
                 break;
             default:

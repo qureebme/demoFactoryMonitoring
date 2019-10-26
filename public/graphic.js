@@ -1,5 +1,5 @@
-h = window.screen.availHeight;
-w = window.screen.availWidth;
+let h = window.screen.availHeight;
+let w = window.screen.availWidth;
 
 
 var s = new Snap(w, h + 200).attr({
@@ -167,7 +167,7 @@ var ccc = s.circle(Number(s.select("#proc").attr("x")) + 100, Number(s.select("#
     id: "ccc"
 }); // the centre circle
 
-let wkpc_proc = makeWkpc(s,768,812) // opacity to 0
+let wkpc_proc = makeWkpc2(s,768,812,'green') // opacity to 0
 
 var spinner = s.group(flange1, flange2, flange3, ccc, wkpc_proc).attr({
     id: "spin"
@@ -300,15 +300,16 @@ testCasing = s.rect(distbBox.x2-50, Number(slides.getBBox().y2)-15,25,15).attr({
     opacity: 0.8,
     rx: 3,
     ry:3
-}) // testPusherCasing
-s.circle(distbBox.x2, Number(distbBox.y)+90, 10).attr({
+}), // testPusherCasing
+cir = s.circle(distbBox.x2, Number(distbBox.y)+90, 10).attr({
     id: 'circ'
 }) //black
 
 let swivel = drawMyrect(Number(s.select('#circ').attr('cx'))+2, Number(s.select('#circ').attr('cy'))+2, -77,-5).attr({
     id: 'myrect1',
     rx: 2,
-    ry: 2
+    ry: 2,
+    transform: new Snap.Matrix().rotate(10, cir.attr('cx'), cir.attr('cy'))//10
 })
 
 let knob = s.circle(distbBox.x2, Number(distbBox.y)+90, 10).attr({
@@ -330,7 +331,7 @@ var rr = 8, // radius of the circles
     transMatrix3 = new Snap.Matrix().translate(20, 0);
 
 var storBox = stor.getBBox(),
-    point = s.circle(storBox.x2 - 100, storBox.y + 75, 2.5).attr({ id: "pt" }),
+    point = s.circle(storBox.x2 - 100, storBox.y + 75, 5).attr({ id: "pt" }),
 
     cp = [s.select("#pt").attr("cx"), s.select("#pt").attr("cy")], //center coords of point
 
@@ -423,6 +424,7 @@ getBlack.dblclick(() => {storSocket.emit('getBlack')})
 let pickP = s.circle(Number(s.select('#stor').attr('x'))+80, Number(s.select('#stor').attr('y'))+130, rr ).attr({
     stroke: 'black',
     opacity: 1,
+    fill: stationFill
 });
 
 
@@ -432,20 +434,17 @@ var bigGr = s.group(gr1a, gr1b, gr1c, gr1d, gr1e, gr1f).attr({ id: "bg1", }), //
 
     bigGr3 = s.group(gr3a, gr3b, gr3c, gr3d, gr3e, gr3f).attr({ transform: transMatrix3 }); //level3, black pcs
 
-s.circle(Number(s.select("#pt").attr("cx")) + 10, s.select("#pt").attr("cy"), 2.5).attr({ fill: "#FFFFFF" }); //second dot
-s.circle(Number(s.select("#pt").attr("cx")) + 20, s.select("#pt").attr("cy"), 2.5).attr({ fill: "#FFFFFF" }); //third dot
-
 s.rect(cp[0] - 5, cp[1] - 5, 30, 10).attr({
     opacity: 0.5,
     rx: 2,
     ry: 2
 }); // layer over 3 points
 
-var s_arm = s.line(s.select("#pt").attr("cx") - 70, s.select("#pt").attr("cy"), s.select("#pt").attr("cx"), s.select("#pt").attr("cy")).attr({ //robot arm
+var s_arm = s.line(s.select("#pt").attr("cx") - 80, s.select("#pt").attr("cy"), s.select("#pt").attr("cx"), s.select("#pt").attr("cy")).attr({ //robot arm
         id: "s_arm",
         stroke: "black",
         strokeWidth: 4,
-    }),
+    }),// -40 to holder, 30 to ,,,
 
     bx0 = s_arm.getBBox();
 //console.log("bx0:: ", bx0)
@@ -467,7 +466,9 @@ var gr_2 = s.line(bx0.x, bx0.y - 7, bx0.x, Number(bx0.y) + 7).attr({ //gripper, 
         strokeWidth: 4
     }),
 
-    gripper_s = s.group(s_arm, gr_2, gr_u, gr_d)
+    gripper_s = s.group(s_arm, gr_2, gr_u, gr_d).attr({
+        transform: new Snap.Matrix().rotate(-38, cp[0], cp[1])
+    })
 
 // utilities
 
@@ -581,7 +582,6 @@ bla5[1].animate({'cx': Number(bla5[1].attr('cx'))+19, 'cy': Number(bla5[1].attr(
 bla6[0].animate({'cx': Number(bla6[0].attr('cx'))+18, 'cy': Number(bla6[0].attr('cy'))+8.5},1000);
 bla6[1].animate({'cx': Number(bla6[1].attr('cx'))+18, 'cy': Number(bla6[1].attr('cy'))+8.5},1000);
 
-//sil5.attr({opacity: 0})
 function setTransform(theta, x, y){
     return new Snap.Matrix().rotate(theta, x, y)
 }
@@ -616,4 +616,44 @@ function makeWkpc2(s, x, y, color){
             fill: color,
         });
     return s.group(part2, part1).attr({opacity: 0})
+}
+
+let fromAng = -38, toAng;
+//fromAng: angle, toAng: angle, fromPos: realWorldPos, toPos: realWorldPos
+function rotateGroup(group, fromPos, toPos){
+    //console.log('from-to: ', fromPos, toPos)
+    if (fromPos==0) fromAng = 35
+    else if (fromPos==1) fromAng = 30
+    else if (fromPos==2) fromAng = 18
+    else if (fromPos==3) fromAng = 6
+    else if (fromPos==4) fromAng = -6
+    else if (fromPos==5) fromAng = -18
+    else if (fromPos==6) fromAng = -30
+    else if (fromPos==7) fromAng = -38
+
+    if (toPos==0) toAng = 35
+    else if (toPos==1) toAng = 30
+    else if (toPos==2) toAng = 18
+    else if (toPos==3) toAng = 6
+    else if (toPos==4) toAng = -6
+    else if (toPos==5) toAng = -18
+    else if (toPos==6) toAng = -30
+    else if (toPos==7) toAng = -38
+
+    Snap.animate(fromAng, toAng, function(step){
+        group = group.attr({
+            transform: new Snap.Matrix().rotate(step, cp[0], cp[1])
+        })
+        if(retrieveMode || storeMode) pc = pc.attr({transform: new Snap.Matrix().rotate(step-fromAng, cp[0], cp[1])})
+        //if(storeMode) pc = pc.attr({transform: new Snap.Matrix().rotate(step-fromAng, cp[0], cp[1])})
+    }, Math.abs(fromPos-toPos)*500, mina.linear, function() {
+        fromPos2 = toPos
+        storeMode = false; retrieveMode = false;
+        if (pc) {pc = pc.animate({opacity: 0}, 2000, mina.linear, () =>{})}
+    })
+}
+
+function findCoords(the, x, y){
+    let r2 = 89 * Snap.sin(the)/Snap.tan(the)
+    return [x-r2, y-89*Snap.sin(the)]
 }
