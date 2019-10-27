@@ -22,7 +22,7 @@ let proc = require('./process'),
     hand = require('./handling'),
     dist = require('./distrib'),
     stor = require('./storing'),
-    test = require('./testing')
+    test = require('./testing');
 
 
 proc.procStat.runServer()
@@ -49,15 +49,16 @@ let handSocket = io.of('/handling')
                             hand.handStat.unsubscribe()
                             hand.handStat.light('Red', true)
                             hand.handStat.light('Green', false)
+
+                            proc.procStat.unsubscribe()
+                            dist.distStat.unsubscribe()
+                            test.testStat.unsubscribe()
+                            stor.storStat.unsubscribe()
                         })
 
                         socket.on('success', function(data){
                             hand.handStat.light('Green', true)
                             hand.handStat.light('Red', false)
-                        })
-
-                        socket.on('failure', function(data){
-                            hand.handStat.unsubscribe()
                         })
 
                         socket.on('disconnect', function(){
@@ -76,6 +77,11 @@ let handSocket = io.of('/handling')
                             proc.procStat.unsubscribe()
                             proc.procStat.light('Red', true)
                             proc.procStat.light('Green', false)
+
+                            hand.handStat.unsubscribe()
+                            dist.distStat.unsubscribe()
+                            test.testStat.unsubscribe()
+                            stor.storStat.unsubscribe()
                         })
 
                         socket.on('success', function(data){
@@ -83,14 +89,10 @@ let handSocket = io.of('/handling')
                             proc.procStat.light('Red', false)
                         })
 
-                        socket.on('failure', function(data){
-                            proc.procStat.unsubscribe()
-                        })
-
                         socket.on('disconnect', function(){
                             proc.procStat.light('Green', false)
                             proc.procStat.light('Red', false)
-                            //proc.procStat.light('Amber', false)
+                            //proc.procStat.light('Amber', false) //amber light not connected
                         })
                     }),
 
@@ -103,15 +105,16 @@ let handSocket = io.of('/handling')
                             test.testStat.unsubscribe()
                             test.testStat.light('Red', true)
                             test.testStat.light('Green', false)
+
+                            hand.handStat.unsubscribe()
+                            dist.distStat.unsubscribe()
+                            proc.procStat.unsubscribe()
+                            stor.storStat.unsubscribe()
                         })
 
                         socket.on('success', function(data){
                             test.testStat.light('Green', true)
                             test.testStat.light('Red', false)
-                        })
-
-                        socket.on('failure', function(data){
-                            test.testStat.unsubscribe()
                         })
 
                         socket.on('disconnect', function(){
@@ -130,15 +133,16 @@ let handSocket = io.of('/handling')
                             dist.distStat.unsubscribe()
                             dist.distStat.light('Red', true)
                             dist.distStat.light('Green', false)
+
+                            hand.handStat.unsubscribe()
+                            proc.procStat.unsubscribe()
+                            test.testStat.unsubscribe()
+                            stor.storStat.unsubscribe()
                         })
 
                         socket.on('success', function(data){
                             dist.distStat.light('Green', true)
                             dist.distStat.light('Red', false)
-                        })
-
-                        socket.on('failure', function(data){
-                            dist.distStat.unsubscribe()
                         })
 
                         socket.on('disconnect', function(){
@@ -155,20 +159,32 @@ let handSocket = io.of('/handling')
                         socket.on('initialStatusError', function(mssg){
                             console.log(chalk.red.bold(`Storing Station, INITIAL STATUS ERROR: ${mssg}`))
                             stor.storStat.unsubscribe()
+
+                            hand.handStat.unsubscribe()
+                            dist.distStat.unsubscribe()
+                            test.testStat.unsubscribe()
+                            proc.procStat.unsubscribe()
                         })
 
                         socket.on('success', function(data){
-                            //stor.storStat.light('Green', true) // has no light
-                        })
-
-                        socket.on('failure', function(data){
-                            stor.storStat.unsubscribe()
+                            /*stor.storStat.light('Green', true) // has no light
+                            stor.storStat.light('Red', false)*/
                         })
 
                         socket.on('disconnect', function(){
                             /*stor.storStat.light('Green', false)
                             stor.storStat.light('Red', false)
                             stor.storStat.light('Amber', false)*/
+                        })
+
+                        socket.on('getBlack', function(){
+                            stor.storStat.makeServicePost('getBlack', {})
+                        })
+                        socket.on('getSilver', function(){
+                            stor.storStat.makeServicePost('getSilver', {})
+                        })
+                        socket.on('getRed', function(){
+                            stor.storStat.makeServicePost('getRed', {})
                         })
                     });
 
