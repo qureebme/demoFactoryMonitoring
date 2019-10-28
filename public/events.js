@@ -9,6 +9,7 @@ let distSocket = io.connect('/distributing'),
     storSocket = io.connect('/storing');
 
 //for the handling station                  //DONE
+let colorToken;
 //connect
 handSocket.on('connect', function(){
     console.log('Handling station server is connected');
@@ -76,70 +77,67 @@ handSocket.on('initialStatus', function(data) {
 })
 
 handSocket.on('partAv', function(data){
-    //console.log('partAv:                        ', data);
     data ? wkpc_hand.animate({opacity: 1}, 500) : wkpc_hand.animate({opacity: 0}, 500)
 })
 
 handSocket.on('atFollow', function(data){
-
-    wkpc_hand[0].animate({ cy: 630 }, 500, mina.easein)
-    wkpc_hand[1].animate({ cy: 630 }, 500, mina.easein)
-    /////////////////////////////////////////
-    line_m.animate({y2: line_m.attr('y1')},500, mina.easein)
-    line_c.animate({y1: line_m.attr('y1'), y2: line_m.attr('y1')},500, mina.easein)
-    line_r.animate({y1: line_m.attr('y1'), y2: line_m.attr('y1')},500, mina.easein)
-    line_l.animate({y1: line_m.attr('y1'), y2: line_m.attr('y1')},500, mina.easein)
-    gr_line.animate({opacity: 0}, 500)
+    if (data){
+        wkpc_hand[0].animate({ cy: 630 }, 500, mina.easein)
+        wkpc_hand[1].animate({ cy: 630 }, 500, mina.easein)
+    
+        line_m.animate({y2: line_m.attr('y1')},500, mina.easein)
+        line_c.animate({y1: line_m.attr('y1'), y2: line_m.attr('y1')},500, mina.easein)
+        line_r.animate({y1: line_m.attr('y1'), y2: line_m.attr('y1')},500, mina.easein)
+        line_l.animate({y1: line_m.attr('y1'), y2: line_m.attr('y1')},500, mina.easein)
+        gr_line.animate({opacity: 0}, 500)
+    }  
 })
 
 handSocket.on('atSort', function(data){
+    if (data){
+        wkpc_hand[0].animate({ cy: 690 }, 500, mina.easein)
+        wkpc_hand[1].animate({ cy: 690 }, 500, mina.easein)
+        // animate y props to 
+        gr_line.animate({opacity: 1}, 500)
 
-    wkpc_hand[0].animate({ cy: 690 }, 500, mina.easein)
-    wkpc_hand[1].animate({ cy: 690 }, 500, mina.easein)
-    // animate y props to 
-    gr_line.animate({opacity: 1}, 500)
-
-    line_m.animate({y2: 667},500, mina.easein) /////////////////
-    line_c.animate({y1: 667, y2: 667}, 500, mina.easein)
-    line_r.animate({y1: 667, y2: 687}, 500, mina.easein)
-    line_l.animate({y1: 667, y2: 687}, 500, mina.easein)
+        line_m.animate({y2: 667},500, mina.easein)
+        line_c.animate({y1: 667, y2: 667}, 500, mina.easein)
+        line_r.animate({y1: 667, y2: 687}, 500, mina.easein)
+        line_l.animate({y1: 667, y2: 687}, 500, mina.easein)
+    }
 })
 
 handSocket.on('atPrevious', function(data){
+    if (data){
+        wkpc_hand[0].animate({ cy: 810 }, 500, mina.easein)
+        wkpc_hand[1].animate({ cy: 810 }, 500, mina.easein)
+        gr_line.animate({opacity: 1}, 500)
 
-    wkpc_hand[0].animate({ cy: 805 }, 500, mina.easein)
-    wkpc_hand[1].animate({ cy: 805 }, 500, mina.easein)
-    // animate y props to 0
-    gr_line.animate({opacity: 1}, 500)
-
-    line_m.animate({y2: 782},500, mina.easein) /////////////////
-    line_c.animate({y1: 782, y2: 782}, 500, mina.easein)
-    line_r.animate({y1: 782, y2: 802}, 500, mina.easein)
-    line_l.animate({y1: 782, y2: 802}, 500, mina.easein)
+        line_m.animate({y2: 782},500, mina.easein)
+        line_c.animate({y1: 782, y2: 782}, 500, mina.easein)
+        line_r.animate({y1: 782, y2: 802}, 500, mina.easein)
+        line_l.animate({y1: 782, y2: 802}, 500, mina.easein)
+    }
 })
 
-handSocket.on('gripperDown', function(data){ //no need
-    //console.log('gripperDown', data);
-})
-handSocket.on('gripperUp', function(data){ //no need
-    //console.log('gripperUp', data);
+handSocket.on('gripperDown', function(data){
 })
 
-handSocket.on('gripperOpen', (data) => { //no need
-    //console.log('gripperOpen', data);
+handSocket.on('gripperUp', function(data){
 })
 
-handSocket.on('colorCheck', function(data){ // work this out
-    //set workpiece color
-    var colorToken = data ? 'black' : 'blue'
-    //wkpc.attr({fill : colorToken})
+handSocket.on('gripperOpen', (data) => {
+})
+
+handSocket.on('colorCheck', function(data){
 })
 
 
 //processing station
 
 let text,
-    mat = new Snap.Matrix();
+    mat = new Snap.Matrix(),
+    inPosition;
     
     //console.log('matrix:', mat)
     //console.log('bb:', bb.cx, bb.cy)
@@ -192,37 +190,32 @@ procSocket.on('initialStatus', function(data) {
         procSocket.emit('success')
     }
 
-    if (data.partAv){
-        wkpc_proc.attr({visibility: 'visible'})
+    if (data.partAv && data.inPosition){
+        wkpc_proc.animate({opacity: 1},2000)
     }
 })
 procSocket.on('rotate', function(data){
     //console.log('rotate', data)
 })
 procSocket.on('partAv', function(data){
-    //
-     //* keep just to show an example tricky issue.
-     //* Comment body out when running
-     //
-    console.log('part av', data)
-    if(data) wkpc_proc.attr({opacity: 1})
-    else wkpc_proc.attr({opacity: 0})
+    if(data) {
+        wkpc_proc.stop()
+        wkpc_proc.animate({opacity: 1},500)
+    }
+    else {
+        wkpc_proc.stop()
+        wkpc_proc.animate({opacity: 0},5000)
+    }
 })
 procSocket.on('atRub', function(data){
-    //console.log('at Rub', data)
-    //briefly increase wkpc outer strke width
+    if (data) wkpc_proc[0].attr({stroke:'blue', strokeWidth:2})
+    else wkpc_proc[0].attr({stroke:'', strokeWidth:0})
 })
 procSocket.on('atTest', function(data){
-    //console.log('at test', data)
     if (data) plunger = s.select('#plun').animate({transform: new Snap.Matrix().translate(10,0)}, 100)
-    else plunger = s.select('#plun').animate({transform: new Snap.Matrix().translate(-10,0)}, 100)
+    else plunger = s.select('#plun').animate({transform: new Snap.Matrix().translate(0,0)}, 100)
 })
-procSocket.on('rubIsUp', function(data){
-    //console.log('rub up', data)
-})
-procSocket.on('rubIsDown', function(data){
-    //console.log('rub down', data)
-})
+
 procSocket.on('inPosition', function(data){
     console.log('rot pos', data)
    
@@ -238,23 +231,23 @@ procSocket.on('testing', function(data){
 })
 procSocket.on('wkpcOK', function(data){
     console.log('workOK', data)
-    let textCoord = [wkpc_proc.attr('cx'), wkpc_proc.attr('cy')]
+    let textCoord = [wkpc_proc[0].attr('cx'), wkpc_proc[0].attr('cy')]
     if (data){
         text = s.text(textCoord[0], textCoord[1], 'OK').attr({
-            stroke: 'green',
+            stroke: 'blue',
             transform: new Snap.Matrix().translate(-55,85)
         })
     }
 
     setTimeout(function(){ 
         text.attr({visibility: 'hidden'})
-    }, 500)
+    }, 300)
 })
 
 
 
 /////distributing station
-let objToPick, vacuumOn;
+let objToPick, vacuumOn, wkpc_dist;
 //connect
 distSocket.on('connect', function(){
     console.log('Distributing station server is connected');
@@ -335,55 +328,38 @@ distSocket.on('pushCylFront', function(data){ //okay
 
         wkpc_dist[0] = wkpc_dist[0].animate({cx: Number(wkpc_dist[0].attr('cx'))+125}, 100, mina.linear, ()=> {
             objToPick = true
-            //setTimeout(() => objToPick = true, 1000)
+            console.log('objtopick1:', objToPick)
         })
         wkpc_dist[1] = wkpc_dist[1].animate({cx: Number(wkpc_dist[0].attr('cx'))+125}, 100, mina.linear, ()=> {
             objToPick = true
-            //setTimeout(() => objToPick = true, 1000)
+            console.log('objtopick2:', objToPick)
         })
     }
 })
-
+let n =0;
 distSocket.on('armTake', function(data){
     if (!data) {
-        objToPick = false;
-        //swivel = swivel.attr({transform: new Snap.Matrix().rotate(22, Number(knob.attr('cx')), Number(knob.attr('cy')))})***out b4
         Snap.animate(-17, 10, function(step){
             swivel = swivel.attr({transform: new Snap.Matrix().rotate(step, cir.attr('cx'), cir.attr('cy'))})
+            if (objToPick) wkpc_dist = wkpc_dist.attr({transform: new Snap.Matrix().rotate(step+17+27/35, cir.attr('cx'), cir.attr('cy'))})
         },350, mina.linear)
     }
     else {
-        //swivel = swivel.attr({transform: new Snap.Matrix().rotate(-17, Number(knob.attr('cx')), Number(knob.attr('cy')))})
         Snap.animate(10, -17, function(step){
             swivel = swivel.attr({transform: new Snap.Matrix().rotate(step, cir.attr('cx'), cir.attr('cy'))})
         },350, mina.linear)
-    }
-    
+    }  
 })
-distSocket.on('armPut', function(data){
-    //console.log('armput',data)
-    //if(!vacuumOn) objPicked = false
-    if (data){ ////////////////////////////////////all okay
-        Snap.animate(10, 60, function(step){
-            swivel = swivel.attr({transform: new Snap.Matrix().rotate(step, cir.attr('cx'), cir.attr('cy'))})
-        },350, mina.linear)
-        /*swivel = swivel.attr({transform: new Snap.Matrix().rotate(60, Number(knob.attr('cx')), Number(knob.attr('cy')))})
-        wkpc_dist[0] = wkpc_dist[0].attr({
-            transform: new Snap.Matrix().rotate(78, Number(knob.attr('cx')), Number(knob.attr('cy'))),
-            opacity: 0
-        })
-        wkpc_dist[1] = wkpc_dist[1].attr({
-            transform: new Snap.Matrix().rotate(78, Number(knob.attr('cx')), Number(knob.attr('cy'))),////////////////////////////
-            opacity: 0
-        })
-        wkpc_dist.attr({opacity: 0})
 
-        wkpc_test = makeWkpc(s, Number(testCasing.getBBox().x) + 12.5, testCasing.getBBox().y - 8).attr({
-            opacity: 1
-        })*/
+distSocket.on('armPut', function(data){
+    if (data){
+        Snap.animate(10, 60, function(step){
+            n++; 
+            swivel = swivel.attr({transform: new Snap.Matrix().rotate(step, cir.attr('cx'), cir.attr('cy'))})
+            wkpc_dist = wkpc_dist.attr({transform: new Snap.Matrix().rotate(step+17+33/18, cir.attr('cx'), cir.attr('cy'))})
+        },350, mina.linear, () => {wkpc_dist.animate({opacity:0},500)})
     }
     else {
-        //swivel = swivel.attr({transform: new Snap.Matrix().rotate(22, Number(knob.attr('cx')), Number(knob.attr('cy')))})
         Snap.animate(60, 10, function(step){
             swivel = swivel.attr({transform: new Snap.Matrix().rotate(step, cir.attr('cx'), cir.attr('cy'))})
         },350, mina.linear)
@@ -391,19 +367,14 @@ distSocket.on('armPut', function(data){
     
 })
 
-distSocket.on('pushCylBack', function(data){
-    //console.log('pushCylBack', data)
-    
-})
+distSocket.on('pushCylBack', function(data){})
 
 distSocket.on('vacuum', function(data){
     if (data) {
         vacuumOn = true
-        //objPicked = true
     }
     else {
         vacuumOn = false
-        //objPicked = false
     }
 })
 
@@ -435,7 +406,6 @@ testSocket.on('initialStatus', function(data) {
             stroke: 'red',
             strokeWidth: 3,
         })
-        //testSocket.emit('failure')
         return
     }
 
@@ -445,7 +415,6 @@ testSocket.on('initialStatus', function(data) {
             stroke: 'red',
             strokeWidth: 3,
         })
-        //testSocket.emit('failure')
         return
     }
 

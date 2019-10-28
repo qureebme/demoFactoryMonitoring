@@ -7,7 +7,7 @@ const sockets = require('./index');
 
 var distStat = new Station("Distributing Station", "192.168.3.63", 3007);
 distStat.getEvents(['magEmptyE','armPutE','armTakeE','pushCylFrontE','pushCylBackE','vacuumE']);
-distStat.subscribe()
+//distStat.subscribe()
 
 distStat.runServer = function(){
     var ref = this;
