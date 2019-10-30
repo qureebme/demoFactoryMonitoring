@@ -2,7 +2,7 @@ var app = require('express')(),
     http = require('http').createServer(app),
     bodyParser = require('body-parser').json({ strict: false });
 
-const sockets = require('./index');
+const socket = require('./index').handSocket;
 const Station = require('./station');
 
 var handStat = new Station("Handling Station", "192.168.3.68", 3005);
@@ -23,29 +23,28 @@ handStat.runServer = function(){
 
         switch (id) {
             case ('partAv'):
-                //console.log(ref.name, id, req.body.status)
-                sockets.handSocket.emit('partAv', req.body.status)
+                socket.emit('partAv', req.body.status)
                 break;
             case('atPrevious'):
-                sockets.handSocket.emit('atPrevious', req.body.status)
+                socket.emit('atPrevious', req.body.status)
                 break;
             case('atFollow'):
-                sockets.handSocket.emit('atFollow', req.body.status)
+                socket.emit('atFollow', req.body.status)
                 break;
             case('atSort'):
-                sockets.handSocket.emit('atSort', req.body.status)
+                socket.emit('atSort', req.body.status)
                 break;
             case('colorCheck'):
-                sockets.handSocket.emit('colorCheck', req.body.status)
+                socket.emit('colorCheck', req.body.status)
                 break;
             case('gripperDown'):
-                sockets.handSocket.emit('gripperDown', req.body.status)
+                socket.emit('gripperDown', req.body.status)
                 break;
             case('gripperUp'):
-                sockets.handSocket.emit('gripperUp', req.body.status)
+                socket.emit('gripperUp', req.body.status)
                 break;
             case('gripperOpen'):
-                sockets.handSocket.emit('gripperOpen', req.body.status)
+                socket.emit('gripperOpen', req.body.status)
                 break;
             default:
                 break;

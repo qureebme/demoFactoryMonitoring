@@ -3,11 +3,11 @@ var app = require('express')(),
     bodyParser = require('body-parser').json({ strict: false });
     
 const Station = require('./station');
-const sockets = require('./index');
+const socket = require('./index').distSocket;
 
 var distStat = new Station("Distributing Station", "192.168.3.63", 3007);
 distStat.getEvents(['magEmptyE','armPutE','armTakeE','pushCylFrontE','pushCylBackE','vacuumE']);
-//distStat.subscribe()
+distStat.subscribe()
 
 distStat.runServer = function(){
     var ref = this;
@@ -23,22 +23,22 @@ distStat.runServer = function(){
 
         switch (id) {
             case ('magEmpty'):
-                sockets.distSocket.emit('magEmpty', req.body.status)
+                socket.emit('magEmpty', req.body.status)
                 break;
             case ('armPut'):
-                sockets.distSocket.emit('armPut', req.body.status)
+                socket.emit('armPut', req.body.status)
                 break;
             case ('armTake'):
-                sockets.distSocket.emit('armTake', req.body.status)
+                socket.emit('armTake', req.body.status)
                 break;
             case ('pushCylFront'):
-                sockets.distSocket.emit('pushCylFront', req.body.status)
+                socket.emit('pushCylFront', req.body.status)
                 break;
             case ('pushCylBack'):
-                sockets.distSocket.emit('pushCylBack', req.body.status)
+                socket.emit('pushCylBack', req.body.status)
                 break;
             case ('vacuum'):
-                sockets.distSocket.emit('vacuum', req.body.status)
+                socket.emit('vacuum', req.body.status)
                 break;
             default:
                 break;

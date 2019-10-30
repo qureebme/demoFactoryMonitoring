@@ -4,13 +4,14 @@ var app = require('express')(),
     request = require('request');
     
 const Station = require('./station');
-const sockets = require('./index');
+const socket = require('./index').testSocket;
 
 var testStat = new Station("Testing Station", "192.168.3.27", 3008);
 testStat.getEvents(['liftIsDownE','liftIsUpE','heightOKE','partAvE','pushCylBackE','airSlideE','startE']);
 testStat.subscribe()
 
 let lift, height;
+let n = 0; // programming to the liftIsDown sensor problem
 
 testStat.sendLiftUp = function(){
     let ref = this;
@@ -52,6 +53,8 @@ testStat.runServer = function(){
         switch (id) {
             case ('start'):
                 ref.sendLiftUp();
+                socket.emit('start', req.body.status)
+                break
             case ('liftIsUp'):
                 lift = req.body.status
                 if (lift){
@@ -62,29 +65,33 @@ testStat.runServer = function(){
                             setTimeout(()=> ref.airSlideOff(), 3000)
                         }
                         else ref.sendLiftDown()
-                    }, 3000)
+                    }, 1000)
                 }
-                sockets.testSocket.emit('start', req.body.status)
+                socket.emit('liftIsUp', req.body.status)
                 break
             case ('liftIsDown'):
-                if (req.body.status){
-                    if (!height) setTimeout(() => ref.pushCyl(), 4000)
+                n++;
+                if (n==3 || n==4) { // only every other liftIsDown event (pair, 0 and 1) is acceptable
+                    if (req.body.status){
+                        if (!height) setTimeout(() => {ref.pushCyl();}, 4000)
+                    }
+                    else n = 0 // n must be 4
+                socket.emit('liftIsDown', req.body.status)
                 }
-                sockets.testSocket.emit('liftIsDown', req.body.status)
                 break
             case ('heightOK'):
                 if (req.body.status) height = req.body.status
                 else setTimeout(()=> height = req.body.status,5000)
-                sockets.testSocket.emit('heightOK', req.body.status)
+                socket.emit('heightOK', req.body.status)
                 break
             case('airSlide'):
-                if(!req.body.status) ref.sendLiftDown()
-                sockets.testSocket.emit('airSlide', req.body.status)
+                if(!req.body.status) ref.sendLiftDown()  //for accepted wkpc
+                socket.emit('airSlide', req.body.status)
             case ('partAv'):
-                sockets.testSocket.emit('partAv', req.body.status)
+                socket.emit('partAv', req.body.status)
                 break
             case ('pushCylBack'):
-                //console.log(ref.name, id, req.body.status)
+                socket.emit('pushCylBack', req.body.status)
                 break
             default:
                 break

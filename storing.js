@@ -3,16 +3,15 @@ var app = require('express')(),
     bodyParser = require('body-parser').json({ strict: false });
     
 const Station = require('./station');
-const sockets = require('./index');
+const socket = require('./index').storSocket;
 
 var storStat = new Station("Storing Station", "192.168.3.65", 3009);
-storStat.getEvents(['colorE','placedE','removeRedE','removeBlackE','removeSilverE', 'rotateE'/*, 'translateE', 'linearDoneE','rotaryDoneE', */]);
-//storStat.subscribe()
+storStat.getEvents(['colorE','placedE','removeRedE','removeBlackE','removeSilverE', 'rotateE']);
+storStat.subscribe()
 
-let rot, trans; //for holding info abt current bits' status
-let blackCount = 0, //wkpc tracking has to be done here
+let blackCount = 0,
     redCount = 0,
-    silverCount = 0;//testing
+    silverCount = 0;
 
 storStat.runServer = function(){
     var ref = this;
@@ -28,59 +27,50 @@ storStat.runServer = function(){
         */
         switch (id) {
             case('rotate'):
-                rot = req.body
-                //console.log('rotation: ', rot)
-                sockets.storSocket.emit('rotate', req.body.status)
+                socket.emit('rotate', req.body.status)
                 break
             case('translate'):
-                trans = req.body
-                //console.log('       translation: ', trans)
-                sockets.storSocket.emit('translate', req.body)
+                socket.emit('translate', req.body)
                 break    
-            case ('linearComplete')://or use translate event?
-                //redraw the gripper
-                console.log('linear is done')
+            case ('linearComplete'):
                 break
-            case ('rotaryComplete'):// or use rotate event?
-                //redraw the gripper
-                console.log('rotary is done')
+            case ('rotaryComplete'):
                 break
             case('placed'):
-                //console.log('placed:', req.body)
                 if (req.body.black){
                     blackCount++;
-                    sockets.storSocket.emit('placed', {color: 'black', num: blackCount})
+                    socket.emit('placed', {color: 'black', num: blackCount})
                 }
                 else if (req.body.red){
                     redCount++;
-                    sockets.storSocket.emit('placed', {color: 'red', num: redCount})
+                    socket.emit('placed', {color: 'red', num: redCount})
                 }
                 else if (req.body.silver){
                     silverCount++;
-                    sockets.storSocket.emit('placed', {color: 'silver', num: silverCount})
+                    socket.emit('placed', {color: 'silver', num: silverCount})
                 }
                 break
             case('removeRed'):
-                sockets.storSocket.emit('removeRed', {color: 'red', num: redCount})
+                socket.emit('removeRed', {color: 'red', num: redCount})
                 redCount--;
                 break;
             case('removeBlack'):
-                sockets.storSocket.emit('removeBlack', {color: 'black', num: blackCount})
+                socket.emit('removeBlack', {color: 'black', num: blackCount})
                 blackCount--;
                 break;
             case('removeSilver'):
-                sockets.storSocket.emit('removeSilver', {color: 'silver', num: silverCount})
+                socket.emit('removeSilver', {color: 'silver', num: silverCount})
                 silverCount--;
                 break;
             case('color'):
                 if (req.body.red){
-                    sockets.storSocket.emit('color', 'red')
+                    socket.emit('color', 'red')
                 }
                 else if(req.body.black){
-                    sockets.storSocket.emit('color', 'black')
+                    socket.emit('color', 'black')
                 }
                 else if(req.body.silver){
-                    sockets.storSocket.emit('color', 'silver')
+                    socket.emit('color', 'silver')
                 }
                 break;
             default:

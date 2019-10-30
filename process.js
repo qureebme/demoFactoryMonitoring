@@ -1,10 +1,9 @@
-
 var app = require('express')(),
     http = require('http').createServer(app),
     bodyParser = require('body-parser').json({ strict: false });
 
 const Station = require('./station');
-const sockets = require('./index');
+const socket = require('./index').procSocket;
 
 var procStat = new Station("Processing Station", "192.168.3.60", 3006);
 procStat.getEvents(['rotateE','partAvE','atRubE','atTestE','inPositionE','wkpcOKE', 'testingE']);
@@ -17,37 +16,36 @@ procStat.runServer = function(){
 
     app.post('/', function(req, res){
         let id = req.body.eventID;
-
-        clearTimeout(idle)
-        ref.light('Amber', false)
-        idle = setTimeout(() => ref.light('Amber', true), 300000)
+        /*clearTimeout(idle)
+        ref.light('Amber', false)     //no amber light
+        idle = setTimeout(() => ref.light('Amber', true), 300000)*/
 
         switch (id) {
             case ('rotate'):
-                sockets.procSocket.emit('rotate', req.body.status)
+                socket.emit('rotate', req.body.status)
                 break;
             case ('partAv'):
-                sockets.procSocket.emit('partAv', req.body.status)
+                socket.emit('partAv', req.body.status)
                 break;
             case ('atRub'):
-                sockets.procSocket.emit('atRub', req.body.status)
+                socket.emit('atRub', req.body.status)
                 break;
             case ('atTest'):
-                sockets.procSocket.emit('atTest', req.body.status)
+                socket.emit('atTest', req.body.status)
                 break;
             case ('inPosition'):
-                sockets.procSocket.emit(id, req.body.status)
+                socket.emit(id, req.body.status)
                 break
             case ('wkpcOK'):
-                procSocket.emit('wkpcOK', req.body.status)
+                socket.emit('wkpcOK', req.body.status)
                 break;
             case ('testing'):
-                sockets.procSocket.emit('testing', req.body.status)
+                socket.emit('testing', req.body.status)
             case ('rubUp')://doesnt work. bad device
-                sockets.procSocket.emit('rubIsUp', req.body.status)
+                socket.emit('rubIsUp', req.body.status)
                 break;
             case ('rubDown'): //doesnt work, bad device
-                sockets.procSocket.emit('rubIsDown', req.body.status)
+                socket.emit('rubIsDown', req.body.status)
                 break;
             default:
                 break;
@@ -60,5 +58,5 @@ procStat.runServer = function(){
     });
 }
 
-let idle = setTimeout(() => procStat.light('Amber', true), 300000)
+//let idle = setTimeout(() => procStat.light('Amber', true), 300000) //no amber light
 module.exports = {procStat}
