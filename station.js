@@ -6,22 +6,15 @@ let request = require('request'),
     class Station {
         constructor(name, ip, eventPort) {
             this.name = name;
-            this.ip = ip; // ip of the real station
-            this.eventPort = eventPort; // for instances of this object
-            this.baseURI = "http://" + ip + "/rest/events/"; // for subscriptions
-            this.baseURI2 = "http://" + ip + "/rest/services/"; // for service consumption
+            this.ip = ip;
+            this.eventPort = eventPort;
+            this.baseURI = "http://" + ip + "/rest/events/";
+            this.baseURI2 = "http://" + ip + "/rest/services/";
 
-            this.events = undefined; // events array
-            this.eventCount = 0; // num of successful subscriptions
-
-            this.inputs = undefined; // array
-            this.inputCount = 0; // same idea as eventCount (initial input statuses)
-
-            this.outputs = undefined; // array
-            this.outputCount = 0; // same idea as eventCount (initial output statuses)
-            //this.nInputs
-            //this.nOutputs
-            //this.nEvents
+            this.events = undefined;
+            this.eventCount = 0;
+            this.inputs = undefined;
+            this.outputs = undefined;
         }
 
         // specify events as an array
@@ -35,7 +28,6 @@ let request = require('request'),
             var ref = this;
             return new Promise(function(resolve, reject){
                 request.post({uri: ref.baseURI2 + uri, json: true, body: body}, function(err, res, body){
-                    //if(res.statusCode.toString().substr(0,1) == 2) resolve(res.body)
                     if (res) resolve(res.body)
                 })
             })
@@ -48,7 +40,7 @@ let request = require('request'),
                 request.post({ uri: uri, json: true, body: body }, function(err, res, body) {
                     if (res) {
                         resolve(res.statusCode);
-                    } else console.log('line 65...', uri) //in case it's broken
+                    } else console.log(`${ref.name}: ${chalk.red('Subscription problem')}: ${chalk.red(uri)}`)
                 });
             })
         }
@@ -62,12 +54,11 @@ let request = require('request'),
                 var body = { destUrl: "http://" + myIP + ":" + ref.eventPort };
 
                 ref.makeSubscriptionPost(uri, body)
-                    .then(function(data) { // data is the response code to the most recent subscription
-                        if (data.toString().substr(0, 1) == 2) { // success = 2xx
-                            //console.log(ref.name, ref.events[ref.eventCount], 'SUBSCRIBED!');
+                    .then(function(data) {
+                        if (data.toString().substr(0, 1) == 2) {
                             ref.eventCount++;
                             if (ref.eventCount < ref.nEvents) {
-                                return ref.subscribe(); // recursive
+                                return ref.subscribe();
                             }
                             else if(ref.eventCount == ref.nEvents) {
                                 console.log(chalk.green(`${ref.name}: all subscriptions successful!`))
@@ -91,15 +82,15 @@ let request = require('request'),
                 request.delete(uri, function(err, res, body){
                     let code = res.statusCode.toString().substr(0, 1)
                     
-                    if (code == 2){ // success
+                    if (code == 2){
                         console.log(`${ref.name} has unsubscribed from all events`)
                         console.log(`${ref.name}: ${chalk.red.bold('no monitoring will be done')}`)
                     }
                     else if(code == 4){ // failure
-                        console.log(`${ref.name} has no events subscribed`)
+                        console.log(`${ref.name}: $chalk.yellow{'has no events subscribed'}`)
                     }
                     else{
-                        //dunno yet
+                        //dunno
                     }
                 })
         }
@@ -126,8 +117,7 @@ let request = require('request'),
                 this.nOutputs = this.outputs.length;
 
                 if (Object.values(res.body).includes(true)) {
-                    //problem: an output is set
-                    ioObj.emit('initialStateError'); //---> to the front-end
+                    ioObj.emit('initialStateError');
                     console.log("Error: check that no output on the station is active.");
                 }
             })
@@ -143,11 +133,7 @@ let request = require('request'),
                     else if ((color == 'Green') && (outputs.d3 !== state)) ref.makeServicePost(uri, {})
                 })
                 .catch((err) => console.log(chalk.red.bold('Error in lighting:', ref.name, uri)))
-            /*ref.makeServicePost(uri, {})
-                .then((data) => {
-                    if (state != data.status) ref.makeServicePost(uri, {})
-                })
-                .catch((err) => console.log(chalk.red.bold('Error in lighting:', ref.name, uri)))*/
+
         }
 
         //run a server
