@@ -3,7 +3,7 @@ var app = require('express')(),
     bodyParser = require('body-parser').json({ strict: false });
 
 const Station = require('./station');
-const socket = require('./index').procSocket;
+const sockets = require('./index');
 
 var procStat = new Station("Processing Station", "192.168.3.60", 3006);
 procStat.getEvents(['rotateE','partAvE','atRubE','atTestE','inPositionE','wkpcOKE', 'testingE']);
@@ -22,30 +22,30 @@ procStat.runServer = function(){
 
         switch (id) {
             case ('rotate'):
-                socket.emit('rotate', req.body.status)
+                sockets.procSocket.emit('rotate', req.body.status)
                 break;
             case ('partAv'):
-                socket.emit('partAv', req.body.status)
+                sockets.procSocket.emit('partAv', req.body.status)
                 break;
             case ('atRub'):
-                socket.emit('atRub', req.body.status)
+                sockets.procSocket.emit('atRub', req.body.status)
                 break;
             case ('atTest'):
-                socket.emit('atTest', req.body.status)
+                sockets.procSocket.emit('atTest', req.body.status)
                 break;
             case ('inPosition'):
-                socket.emit(id, req.body.status)
+                sockets.procSocket.emit(id, req.body.status)
                 break
             case ('wkpcOK'):
-                socket.emit('wkpcOK', req.body.status)
+                sockets.procSocket.emit('wkpcOK', req.body.status)
                 break;
             case ('testing'):
-                socket.emit('testing', req.body.status)
+                sockets.procSocket.emit('testing', req.body.status)
             case ('rubUp')://doesnt work. bad device
-                socket.emit('rubIsUp', req.body.status)
+                sockets.procSocket.emit('rubIsUp', req.body.status)
                 break;
             case ('rubDown'): //doesnt work, bad device
-                socket.emit('rubIsDown', req.body.status)
+                sockets.procSocket.emit('rubIsDown', req.body.status)
                 break;
             default:
                 break;

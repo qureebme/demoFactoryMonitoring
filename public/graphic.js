@@ -193,8 +193,6 @@ let base = s.rect(s.select("#proc").attr("x") - 15, Number(s.select("#proc").att
         stroke: "#6200ee",
         strokeWidth: 4,
     })
-//console.log("xx: ", s.select("#proc").attr("x"));
-//console.log("yy: ", s.select("#proc").attr("y"));
 
 s.path("M678 827 l 10 10 l 0 4 L 678 851").attr({
     //stroke: "black",
@@ -254,7 +252,7 @@ let handler = s.rect(Number(s.select("#hand").attr("x")) + 50+42, Number(s.selec
     }),
 
     wkpc_hand = makeWkpc(s,Number(s.select("#handler").attr("x")) + 8, Number(s.select("#handler").attr("y")) + Number(s.select("#handler").attr("height")) - 10)
-    //wkpc_hand.attr({opacity: 1}) //delete
+
 // DISTRIBUTING STATION COMPONENTS
 
 var holder = s.rect(Number(s.select("#dist").attr("x")) + 23, Number(s.select("#dist").attr("y")) + 100, 160, 25).attr({
@@ -280,12 +278,9 @@ var pusher = s.rect(Number(s.select("#dist").attr("x")) + 20, Number(s.select("#
     }),
 
 wkpc_dist2 = makeWkpc(s, Number(pusherCasing.getBBox().x2) + 8, pusherCasing.getBBox().y2-12.5)
-////////////////////////
-//wkpc_dist.attr({opacity: 1})
 
-//console.log('dist ', wkpc_dist[0].attr('cx'), wkpc_dist[0].attr('cy')) //239.60000000000002 904.5
-//////////////////////
 var distbBox = s.select('#dist').getBBox();
+var testbBox = s.select('#test').getBBox();
 //TESTING STATION COMPONENTS
 
 var slides = s.rect(distbBox.x2-50, distbBox.y-165,25,210).attr({
@@ -295,6 +290,10 @@ var slides = s.rect(distbBox.x2-50, distbBox.y-165,25,210).attr({
     rx: 3,
     ry:3
 }),
+vac1 = s.circle(Number(slides.attr('x'))+12.5, Number(slides.attr('y'))+20,1).attr({opacity:0.4}),
+vac2 = vac1.clone().attr({transform: new Snap.Matrix().translate(0,40)}),
+vac3 = vac1.clone().attr({transform: new Snap.Matrix().translate(0,80)}),
+vac4 = vac1.clone().attr({transform: new Snap.Matrix().translate(0,120)}),
 testPusher = s.rect(Number(slides.getBBox().x) + 9, slides.getBBox().y2 - 20, 7, 0), //animate x and height
 testCasing = s.rect(distbBox.x2-50, Number(slides.getBBox().y2)-15,25,15).attr({
     opacity: 0.8,
@@ -645,8 +644,7 @@ function rotateGroup(group, fromPos, toPos){
             transform: new Snap.Matrix().rotate(step, cp[0], cp[1])
         })
         if(retrieveMode || storeMode) pc = pc.attr({transform: new Snap.Matrix().rotate(step-fromAng, cp[0], cp[1])})
-        //if(storeMode) pc = pc.attr({transform: new Snap.Matrix().rotate(step-fromAng, cp[0], cp[1])})
-    }, Math.abs(fromPos-toPos)*500, mina.linear, function() {
+    }, Math.abs(fromPos-toPos)*550, mina.linear, function() {
         fromPos2 = toPos
         storeMode = false; retrieveMode = false;
         if (pc) {pc = pc.animate({opacity: 0}, 2000, mina.linear, () =>{})}

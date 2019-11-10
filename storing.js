@@ -3,7 +3,7 @@ var app = require('express')(),
     bodyParser = require('body-parser').json({ strict: false });
     
 const Station = require('./station');
-const socket = require('./index').storSocket;
+const sockets = require('./index');
 
 var storStat = new Station("Storing Station", "192.168.3.65", 3009);
 storStat.getEvents(['colorE','placedE','removeRedE','removeBlackE','removeSilverE', 'rotateE']);
@@ -27,10 +27,10 @@ storStat.runServer = function(){
         */
         switch (id) {
             case('rotate'):
-                socket.emit('rotate', req.body.status)
+                sockets.storSocket.emit('rotate', req.body.status)
                 break
             case('translate'):
-                socket.emit('translate', req.body)
+                sockets.storSocket.emit('translate', req.body)
                 break    
             case ('linearComplete'):
                 break
@@ -39,38 +39,38 @@ storStat.runServer = function(){
             case('placed'):
                 if (req.body.black){
                     blackCount++;
-                    socket.emit('placed', {color: 'black', num: blackCount})
+                    sockets.storSocket.emit('placed', {color: 'black', num: blackCount})
                 }
                 else if (req.body.red){
                     redCount++;
-                    socket.emit('placed', {color: 'red', num: redCount})
+                    sockets.storSocket.emit('placed', {color: 'red', num: redCount})
                 }
                 else if (req.body.silver){
                     silverCount++;
-                    socket.emit('placed', {color: 'silver', num: silverCount})
+                    sockets.storSocket.emit('placed', {color: 'silver', num: silverCount})
                 }
                 break
             case('removeRed'):
-                socket.emit('removeRed', {color: 'red', num: redCount})
+                sockets.storSocket.emit('removeRed', {color: 'red', num: redCount})
                 redCount--;
                 break;
             case('removeBlack'):
-                socket.emit('removeBlack', {color: 'black', num: blackCount})
+                sockets.storSocket.emit('removeBlack', {color: 'black', num: blackCount})
                 blackCount--;
                 break;
             case('removeSilver'):
-                socket.emit('removeSilver', {color: 'silver', num: silverCount})
+                sockets.storSocket.emit('removeSilver', {color: 'silver', num: silverCount})
                 silverCount--;
                 break;
             case('color'):
                 if (req.body.red){
-                    socket.emit('color', 'red')
+                    sockets.storSocket.emit('color', 'red')
                 }
                 else if(req.body.black){
-                    socket.emit('color', 'black')
+                    sockets.storSocket.emit('color', 'black')
                 }
                 else if(req.body.silver){
-                    socket.emit('color', 'silver')
+                    sockets.storSocket.emit('color', 'silver')
                 }
                 break;
             default:

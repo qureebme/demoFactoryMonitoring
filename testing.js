@@ -4,7 +4,7 @@ var app = require('express')(),
     request = require('request');
     
 const Station = require('./station');
-const socket = require('./index').testSocket;
+const sockets = require('./index');
 
 var testStat = new Station("Testing Station", "192.168.3.27", 3008);
 testStat.getEvents(['liftIsDownE','liftIsUpE','heightOKE','partAvE','pushCylBackE','airSlideE','startE']);
@@ -53,7 +53,7 @@ testStat.runServer = function(){
         switch (id) {
             case ('start'):
                 ref.sendLiftUp();
-                socket.emit('start', req.body.status)
+                sockets.testSocket.emit('start', req.body.status)
                 break
             case ('liftIsUp'):
                 lift = req.body.status
@@ -67,7 +67,7 @@ testStat.runServer = function(){
                         else ref.sendLiftDown()
                     }, 1000)
                 }
-                socket.emit('liftIsUp', req.body.status)
+                sockets.testSocket.emit('liftIsUp', req.body.status)
                 break
             case ('liftIsDown'):
                 n++;
@@ -76,22 +76,22 @@ testStat.runServer = function(){
                         if (!height) setTimeout(() => {ref.pushCyl();}, 4000)
                     }
                     else n = 0 // n must be 4
-                socket.emit('liftIsDown', req.body.status)
+                sockets.testSocket.emit('liftIsDown', req.body.status)
                 }
                 break
             case ('heightOK'):
                 if (req.body.status) height = req.body.status
                 else setTimeout(()=> height = req.body.status,5000)
-                socket.emit('heightOK', req.body.status)
+                sockets.testSocket.emit('heightOK', req.body.status)
                 break
             case('airSlide'):
                 if(!req.body.status) ref.sendLiftDown()  //for accepted wkpc
-                socket.emit('airSlide', req.body.status)
+                sockets.testSocket.emit('airSlide', req.body.status)
             case ('partAv'):
-                socket.emit('partAv', req.body.status)
+                sockets.testSocket.emit('partAv', req.body.status)
                 break
             case ('pushCylBack'):
-                socket.emit('pushCylBack', req.body.status)
+                sockets.testSocket.emit('pushCylBack', req.body.status)
                 break
             default:
                 break

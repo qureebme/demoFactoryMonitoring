@@ -32,12 +32,11 @@ test.testStat.runServer()
 stor.storStat.runServer()
 
 io.on('connection', (socket) => {
-    console.log('main server: connected to a client');
-    //hand.handStat.initInputs(handSocket)
-    //proc.procStat.initInputs(procSocket)
+    hand.handStat.initInputs(handSocket)
+    proc.procStat.initInputs(procSocket)
     dist.distStat.initInputs(distSocket)
-    //test.testStat.initInputs(testSocket)
-    //stor.storStat.initInputs(storSocket)
+    test.testStat.initInputs(testSocket)
+    stor.storStat.initInputs(storSocket)
 })
 
 let handSocket = io.of('/handling')
